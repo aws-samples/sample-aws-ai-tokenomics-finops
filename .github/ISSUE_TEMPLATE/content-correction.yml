@@ -1,0 +1,66 @@
+name: Content correction
+description: Report something in the runbook that is wrong, out of date, or unclear, and propose a fix.
+title: "[Content]: "
+labels: ["content", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep the runbook accurate. If you used the **Suggest a change** link on the site, the section is already filled in.
+
+        Every factual change needs a public source. We cannot accept corrections based on private, internal, or customer information.
+        For a price change, the **Pricing update** form asks for the pricing page and as-of date we need.
+  - type: input
+    id: section
+    attributes:
+      label: Section
+      description: The runbook section this is about. Set automatically by the "Suggest a change" link.
+      placeholder: "e.g. Prompt caching"
+    validations:
+      required: true
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL
+      description: Optional. A link to the page or anchor on the site.
+      placeholder: "https://..."
+    validations:
+      required: false
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+      description: Quote the current text if you can, and explain what is incorrect, out of date, or unclear.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-text
+    attributes:
+      label: Proposed text
+      description: The wording you suggest instead. Markdown is fine.
+    validations:
+      required: true
+  - type: input
+    id: source-url
+    attributes:
+      label: Public source URL
+      description: A public page that supports the change (for example AWS documentation, a pricing page, or a paper). Add more sources in the field below.
+      placeholder: "https://docs.aws.amazon.com/..."
+    validations:
+      required: true
+  - type: textarea
+    id: additional-sources
+    attributes:
+      label: Additional sources or context
+      description: Optional.
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: The source above is public, and this issue contains no customer, internal, or confidential information.
+          required: true
+        - label: I agree to follow the project's [Code of Conduct](https://aws.github.io/code-of-conduct).
+          required: true

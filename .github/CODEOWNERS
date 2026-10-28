@@ -1,0 +1,14 @@
+# Code owners are requested for review on every pull request.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# TODO: add the AI Tokenomics FinOps working group team handle (for example
+# @aws-samples/<team-name>) once the team exists, and list it next to the
+# individual owner below.
+
+# Default owner for everything in the repository.
+*                    @jiem-ying
+
+# Repository governance files: keep ownership explicit so changes to review
+# rules, workflows, and this file always need an owner's approval.
+/.github/            @jiem-ying
+/CONTRIBUTING.md     @jiem-ying
