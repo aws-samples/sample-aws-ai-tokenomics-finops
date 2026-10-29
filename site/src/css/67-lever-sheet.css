@@ -1,0 +1,100 @@
+/* 67-lever-sheet.css — the TLDR pane's list of all 34 levers and what each one saves.
+
+   Two things this file deliberately does NOT do.
+
+   It does not style `#key-levers > h2`. That heading is now the first `main.content section > h2` in the
+   document, which is the element verify-runbook-dom.mjs measures to prove the stylesheet loaded at all
+   (it asserts a 3px accent border from 50-content.css). Overriding it here would make that check pass or
+   fail on this file rather than on the one it is about.
+
+   It does not break out of the text measure. The sheet is a reading surface, not an instrument: the cost
+   structure map is the full-bleed one, and having two of them competing was the problem the wayfinder
+   redesign was about. */
+
+.lever-sheet { margin: 1.1rem 0 0; }
+
+/* ---- track ---- */
+.ls-track { margin: 0 0 1.5rem; }
+
+.ls-track-h {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem;
+  padding: 0 0 .35rem; margin: 0 0 .6rem;
+  border-bottom: 2px solid var(--border);
+}
+.ls-track-num { font-size: .74rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.ls-track-name { font-size: .95rem; font-weight: 700; color: var(--heading); }
+/* The economics line, read from the choice card that already states it. Pushed right so the row reads
+   "who you are ................ what you own". */
+.ls-track-econ { margin-left: auto; font-size: .76rem; color: var(--text-muted); }
+
+.ls-t1 .ls-track-num { color: var(--model-accent); }
+.ls-t1 .ls-track-h { border-bottom-color: color-mix(in srgb, var(--model-accent) 45%, var(--border)); }
+.ls-t2 .ls-track-num { color: var(--token-accent); }
+.ls-t2 .ls-track-h { border-bottom-color: color-mix(in srgb, var(--token-accent) 45%, var(--border)); }
+
+/* ---- layer ---- */
+.ls-layer, .ls-principles { margin: 0 0 .85rem; }
+
+.ls-layer-h {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .45rem;
+  margin: 0 0 .25rem;
+}
+.ls-layer-name {
+  font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--heading);
+}
+.ls-layer-name:hover { color: var(--workload-accent); }
+.ls-layer-n {
+  font-size: .66rem; font-weight: 600; color: var(--text-muted);
+  padding: 1px 6px; border: 1px solid var(--border); border-radius: 999px;
+}
+.ls-layer-hint { font-size: .72rem; color: var(--text-muted); font-style: italic; }
+
+/* ---- levers ---- */
+.ls-levers { list-style: none; margin: 0; padding: 0; }
+
+/* Name on the left, saving on the right, on one line each. A definition list would be more semantic in the
+   abstract, but every name here is a LINK -- this is the pane's primary navigation into the levers -- and a
+   list of links is what it actually is. */
+/* Both text columns flex rather than the name being capped in `ch`. A fixed name column wide enough for
+   "Route deterministically before invoking a supervisor" is far wider than most names need, and one narrow
+   enough to look tidy wrapped half of them to two lines -- which is what makes a list of 34 stop being
+   scannable. Slightly more room to the name than the saving, because the name is the link. */
+.ls-lever {
+  display: grid; grid-template-columns: minmax(0, 1.15fr) auto minmax(0, 1fr);
+  align-items: baseline; gap: .1rem .55rem;
+  padding: 4px 0; border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+}
+.ls-lever:last-child { border-bottom: 0; }
+
+.ls-lever-name { grid-column: 1; font-size: .82rem; font-weight: 600; }
+.ls-shared {
+  grid-column: 2; font-size: .62rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--workload-accent); white-space: nowrap;
+}
+.ls-saves { grid-column: 3; font-size: .8rem; color: var(--text); }
+
+/* A declared cross-reference lever has no saving of its own, by design. `no headline` is the UNDECLARED
+   case, which the DOM check fails on, so it is styled to look like the defect it is rather than blending in.
+   An enabler needs no special casing: its headline says "Enabler" in words. */
+.ls-saves.is-ref { color: var(--text-muted); font-style: italic; }
+.ls-saves.is-none { color: var(--expensive); font-weight: 700; }
+
+/* Three levels wide is one level too many below the measure, so the saving wraps under the name. */
+@media (max-width: 720px) {
+  .ls-lever { grid-template-columns: 1fr auto; }
+  .ls-lever-name { grid-column: 1; }
+  .ls-shared { grid-column: 2; }
+  .ls-saves { grid-column: 1 / -1; color: var(--text-muted); }
+}
+
+/* ---- decision principles ---- */
+/* Single-homed in "Synthesis and next steps" because they are identical on both tracks. Named here so a
+   reader carries them in rather than meeting them after the work, which is what the sidebar's Overview scope
+   used to do for them. */
+.ls-principles { border-top: 1px dashed var(--border); padding-top: .7rem; }
+
+/* ---- the no-JS fallback ---- */
+/* Authored visible and switched off by buildLeverSheet(), the same progressive-enhancement pattern as
+   `.rail-fallback` and Figure 2's lever-index table. */
+.sheet-fallback { font-size: .82rem; color: var(--text-muted); }

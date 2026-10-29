@@ -1,0 +1,17 @@
+/* 92-suggest.css — "Suggest a change" links (site/src/js/suggest.mjs).
+   Replaces the old feedback chrome in the same cascade slot. One quiet link under each h4 heading and
+   one in the page footer, each opening the repository's GitHub issue form in a new tab. Classes only:
+   the site serves under `style-src 'self'`, so nothing here may come from an inline style. */
+
+.suggest-change { margin: -6px 0 14px; font-size: .78rem; }
+.suggest-link {
+  display: inline-block;
+  color: var(--text-muted); text-decoration: none;
+  padding: 2px 9px; border-radius: 999px;
+  border: 1px dashed var(--border);
+}
+.suggest-link:hover,
+.suggest-link:focus-visible { color: var(--text); border-style: solid; background: var(--bg-elev); }
+.suggest-footer { margin-top: 14px; font-size: .86rem; color: var(--text-muted); }
+.suggest-footer .suggest-link { font-size: .82rem; }
+.page-disclaimer { font-size: .82rem; color: var(--text-muted); }

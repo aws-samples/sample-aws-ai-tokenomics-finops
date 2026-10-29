@@ -1,0 +1,131 @@
+/* 68-heatmap.css — effort against impact, for the levers the runbook ranks.
+
+   THE HEAT IS NEVER COLOUR ALONE. Same rule the assessment's five maturity states follow, and for the same
+   reason recorded in 90-assess.css: two states that differ only in hue are indistinguishable under a colour
+   vision deficiency, in greyscale, and in forced-colours mode. So a cell's weight is carried by its
+   background tint, its position under a written row and column tick, AND (for the two cells that need
+   calling out) an accent border, and every chip states its saving in words. Nothing here needs colour alone.
+
+   A CHART, NOT A BORDERED TABLE. Cells carry no border and no card radius of their own -- only the two axis
+   baselines (under the effort ticks, beside the impact ticks) and the two called-out cells (the quick win,
+   and the one caution cell) draw a line at all. Every other cell is told apart purely by its background tint
+   and its position relative to the axes, the way a real quadrant chart reads: by region, not by ruled-off
+   boxes. This is deliberate under dataviz's `choosing-a-form.md` (a quadrant/prioritisation matrix, not a
+   sequential-magnitude heatmap) and `marks-and-anatomy.md` ("gridlines/axes: one-step-off-surface,
+   hairline, recessive" -- never a border drawn around a mark to separate it).
+
+   THE GRID RENDERS ONLY THE ROWS THAT HAVE LEVERS. `data-rows` on the grid says how many, because a
+   three-row template with two empty rows would claim that nothing is medium- or low-impact rather than that
+   nothing has been rated. See the module docblock in site/src/js/heatmap.mjs. */
+
+.lever-heat { margin: 1.1rem 0 1.4rem; }
+
+/* ---- the grid ---- */
+.hm-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7.5rem) repeat(3, minmax(0, 1fr));
+  gap: 3px;
+  margin: 0;
+  /* Cells size to their contents rather than stretching to the tallest in the row. Stretched, a cell holding
+     one lever beside a cell holding five rendered as a large block of flat colour, which reads as something
+     missing rather than as a cell with one lever in it. Ragged bottoms are the honest shape of the data. */
+  align-items: start;
+}
+
+/* The axis baseline: a hairline under the effort ticks and beside the impact ticks, meeting at the empty
+   corner to read as one L-shaped frame around the plot -- the one thing that IS drawn as a line, because an
+   axis is chart chrome, not a mark. */
+/* `align-self: stretch` overrides the grid's own `align-items: start` (which is what keeps DATA cells
+   ragged) for exactly these three: a tick label's border is the axis line for its whole row or column,
+   not just for the text, so it has to span the row/column's full track height to read as one, the way
+   the data cells beside it are tall. Centering the label text inside that now-tall box, rather than
+   pinning it to the top, is also the correct anatomy for a categorical tick -- centred on its band. */
+.hm-corner { align-self: stretch; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+.hm-col-h, .hm-row-h {
+  font-size: .66rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.hm-col-h { padding: 0 .5rem .45rem; border-bottom: 1px solid var(--border); }
+.hm-row-h {
+  display: flex; align-items: center; justify-content: flex-end;
+  align-self: stretch;
+  padding: .5rem .6rem .5rem 0; text-align: right;
+  border-right: 1px solid var(--border);
+}
+
+/* The axis name, once, below the plot -- see the JS module for why it is a grid item spanning columns
+   2..-1 rather than a margin-offset sibling, and why it is aria-hidden. */
+.hm-axis-x {
+  grid-column: 2 / -1;
+  margin: .5rem 0 0;
+  font-size: .66rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--text-muted); text-align: center;
+}
+
+.hm-cell {
+  display: flex; flex-direction: column; gap: .3rem;
+  min-height: 3.2rem; padding: .5rem;
+  background: var(--surface);
+}
+
+/* Weight by impact, then by cheapness. The quick-win corner is the strongest thing on the pane, and the only
+   cell with a full border, because it is the answer to the question the pane exists for -- emphasise the
+   one thing, per dataviz's `choosing-a-form.md`, rather than tint every cell into competing for attention. */
+.hm-cell[data-impact="high"][data-effort="low"] {
+  border: 2px solid var(--positive-accent);
+  border-radius: 8px;
+  background: var(--positive-fill);
+}
+.hm-cell[data-impact="high"][data-effort="medium"] { background: color-mix(in srgb, var(--positive-fill) 55%, transparent); }
+/* A thin top accent, not a border-color on an already-borderless cell: the one other cell worth a flag
+   (high-impact, but the expensive way to get there) gets a strip, not a box. */
+.hm-cell[data-impact="high"][data-effort="high"] { background: var(--caution-fill); border-top: 2px solid var(--caution-accent); }
+.hm-cell[data-impact="medium"] { background: var(--neutral-fill); }
+
+/* An empty cell is a cell with nothing rated into it, which is information. It is not styled as a gap or a
+   warning, because it is neither. Its own explicit border (cells carry none by default) is what a dashed
+   style needs to render at all. */
+.hm-cell.is-empty { background: none; border: 1px dashed var(--border); min-height: 2.4rem; }
+
+.hm-cell-t {
+  font-size: .64rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--positive-accent);
+}
+
+/* ---- lever chips ---- */
+.hm-chip {
+  display: block; padding: 5px 8px;
+  border: 1px solid var(--border); border-left: 3px solid var(--border);
+  border-radius: 6px; background: var(--bg-elev);
+  text-decoration: none;
+}
+.hm-chip:hover { text-decoration: none; border-color: var(--workload-accent); }
+/* The track a lever belongs to, in the same two accents the mapcard, the rail and the cost map use, so the
+   reader is not learning a third colour language on this pane. */
+.hm-t1 { border-left-color: var(--model-accent); }
+.hm-t2 { border-left-color: var(--token-accent); }
+
+.hm-chip-name { display: block; font-size: .76rem; font-weight: 700; color: var(--heading); }
+.hm-chip-saves { display: block; font-size: .7rem; color: var(--text-muted); }
+
+/* ---- coverage footer ----
+   States how many of the 34 levers are placed. A view that showed ten without saying so would read as the
+   whole picture, which is the "no silent caps" rule the cost map's "showing N of 34" bar already follows. */
+.hm-foot { margin: .6rem 0 0; font-size: .74rem; color: var(--text-muted); }
+.hm-foot-n { font-weight: 700; color: var(--heading); }
+
+/* Below the measure the row headers cost more width than they explain, so the grid becomes one column per
+   effort band stacked, each still labelled. */
+@media (max-width: 760px) {
+  .hm-grid { grid-template-columns: 1fr; }
+  .hm-corner, .hm-col-h, .hm-axis-x { display: none; }
+  /* The row-header's right-hand axis line separated it from the effort columns beside it; stacked to
+     one column, there is nothing beside it any more, so the line would just be a stray mark. */
+  .hm-row-h { justify-content: flex-start; text-align: left; padding: .6rem 0 .2rem; border-right: none; }
+  .hm-cell::before {
+    content: attr(data-effort) " effort";
+    font-size: .62rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .hm-cell.is-empty { display: none; }
+}

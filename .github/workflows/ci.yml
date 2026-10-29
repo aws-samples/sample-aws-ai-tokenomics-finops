@@ -1,0 +1,83 @@
+# CI: build the site and run every verify gate on each pull request and on main.
+#
+#   npm ci -> npm run build (build:runbook + build:site) -> npm run verify
+#   where verify = verify:static + verify:facts + verify:dom (headless Chrome).
+#
+# On pull requests the built site (dist/) is uploaded as an artifact, so a reviewer can download
+# and open it as a preview. verify:dom also leaves screenshots and print PDFs in .verify-out/,
+# uploaded alongside it.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the site
+        run: npm run build
+
+      - name: Check the build is committed
+        # build:runbook regenerates the <style>/<script> regions of content/index.html from site/src.
+        # If that changed the file, the committed content is stale: rebuild locally and commit it.
+        run: git diff --exit-code -- content/index.html
+
+      - name: Install Chrome for verify:dom
+        # Uses the @puppeteer/browsers CLI pinned in package-lock.json (a puppeteer-core dependency).
+        # No --install-deps: it needs root, and the ubuntu-latest image already carries Chrome's libraries.
+        run: |
+          # The CLI prints download progress before the path, so take the last line only.
+          CHROME="$(npx --no-install browsers install chrome@stable --path "$RUNNER_TEMP/browsers" --format '{{path}}' | tail -n 1)"
+          test -x "$CHROME"
+          echo "PUPPETEER_EXECUTABLE_PATH=$CHROME" >> "$GITHUB_ENV"
+          "$CHROME" --version
+
+      - name: Verify (static + facts + DOM)
+        run: |
+          # The gates must measure against the committed baseline, never an override.
+          test -z "${RUNBOOK_ARCHIVE_DIR:-}"
+          npm run verify
+
+      - name: Calculator tests
+        run: npm run test:calculators
+
+      - name: Upload site preview
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site-preview
+          path: dist/
+          include-hidden-files: true
+          retention-days: 14
+
+      - name: Upload verify artefacts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verify-artefacts
+          path: .verify-out/
+          if-no-files-found: ignore
+          retention-days: 14

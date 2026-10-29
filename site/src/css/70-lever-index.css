@@ -1,0 +1,27 @@
+/* 70-lever-index.css — The collapsed lever-index table that Figure 2 falls back to.
+   Extracted verbatim from the runbook's original single inline style block, lines 444-467 of the block. */
+
+/* ---- collapsed lever index ---- */
+details.lever-index { margin: 0; }
+details.lever-index > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  padding: .7rem .9rem; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg-elev); color: var(--heading); font-weight: 600;
+  transition: background .12s, border-color .12s;
+}
+details.lever-index > summary:hover { background: var(--workload-fill); border-color: var(--workload-accent); }
+details.lever-index > summary::-webkit-details-marker { display: none; }
+details.lever-index > summary::before {
+  content: "\25B8"; color: var(--workload-accent); font-size: .9em;
+  transition: transform .15s; display: inline-block;
+}
+details.lever-index[open] > summary::before { transform: rotate(90deg); }
+details.lever-index[open] > summary { border-radius: 10px 10px 0 0; margin-bottom: 0; }
+.disc-label { font-size: .98rem; }
+.disc-sub { font-size: .82rem; font-weight: 400; color: var(--text-muted); }
+.disc-sub::before { content: "\2014"; margin: 0 .45rem 0 .1rem; color: var(--text-muted); }
+details.lever-index table { margin: 0; border: 1px solid var(--border); border-top: 0; border-radius: 0 0 10px 10px; }
+details.lever-index td a { font-weight: 600; }
+.lever-index.is-fallback { margin-top: 10px; }
+

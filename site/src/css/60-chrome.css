@@ -1,0 +1,51 @@
+/* 60-chrome.css — Right rail, back-to-top, mobile scrim, responsive breakpoints.
+   Extracted verbatim from the runbook's original single inline style block, lines 400-443 of the block. */
+
+/* ---- right rail ---- */
+.rail { position: sticky; top: 56px; align-self: start; height: calc(100vh - 56px); overflow-y: auto; padding: 26px 18px 40px; }
+.rail .rail-title { font-size: .72rem; text-transform: uppercase; letter-spacing: .09em; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
+.rail ul { list-style: none; margin: 0; padding: 0; }
+/* Scoped to the no-JS fallback list on purpose. These rules used to apply to every <a> in the rail, which
+   put a grey left border and 10px of padding on each of the wayfinder's own links too. */
+.rail .rail-fallback a { display: block; padding: 4px 10px; border-left: 2px solid var(--border); color: var(--text-muted); font-size: .82rem; line-height: 1.3; }
+.rail .rail-fallback a:hover { color: var(--text); text-decoration: none; }
+.rail .rail-fallback a.active { color: var(--workload-accent); border-left-color: var(--workload-accent); font-weight: 600; }
+
+/* ---- back to top ---- */
+#toTop {
+  position: fixed; right: 22px; bottom: 22px; z-index: 70;
+  width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow);
+  cursor: pointer; font-size: 1.1rem; opacity: 0; pointer-events: none; transition: opacity .18s;
+}
+#toTop.show { opacity: 1; pointer-events: auto; }
+#toTop:hover { background: var(--bg-elev); }
+
+/* ---- scrim for mobile drawer ---- */
+.scrim { display: none; position: fixed; inset: 56px 0 0; background: rgba(10,15,20,.45); z-index: 55; }
+.scrim.show { display: block; }
+
+/* ---- responsive ---- */
+@media (max-width: 1180px) {
+  .app { grid-template-columns: var(--sidebar-w) minmax(0, 1fr); }
+  .rail { display: none; }
+}
+@media (max-width: 860px) {
+  #navToggle { display: inline-flex; }
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .sidebar {
+    position: fixed; top: 56px; left: 0; z-index: 58;
+    width: min(86vw, var(--sidebar-w)); height: calc(100vh - 56px);
+    transform: translateX(-102%); transition: transform .22s ease; box-shadow: var(--shadow);
+  }
+  .sidebar.open { transform: translateX(0); }
+  /* Setting the token rather than the padding keeps the cost map's full-bleed in step: it cancels
+     --content-pad, so a literal 20px here would leave the board 20px wider than the shell. */
+  main.content { --content-pad: 20px; padding: 8px var(--content-pad) 88px; }
+  .hero h1 { font-size: 1.7rem; }
+  .mapgrid { grid-template-columns: 1fr; }
+  .mapgrid .col-h, .mapgrid .corner { display: none; }
+  .mapgrid .row-h { border-radius: 9px 9px 0 0; }
+  .mapgrid a.cell { min-height: 0; }
+}
+

@@ -1,0 +1,46 @@
+/* 60-dashboard.css — the cross-layer assessment dashboard (site/src/js/assessment.mjs).
+
+   Why it exists: every per-layer summary panel is scoped to its own layer by design, so before this
+   there was nowhere in the runbook that showed the six layers together, and no way to export the whole
+   assessment as one document. A reviewer finishing a session wants both.
+
+   It reuses the per-layer panel's chrome (.assess-btn, .ar-actions, .assess-sub) rather than inventing
+   a parallel set, so the two surfaces read as the same system. */
+
+.assess-dashboard {
+  border: 1px solid var(--border); border-radius: 12px; background: var(--bg-elev);
+  padding: 1rem 1.2rem 1.2rem; margin: 1.2rem 0 1.6rem; box-shadow: var(--shadow);
+}
+
+.ad-head {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: .8rem; margin: .9rem 0 .2rem;
+}
+
+/* Headline metrics. A big number with a small label is the template answer for a stat tile, and it is
+   the right answer here: three scalars with no shape of their own, read at a glance before the rows. */
+.ad-metrics { display: flex; flex-wrap: wrap; gap: 1.4rem; }
+.ad-metric { display: flex; flex-direction: column; line-height: 1.15; }
+.ad-metric-n { font-size: 1.5rem; font-weight: 800; color: var(--heading); font-variant-numeric: tabular-nums; }
+.ad-metric-l { font-size: .74rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+.ad-metric.is-gap .ad-metric-n { color: var(--expensive); }
+
+.ad-rows { margin-top: 1rem; display: grid; gap: .85rem; }
+.ad-row { padding: .6rem .75rem .5rem; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); }
+.ad-row-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem; }
+.ad-row-title { font-weight: 700; font-size: .95rem; }
+.ad-row-n { font-size: .8rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+/* Compact rows carry the bar only; the full legend appears once, on the per-layer panels, rather than
+   six times down a list where it would outweigh the data. */
+.ad-row .cov { margin: .45rem 0 0; }
+
+.ad-weakest {
+  margin: 1rem 0 0; padding: .55rem .9rem; font-size: .88rem;
+  background: var(--caution-fill); border-left: 4px solid var(--caution-accent);
+  border-radius: 0 6px 6px 0; color: var(--text);
+}
+
+@media (max-width: 620px) {
+  .ad-head { flex-direction: column; align-items: flex-start; }
+  .ad-metrics { gap: 1rem; }
+}

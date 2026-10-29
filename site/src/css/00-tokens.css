@@ -1,0 +1,88 @@
+/* 00-tokens.css — Design tokens: brand accents, themeable surface/text tokens, dark theme.
+   Extracted verbatim from the runbook's original single inline style block, lines 2-71 of the block. */
+
+:root {
+  /* brand accents (constant across themes) */
+  --ink:            #232F3E;
+  --workload-accent:#0972D3;
+  --token-accent:   #8B5CF6;  --token-heading: #7C3AED;
+  --model-accent:   #FF9900;
+  --positive-accent:#7AA116;
+  --expensive:      #D13212;
+  --caution-accent: #B7791F;
+
+  /* themeable surface / text tokens (light) */
+  --bg:        #ffffff;
+  --bg-elev:   #f6f8fa;
+  --sidebar-bg:#f6f8fa;
+  --surface:   #ffffff;
+  --text:      #1c2530;
+  --text-muted:#55606b;
+  --heading:   #232F3E;
+  --border:    #e5e7eb;
+  --zebra:     #f9fafb;
+  --link:      #0972D3;
+
+  /* component fills (light) */
+  --workload-fill: #EAF5FF;
+  --token-fill:    #F4EEFF;
+  --model-fill:    #FFF4E0;
+  --positive-fill: #F0F8E8;
+  --caution-fill:  #FDF6E7;
+  --expensive-fill:#FDECEA;
+  --neutral-fill:  #F3F4F6;
+  --code-bg:       #1b2530;
+  --code-fg:       #eef2f6;
+
+  --sidebar-w: 288px;
+  --rail-w:    212px;
+  --measure:   70ch;
+  /* main.content's horizontal padding, as a token because the cost structure map cancels it to reach the
+     shell edges. Two hard-coded 40s would drift the moment one of them changed. */
+  --content-pad: 40px;
+  --topbar-h:  56px;
+  /* The FIRST sticky line: below the top bar, where the tab bar pins. tabs.mjs overwrites this with the
+     bar's measured bottom edge; this value is the no-JS answer, where there is no bar because there are no
+     panes, so the breadcrumb pins straight under the top bar exactly as it did before tabs existed. */
+  --sticky-1:  var(--topbar-h);
+  /* The second sticky line: below the top bar AND below the sticky breadcrumb, for anything that has to
+     stick under both (the cost map's command bar). Measured from the breadcrumb's own box in
+     30-shell.css -- 10px padding, ~19px line, 1px border. costmap.mjs overwrites this with the measured
+     value, which now tracks the tab bar's height through the breadcrumb's own pinned top. */
+  --sticky-2:  calc(var(--topbar-h) + 40px);
+  /* Where an anchor's target should land: just below the last sticky layer. See 50-content.css. */
+  --anchor-offset: calc(var(--sticky-2) + 12px);
+  --radius:    10px;
+  --shadow:    0 1px 2px rgba(16,24,40,.06), 0 4px 16px rgba(16,24,40,.05);
+}
+
+html[data-theme="dark"] {
+  --bg:        #0e141b;
+  --bg-elev:   #151d27;
+  --sidebar-bg:#111823;
+  --surface:   #151d27;
+  --text:      #dbe4ee;
+  --text-muted:#98a6b5;
+  --heading:   #f1f5fa;
+  --border:    #26313f;
+  --zebra:     #131b24;
+  --link:      #5aa9f0;
+  --token-heading: #c4b5fd;
+  --caution-accent: #E0A94A;
+  --expensive:      #F87A63;
+  --positive-accent:#A6CE4E;
+
+  --workload-fill: #10263c;
+  --token-fill:    #241d3a;
+  --model-fill:    #33260f;
+  --positive-fill: #1b2c17;
+  --caution-fill:  #2e2510;
+  --expensive-fill:#331815;
+  --neutral-fill:  #1b2430;
+  --code-bg:       #0a0f15;
+  --code-fg:       #e6edf3;
+  --shadow:        0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }

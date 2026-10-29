@@ -1,0 +1,27 @@
+{
+  "name": "sample-aws-ai-tokenomics-finops",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AI Tokenomics FinOps: a self-assessment runbook for AI cost optimization on AWS (AI coding assistants and agentic applications on Amazon Bedrock), built as a static site for GitHub Pages.",
+  "license": "MIT-0",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build:runbook": "node scripts/build-runbook.mjs",
+    "build:site": "node scripts/build-site.mjs",
+    "build": "npm run build:runbook && npm run build:site",
+    "test": "npm run verify",
+    "test:calculators": "python3 -m unittest discover -s tools/calculators -t tools/calculators",
+    "verify:static": "node scripts/verify-runbook.mjs",
+    "verify:dom": "node scripts/verify-runbook-dom.mjs",
+    "verify:facts": "node scripts/verify-runbook-facts.mjs",
+    "verify:facts:snapshot": "node scripts/verify-runbook-facts.mjs --snapshot",
+    "verify": "npm run verify:static && npm run verify:facts && npm run verify:dom"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "parse5": "^8.0.1",
+    "puppeteer-core": "^24.43.1"
+  }
+}

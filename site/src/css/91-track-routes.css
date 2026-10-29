@@ -1,0 +1,144 @@
+/* Polished parity layer for the dedicated two-track assessments.
+   The reviewed external export supplies visual semantics, never runtime code or assets. */
+
+:root {
+  --page-bg: #f6f8fb;
+  --focus: #ffb84d;
+  --radius-lg: 14px;
+  --shadow-lg: 0 8px 30px rgba(24,34,48,.09);
+  --route-accent: var(--workload-accent);
+  --route-fill: var(--workload-fill);
+}
+html[data-theme="dark"] {
+  --page-bg: #0b1118;
+  --shadow-lg: 0 10px 34px rgba(0,0,0,.42);
+}
+
+html[data-scope="overview"] { --route-accent: var(--workload-accent); --route-fill: var(--workload-fill); }
+html[data-scope="t1"] { --route-accent: var(--model-accent); --route-fill: var(--model-fill); }
+html[data-scope="t2"] { --route-accent: var(--token-accent); --route-fill: var(--token-fill); }
+body { background: var(--page-bg); }
+
+.topbar { background: var(--ink); color: #fff; border-bottom: 3px solid var(--model-accent); backdrop-filter: none; }
+.topbar .brand { color: #fff; }
+.topbar .brand .dot { color: #ffb84d; }
+.topbar .iconbtn { color: #fff; border-color: rgba(255,255,255,.45); }
+.topbar .iconbtn:hover { background: rgba(255,255,255,.1); }
+.breadcrumb { background: var(--surface); backdrop-filter: none; }
+
+.route-anchor { display: block; position: relative; top: calc(-1 * var(--anchor-offset)); visibility: hidden; }
+[data-route-focus="tracks"] { scroll-margin-top: var(--anchor-offset); }
+.hero, html[data-scope="overview"] main.content > section, .track-route, #references {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); padding: clamp(22px, 4vw, 38px); margin: 24px 0 30px;
+}
+html[data-scope="overview"] .hero {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--workload-fill) 68%, var(--surface)), var(--surface) 62%);
+}
+html[data-scope="overview"] .hero::after {
+  content: ""; position: absolute; width: 180px; height: 180px; right: -70px; top: -82px;
+  border-radius: 50%; background: color-mix(in srgb, var(--model-accent) 18%, transparent); pointer-events: none;
+}
+html[data-scope="overview"] .hero h1 { font-size: clamp(2rem, 4vw, 3.15rem); max-width: 18ch; }
+html[data-scope="overview"] .hero .lede { font-size: 1.05rem; }
+
+.trk-choose { max-width: none; gap: 20px; }
+.trk-card { min-height: 300px; padding: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); gap: 8px; }
+.trk-card:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.trk-card-name { font-size: clamp(1.25rem, 2.2vw, 1.6rem); }
+.trk-card-econ { line-height: 1.55; }
+.trk-card-meta { margin-top: auto; font-weight: 700; }
+.trk-card-progressbar, .track-progress {
+  display: block; width: 100%; height: 10px; overflow: hidden; border-radius: 999px;
+  background: var(--bg-elev); border: 1px solid var(--border);
+}
+.trk-card-progressbar { margin-top: 8px; }
+.trk-card-progress, .track-progress > span {
+  display: block; width: 0; height: 100%; border-radius: inherit; background: var(--route-accent); transition: width .2s ease;
+}
+.trk-card-t1 .trk-card-progress { background: var(--model-accent); }
+.trk-card-t2 .trk-card-progress { background: var(--token-accent); }
+.trk-card-status { font-size: .78rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.trk-card-go { display: inline-flex; align-items: center; align-self: flex-start; margin-top: 6px; padding: 8px 12px; border-radius: 8px; background: var(--route-fill); }
+
+.track-route { max-width: 920px; margin-left: auto; margin-right: auto; }
+.track-route > h2 { margin-top: 0; font-size: clamp(1.85rem, 3.5vw, 2.6rem); border-bottom-color: var(--route-accent); }
+.track-route-actions { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 0 0 18px; font-size: .84rem; font-weight: 700; }
+.track-route-actions a { padding: 6px 9px; border-radius: 7px; background: var(--bg-elev); text-decoration: none; }
+.track-route-actions a:hover { background: var(--route-fill); }
+
+.track-assessment-overview {
+  margin: 26px 0 42px; padding: clamp(18px, 3vw, 28px); border-radius: var(--radius-lg);
+  border: 1px solid var(--route-accent); background: color-mix(in srgb, var(--route-fill) 38%, var(--surface)); box-shadow: var(--shadow);
+}
+.track-assessment-heading h3 { margin: 0 0 7px; font-size: clamp(1.35rem, 2.4vw, 1.85rem); }
+.track-assessment-heading p { max-width: 68ch; }
+.track-kicker { margin: 0 0 4px !important; color: var(--route-accent); font-size: .72rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.track-progress-wrap { margin: 18px 0; }
+.track-progress-label { margin-bottom: 6px; font-size: .82rem; color: var(--text-muted); font-weight: 750; font-variant-numeric: tabular-nums; }
+.track-progress > span { background: var(--route-accent); }
+.track-assessment-overview .ad-metrics { gap: 16px 24px; }
+.track-assessment-overview .ad-metric { min-width: 92px; }
+.track-assessment-overview .ar-actions { margin-left: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.track-start { display: inline-flex; align-items: center; text-decoration: none; }
+.track-start:hover { text-decoration: none; }
+#themeToggle { width: auto; min-width: 58px; padding: 0 10px; font-size: .76rem; font-weight: 800; gap: 4px; }
+.theme-glyph { font-size: .9rem; line-height: 1; }
+.assess-btn.danger { color: var(--expensive); border-color: color-mix(in srgb, var(--expensive) 58%, var(--border)); }
+.assess-btn.danger:hover { background: var(--expensive-fill); border-color: var(--expensive); }
+.track-gap-summary { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.track-gap-summary h4 { margin: 0 0 8px; font-size: 1rem; }
+.track-gap-summary .assess-gaplist li { display: grid; grid-template-columns: auto minmax(150px, .55fr) minmax(220px, 1fr); align-items: start; }
+.track-gap-summary .gl-notes { grid-column: 2 / -1; }
+
+.track-route h3.layer { margin: 52px -10px 16px; padding: 10px 12px; border: 0; border-left: 5px solid var(--route-accent); background: var(--route-fill); border-radius: 8px; }
+.track-route > h4 { margin-top: 32px; }
+.assess { border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+.assess-head { padding: 13px 16px; }
+.assess-q { padding: 16px; }
+.assess-qrow { display: grid; grid-template-columns: minmax(250px, 1fr) auto; align-items: start; }
+.assess-qtext { font-size: .96rem; line-height: 1.5; }
+.seg { border-radius: 9px; }
+.seg button { min-height: 36px; padding: 8px 12px; }
+details.assess-gap { margin-top: 12px; }
+.assess-report { padding: 16px; }
+
+.landing-library {
+  margin: 24px 0 30px; border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--surface); box-shadow: var(--shadow);
+}
+.landing-library > summary { cursor: pointer; list-style: none; display: flex; flex-direction: column; gap: 2px; padding: 18px 22px; color: var(--heading); font-weight: 800; }
+.landing-library > summary::-webkit-details-marker { display: none; }
+.landing-library > summary::before { content: "+"; align-self: flex-end; margin-bottom: -24px; color: var(--route-accent); font-size: 1.3rem; }
+.landing-library[open] > summary::before { content: "−"; }
+.landing-library > summary small { color: var(--text-muted); font-weight: 500; }
+.landing-library-body { padding: 0 22px 26px; }
+.landing-library-body > section, .landing-library-body > .mapcard { margin-top: 24px; }
+.assessment-separation-note { padding: 16px 18px; border-left: 4px solid var(--workload-accent); background: var(--workload-fill); border-radius: 0 9px 9px 0; }
+
+#references { max-width: 920px; margin-left: auto; margin-right: auto; }
+.reference-note { color: var(--text-muted); }
+.reference-disclosure { border-top: 1px solid var(--border); margin-top: 15px; padding-top: 10px; }
+.reference-disclosure > summary { cursor: pointer; font-weight: 800; color: var(--link); padding: 8px 0; }
+.reference-disclosure ol { margin-top: 10px; }
+
+@media (max-width: 760px) {
+  .topbar .beta-chip { display: none; }
+  #toTop { right: 6px; bottom: 8px; width: 36px; height: 36px; }
+  main.content { --content-pad: 14px; }
+  .hero, html[data-scope="overview"] main.content > section, .track-route, #references { padding: 18px; border-radius: 10px; }
+  .trk-card { min-height: 0; padding: 18px; }
+  .track-route-actions { justify-content: space-between; }
+  .assess-qrow { grid-template-columns: 1fr; }
+  .seg { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+  .seg button { white-space: normal; border-bottom: 1px solid var(--border); }
+  .track-gap-summary .assess-gaplist li { grid-template-columns: auto 1fr; }
+  .track-gap-summary .assess-gaplist li > span:nth-of-type(2), .track-gap-summary .gl-notes { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) { .trk-card-progress, .track-progress > span { transition: none; } }
+@media print {
+  .track-route-actions, .landing-library > summary, .reference-disclosure > summary { display: none !important; }
+  .landing-library, .reference-disclosure { border: 0; box-shadow: none; }
+  .landing-library-body, .reference-disclosure > * { display: block !important; }
+}
