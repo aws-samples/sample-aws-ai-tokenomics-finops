@@ -1,0 +1,71 @@
+name: Pricing update
+description: Report a model or service price in the runbook that has changed.
+title: "[Pricing]: "
+labels: ["pricing", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prices change often, so every price in the runbook carries a public pricing page and an as-of date.
+        Please give both so a maintainer can check the change quickly.
+  - type: input
+    id: section
+    attributes:
+      label: Section
+      description: Optional. The runbook section where the price appears.
+      placeholder: "e.g. Model selection"
+    validations:
+      required: false
+  - type: input
+    id: model-or-service
+    attributes:
+      label: Model or service
+      description: Include the Region and pricing dimension where it matters.
+      placeholder: "e.g. Amazon Bedrock, <model name>, us-east-1, input tokens (on-demand)"
+    validations:
+      required: true
+  - type: input
+    id: old-price
+    attributes:
+      label: Price shown in the runbook
+      placeholder: "e.g. $3.00 per 1M input tokens"
+    validations:
+      required: true
+  - type: input
+    id: new-price
+    attributes:
+      label: Current price
+      placeholder: "e.g. $2.50 per 1M input tokens"
+    validations:
+      required: true
+  - type: input
+    id: pricing-url
+    attributes:
+      label: Public pricing page URL
+      placeholder: "https://aws.amazon.com/bedrock/pricing/"
+    validations:
+      required: true
+  - type: input
+    id: as-of-date
+    attributes:
+      label: As-of date
+      description: The date you read the pricing page (YYYY-MM-DD).
+      placeholder: "YYYY-MM-DD"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Optional. Worked examples or other figures in the runbook that depend on this price.
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: The price comes from a public pricing page, not a private or negotiated rate.
+          required: true
+        - label: I agree to follow the project's [Code of Conduct](https://aws.github.io/code-of-conduct).
+          required: true

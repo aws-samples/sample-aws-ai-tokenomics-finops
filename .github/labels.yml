@@ -1,0 +1,40 @@
+# Label set for issue and pull request triage.
+#
+# This file documents the labels the issue forms and maintainers use. It is the
+# source of truth: the repo-hygiene workflow checks that every label an issue
+# form applies is listed here. Labels are created on the repository through the
+# GitHub REST API (see docs/MAINTAINERS.md); this file is not synced
+# automatically.
+#
+# color is a 6-digit hex value without the leading '#'.
+
+- name: content
+  color: "1d76db"
+  description: "Runbook content: corrections, clarifications, or rewrites"
+- name: pricing
+  color: "fbca04"
+  description: "Model or service price that needs updating"
+- name: new-lever
+  color: "0e8a16"
+  description: "Proposal for a new cost optimization lever"
+- name: bug
+  color: "d73a4a"
+  description: "Something on the site is not working"
+- name: good first issue
+  color: "7057ff"
+  description: "Good for newcomers"
+- name: help wanted
+  color: "008672"
+  description: "Extra attention is needed"
+- name: needs-triage
+  color: "ededed"
+  description: "Waiting for a maintainer to triage"
+- name: needs-source
+  color: "e99695"
+  description: "Needs a public source before it can be accepted"
+- name: track:coding-agent
+  color: "c5def5"
+  description: "Coding Agent track"
+- name: track:agentic-app
+  color: "bfdadc"
+  description: "Agentic App track"

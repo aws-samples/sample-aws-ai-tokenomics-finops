@@ -1,0 +1,75 @@
+name: New lever proposal
+description: Propose a new cost optimization lever (a technique that reduces token or inference cost).
+title: "[Lever]: "
+labels: ["new-lever", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A lever is a technique a team can apply to reduce GenAI or agentic AI token and inference cost.
+        Good proposals describe the problem, the technique, the expected saving, and the public evidence behind it.
+        For a large proposal, consider starting a Discussion first to gather feedback.
+  - type: dropdown
+    id: track
+    attributes:
+      label: Which track does this belong to?
+      options:
+        - Coding Agent
+        - Agentic App
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: lever-name
+    attributes:
+      label: Lever name
+      placeholder: "e.g. Context window pruning"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What drives the cost, and in which scenarios?
+    validations:
+      required: true
+  - type: textarea
+    id: technique
+    attributes:
+      label: Technique
+      description: What a team does to apply the lever. Steps or a checklist work well.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-saving
+    attributes:
+      label: Expected saving
+      description: How much it saves and under what assumptions. Show the arithmetic for any figure.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and public sources
+      description: Public links that support the technique and the saving (documentation, pricing pages, papers, benchmarks).
+      placeholder: |
+        - https://...
+    validations:
+      required: true
+  - type: textarea
+    id: trade-offs
+    attributes:
+      label: Trade-offs and risks
+      description: Optional. Quality, latency, or operational effects to weigh against the saving.
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: All evidence is public, and this issue contains no customer, internal, or confidential information.
+          required: true
+        - label: I agree to follow the project's [Code of Conduct](https://aws.github.io/code-of-conduct).
+          required: true
