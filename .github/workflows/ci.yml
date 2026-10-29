@@ -47,9 +47,10 @@ jobs:
 
       - name: Install Chrome for verify:dom
         # Uses the @puppeteer/browsers CLI pinned in package-lock.json (a puppeteer-core dependency).
+        # No --install-deps: it needs root, and the ubuntu-latest image already carries Chrome's libraries.
         run: |
           # The CLI prints download progress before the path, so take the last line only.
-          CHROME="$(npx --no-install browsers install chrome@stable --path "$RUNNER_TEMP/browsers" --install-deps --format '{{path}}' | tail -n 1)"
+          CHROME="$(npx --no-install browsers install chrome@stable --path "$RUNNER_TEMP/browsers" --format '{{path}}' | tail -n 1)"
           test -x "$CHROME"
           echo "PUPPETEER_EXECUTABLE_PATH=$CHROME" >> "$GITHUB_ENV"
           "$CHROME" --version
