@@ -1,0 +1,101 @@
+/* 85-figures.css — Shared figure primitives, Figure 1 (token cost meter), Figure 3 (decision flow).
+   Extracted verbatim from the runbook's original single inline style block, lines 592-696 of the block. */
+
+/* --- shared figure primitives --- */
+.fig-legend {
+  display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center;
+  margin: 0 0 1rem; font-size: .8rem; color: var(--text-muted);
+}
+.fig-legend .lk { display: inline-flex; align-items: center; gap: 6px; }
+.fig-legend .sw {
+  width: 14px; height: 14px; border-radius: 4px; flex: none;
+  border: 2px solid var(--border); background: var(--neutral-fill);
+}
+.fig-legend .sw.recommend { background: var(--positive-fill); border-color: var(--positive-accent); }
+.fig-legend .sw.avoid     { background: var(--surface);       border-color: var(--expensive); }
+.fig-legend .sw.workload  { background: var(--workload-fill); border-color: var(--workload-accent); }
+.fig-legend .sw.baseline  { background: var(--surface);       border-color: var(--expensive); }
+
+.fig-arrow { color: var(--text-muted); flex: none; display: inline-flex; align-items: center; justify-content: center; }
+.fig-arrow.down { min-height: 26px; }
+.fig-arrow.down::before { content: "\2193"; font-size: 1.15rem; line-height: 1; }
+
+/* ---- Figure 1: token cost meter ----
+   Inline SVG, not divs. Two reasons beyond looking better: the diagram now encodes its numbers as
+   LENGTH rather than stating them in a chip, and it scales as one unit instead of reflowing.
+
+   What it deliberately does NOT do: invent a cost split. The runbook's price-verification rule
+   (the price-verification rule) forbids publishing a number that has not been verified, so the only
+   quantities drawn here are the two already-published percentages -- about 90% off repeated-prefix
+   input from caching, and a reported 40 to 70% fewer input tokens from context hygiene. Each bar is
+   100% of ITS OWN quantity, so nothing implies a ratio between the three rows, and the output row
+   claims no reduction at all because no lever cuts the output rate.
+
+   Colour: the dataviz validator was not available when this was authored, so the design avoids
+   needing a three-way categorical check. Inside any one bar there are only two fills, one hue against
+   a neutral, and every band is directly labelled; the output row's distinct fill sits alone in its own
+   row and is never compared against the green. Text wears text tokens throughout. */
+.tokmeter { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; }
+
+.tokmeter .tm-term { fill: var(--workload-fill); stroke: var(--workload-accent); stroke-width: 1; }
+.tokmeter .tm-term.tm-bill { fill: var(--neutral-fill); stroke: var(--ink); stroke-width: 1.5; }
+.tokmeter .tm-term-t { fill: var(--heading); font-size: 14px; font-weight: 700; }
+.tokmeter .tm-term-s { fill: var(--text-muted); font-size: 11px; }
+.tokmeter .tm-op { fill: var(--text-muted); font-size: 20px; font-weight: 700; }
+
+.tokmeter .tm-rule { stroke: var(--border); stroke-width: 1; }
+.tokmeter .tm-sec { fill: var(--text-muted); font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+
+.tokmeter .tm-base { fill: var(--bg-elev); stroke: var(--border); stroke-width: 1; }
+.tokmeter .tm-base.tm-output { fill: var(--token-fill); stroke: var(--token-accent); }
+.tokmeter .tm-cut { fill: var(--cov-yes); }
+/* Butts against the solid band so the two read as one continuous saving, with the hatch marking the
+   part that is "up to" rather than measured. */
+.tokmeter .tm-cut-range-hatch { fill: url(#tm-range-hatch); stroke: var(--cov-yes); stroke-width: 1; }
+.tokmeter .tm-hatch-line { stroke: var(--cov-yes); stroke-width: 3; }
+
+.tokmeter .tm-lbl { fill: var(--heading); font-size: 12.5px; font-weight: 700; }
+.tokmeter .tm-lbl-s { fill: var(--text-muted); font-size: 11px; }
+.tokmeter .tm-in { fill: #fff; font-size: 12px; font-weight: 800; }
+.tokmeter .tm-in.tm-in-muted { fill: var(--heading); }
+.tokmeter .tm-range-t { fill: var(--heading); font-size: 11px; font-weight: 700; }
+.tokmeter .tm-range-tick { stroke: var(--text-muted); stroke-width: 1; }
+.tokmeter .tm-out-t { fill: var(--token-heading); font-size: 11.5px; font-weight: 600; }
+.tokmeter .tm-leg { fill: var(--text-muted); font-size: 11px; }
+
+/* On a narrow screen the figure scales down as one unit rather than reflowing, so the only thing that
+   has to change is letting it use the full width. */
+@media (max-width: 620px) { .tokmeter { max-width: none; } }
+
+/* ---- Figure 3: decision flow ----
+   Inline SVG so the branches are drawn. The div version carried its structure in indentation and text
+   "edges" with no connecting lines at all, which meant the one thing a decision tree exists to show --
+   which answer leads where -- was the one thing it did not show.
+
+   Path colour marks a recommended route; neutral paths represent decisions or options to evaluate.
+   Text labels carry the meaning, so the advice never rests on colour. */
+.decflow { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; }
+
+.decflow .df-q rect { fill: var(--workload-fill); stroke: var(--workload-accent); stroke-width: 1.5; }
+.decflow .df-recommend rect { fill: var(--positive-fill); stroke: var(--positive-accent); stroke-width: 1.5; }
+
+.decflow .df-tag { fill: var(--workload-accent); font-size: 9.5px; font-weight: 800; letter-spacing: .1em; }
+.decflow .df-t { fill: var(--heading); font-size: 13px; font-weight: 700; }
+.decflow .df-s { fill: var(--text-muted); font-size: 10.5px; }
+
+.decflow .df-badge-t { fill: var(--positive-accent); font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+
+/* Edges: fill:none matters, or the path closes into a filled blob. */
+.decflow .df-edge { fill: none; stroke: var(--text-muted); stroke-width: 1.5; }
+.decflow .df-edge.df-e-go { stroke: var(--positive-accent); }
+.decflow .df-arrowhead { fill: var(--text-muted); }
+.decflow .df-arrowhead.df-go { fill: var(--positive-accent); }
+
+.decflow .df-edge-l { fill: var(--text-muted); font-size: 10.5px; font-weight: 600; }
+
+.decflow .df-sw-q { fill: var(--workload-fill); stroke: var(--workload-accent); }
+.decflow .df-sw-go { fill: var(--positive-fill); stroke: var(--positive-accent); }
+.decflow .df-leg { fill: var(--text-muted); font-size: 10.5px; }
+
+@media (max-width: 620px) { .decflow { max-width: none; } }
+

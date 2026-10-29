@@ -1,0 +1,213 @@
+/* 90-assess.css — Lever self-assessment: question rows, segmented controls, tallies, summary panels, coverage bars.
+   Extracted verbatim from the runbook's original single inline style block, lines 697-812 of the block. */
+
+/* ---- Lever self-assessment (Security-Improvement-Program style) ---- */
+.assess { margin: 1rem 0 1.4rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); overflow: hidden; }
+.assess-head {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 14px; background: var(--bg-elev); border-bottom: 1px solid var(--border);
+}
+.assess-head .assess-title { font-size: .82rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--heading); }
+.assess-head .assess-sub { font-size: .8rem; color: var(--text-muted); }
+.assess-tally { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: .76rem; font-weight: 700; }
+.assess-tally .pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); }
+.assess-tally .pill.ok { color: var(--positive-accent); border-color: var(--positive-accent); }
+.assess-tally .pill.gap.active { color: var(--expensive); border-color: var(--expensive); background: var(--expensive-fill); }
+.assess-tally .pill.done { color: var(--positive-accent); border-color: var(--positive-accent); background: var(--positive-fill); }
+
+.assess-q { border-top: 1px solid var(--border); padding: 12px 14px; }
+.assess-q:first-of-type { border-top: 0; }
+.assess-qrow { display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+.assess-qtext { flex: 1 1 340px; min-width: 0; font-size: .92rem; font-weight: 600; color: var(--text); line-height: 1.4; }
+.assess-qtext .qid { display: inline-block; font-size: .72rem; font-weight: 800; color: var(--text-muted); letter-spacing: .04em; margin-right: 6px; }
+
+.seg { display: inline-flex; flex: 0 0 auto; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button {
+  appearance: none; border: 0; background: transparent; cursor: pointer; font: inherit;
+  font-size: .76rem; font-weight: 700; color: var(--text-muted); padding: 6px 11px;
+  border-right: 1px solid var(--border); line-height: 1; white-space: nowrap;
+  transition: background .15s ease, color .15s ease;
+}
+.seg button:last-child { border-right: 0; }
+.seg button:hover { background: var(--bg-elev); }
+.seg button:focus-visible { outline: 2px solid var(--workload-accent); outline-offset: -2px; }
+.seg button[aria-pressed="true"][data-v="yes"] { background: var(--positive-accent); color: #fff; }
+.seg button[aria-pressed="true"][data-v="wip"] { background: var(--caution-accent); color: #fff; }
+.seg button[aria-pressed="true"][data-v="no"]  { background: var(--expensive); color: #fff; }
+.seg button[aria-pressed="true"][data-v="na"]  { background: var(--text-muted); color: #fff; }
+
+/* status-driven left border on the question */
+.assess-q[data-state="yes"] { border-left: 3px solid var(--positive-accent); }
+.assess-q[data-state="wip"] { border-left: 3px solid var(--caution-accent); }
+.assess-q[data-state="no"]  { border-left: 3px solid var(--expensive); }
+.assess-q[data-state="na"]  { border-left: 3px solid var(--text-muted); }
+
+details.assess-gap { margin: 10px 0 0; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-elev); }
+details.assess-gap > summary {
+  cursor: pointer; list-style: none; padding: 8px 12px; font-size: .82rem; font-weight: 700;
+  color: var(--heading); display: flex; align-items: center; gap: 8px;
+}
+details.assess-gap > summary::-webkit-details-marker { display: none; }
+details.assess-gap > summary::before { content: "▸"; color: var(--text-muted); transition: transform .15s ease; }
+details.assess-gap[open] > summary::before { transform: rotate(90deg); }
+details.assess-gap > summary .gap-tag {
+  font-size: .64rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+  padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-muted);
+}
+.assess-q[data-state="no"] details.assess-gap > summary .gap-tag,
+.assess-q[data-state="wip"] details.assess-gap > summary .gap-tag { color: var(--expensive); border-color: var(--expensive); }
+.assess-gap .gap-body { padding: 2px 14px 12px; border-top: 1px solid var(--border); }
+.assess-gap .gap-body > *:first-child { margin-top: .6rem; }
+
+/* report summary panel */
+.assess-report { border-top: 1px solid var(--border); background: var(--bg-elev); padding: 12px 14px; }
+.assess-report .ar-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.assess-report .ar-title { font-size: .8rem; font-weight: 800; color: var(--heading); }
+.assess-report .ar-actions { margin-left: auto; display: flex; gap: 8px; }
+.assess-btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: .76rem; font-weight: 700;
+  padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); transition: background .15s ease, border-color .15s ease;
+}
+.assess-btn:hover { border-color: var(--workload-accent); background: var(--workload-fill); }
+.assess-btn.primary { background: var(--workload-accent); color: #fff; border-color: var(--workload-accent); }
+.assess-btn.primary:hover { filter: brightness(1.05); }
+.assess-btn:focus-visible { outline: 2px solid var(--workload-accent); outline-offset: 2px; }
+.assess-gaplist { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.assess-gaplist li { font-size: .82rem; color: var(--text); display: flex; gap: 8px; align-items: baseline; }
+.assess-gaplist li .gl-state { flex: 0 0 auto; font-size: .66rem; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; padding: 1px 7px; border-radius: 999px; }
+.assess-gaplist li .gl-state.no  { color: var(--expensive); border: 1px solid var(--expensive); background: var(--expensive-fill); }
+.assess-gaplist li .gl-state.wip { color: var(--caution-accent); border: 1px solid var(--caution-accent); background: var(--caution-fill); }
+.assess-gaplist a { font-weight: 600; }
+.assess-report .ar-clear { font-size: .74rem; color: var(--text-muted); background: none; border: 0; cursor: pointer; text-decoration: underline; padding: 0; }
+.assess-empty { font-size: .82rem; color: var(--text-muted); margin: 8px 0 0; font-style: italic; }
+
+/* per-question notes */
+.assess-notes { display: block; margin: 10px 0 0; }
+.assess-notes .an-label { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.assess-notes textarea {
+  width: 100%; box-sizing: border-box; resize: vertical; min-height: 2.2rem;
+  font: inherit; font-size: .84rem; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px;
+}
+.assess-notes textarea:focus-visible { outline: 2px solid var(--workload-accent); outline-offset: -1px; }
+
+/* coverage bar in the report */
+/* ---- coverage meter (site/src/js/viz/coverage.mjs) ----
+   Maturity states are a STATUS palette, not a categorical one, so the steps are chosen for
+   distinguishability rather than brand variety, and every segment is also labelled with a number.
+
+   These values were selected by running the dataviz skill's validator, not by eye. The previous pair
+   for the two most important states -- positive #7AA116 (Fully covered) and caution #B7791F
+   (Partially) -- measured ΔE 2.6 under deuteranopia and 13.8 for normal vision, below the 15 floor:
+   the two answers the assessment exists to separate looked the same. Re-stepped:
+
+     light  #0F7B5F #E9A13A #CE3311 #8B95A1  -> CVD ΔE 16.6, normal-vision ΔE 23.6   PASS
+     dark   #2FA37E #F2B54D #F0765C #9AA5B2  -> CVD ΔE 11.4, normal-vision ΔE 15.6   PASS
+
+   Two validator flags are knowingly accepted rather than fixed:
+   - Chroma floor on the N/A gray. Deliberate. N/A is the absence of a status and must not read as one;
+     giving it a hue would imply it is an outcome.
+   - Lightness band on the dark steps. A dark surface needs lighter marks to keep amber and red apart,
+     which puts them above the band's top; the checks that govern whether a reader can tell the states
+     apart both pass, and that is the property the band is a proxy for.
+   The contrast-vs-surface warning is discharged, not dismissed: the component always renders numbers
+   and a legend, so no state is carried by colour alone. */
+:root {
+  --cov-yes: #0F7B5F;
+  --cov-wip: #E9A13A;
+  --cov-no:  #CE3311;
+  --cov-na:  #8B95A1;
+}
+html[data-theme="dark"] {
+  --cov-yes: #2FA37E;
+  --cov-wip: #F2B54D;
+  --cov-no:  #F0765C;
+  --cov-na:  #9AA5B2;
+}
+
+.cov { margin: 12px 0 4px; }
+/* The rounded ends live here, not in the SVG: the viewBox is in count units and is stretched to the
+   container, so an `rx` in user units stretches with it and the end renders as a taper. */
+.cov-bar { display: block; width: 100%; height: 12px; border-radius: 6px; overflow: hidden; background: var(--bg-elev); border: 1px solid var(--border); }
+.cov-track { fill: transparent; }
+.cov-seg.cov-yes { fill: var(--cov-yes); }
+.cov-seg.cov-wip { fill: var(--cov-wip); }
+.cov-seg.cov-no  { fill: var(--cov-no); }
+.cov-seg.cov-na  { fill: var(--cov-na); }
+.cov-swatch.cov-yes rect { fill: var(--cov-yes); }
+.cov-swatch.cov-wip rect { fill: var(--cov-wip); }
+.cov-swatch.cov-no  rect { fill: var(--cov-no); }
+.cov-swatch.cov-na  rect { fill: var(--cov-na); }
+
+.cov-legend { display: flex; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .55rem; font-size: .78rem; }
+.cov-key { display: inline-flex; align-items: center; gap: .35rem; color: var(--text-muted); }
+/* Text wears text tokens, never the series colour: the swatch beside it carries identity. */
+.cov-key-n { font-weight: 800; color: var(--heading); font-variant-numeric: tabular-nums; }
+.cov-key.is-zero { opacity: .45; }
+.cov-key-open .cov-key-n { color: var(--text-muted); }
+.cov-key-open::before {
+  content: ""; width: 10px; height: 10px; border-radius: 3px;
+  border: 1px dashed var(--border); background: var(--bg-elev);
+}
+.cov-compact .cov-bar { height: 9px; }
+.assess-gaplist li .gl-notes { display: block; font-size: .76rem; color: var(--text-muted); font-style: italic; margin-top: 2px; }
+
+@media (max-width: 620px) {
+  .tm-formula { flex-direction: column; align-items: stretch; }
+  .tm-term { max-width: none; }
+  .tm-op { transform: rotate(90deg); }
+  .dec-branch { flex-basis: 100%; }
+  .assess-qrow { gap: 8px; }
+  .seg { width: 100%; }
+  .seg button { flex: 1 1 auto; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seg button, details.assess-gap > summary::before, .assess-btn { transition: none; }
+}
+
+/* Export as PDF: a dedicated printable report node is appended to <body> on demand.
+   When printing, hide the whole app and show only that node. */
+/* The summary panel's explanatory paragraph. Was a static inline margin on six elements. */
+.assess-report p.ar-intro { margin: 6px 0 0; }
+
+#assess-print-root { display: none; }
+/* The version marker class once used in the exported report heading. Kept as a class (never an inline
+   style, which the site CSP blocks) in case a version marker returns. */
+.rb-beta-tag { font-size: .5em; vertical-align: middle; }
+
+/* --- Equation-first gap guidance ------------------------------------------------------------
+   Each gap panel opens with one short answer (the equation, the rule, the table or the worked example),
+   and the rest of the guidance sits in a nested "Read more" collapse for the self-serve reader. The nested
+   collapse is visually quieter than the gap panel so the hierarchy reads at a glance. */
+.gap-body .gap-lead { font-size: .95rem; }
+.gap-body .gap-lead code { white-space: normal; }
+details.read-more { margin: .8rem 0 .2rem; border-left: 3px solid var(--border); background: transparent; }
+details.read-more > summary {
+  cursor: pointer; list-style: none; padding: 4px 10px; font-size: .8rem; font-weight: 700; color: var(--text-muted);
+  display: flex; align-items: center; gap: 6px;
+}
+details.read-more > summary::-webkit-details-marker { display: none; }
+details.read-more > summary::before { content: "▸"; transition: transform .15s ease; }
+details.read-more[open] > summary::before { transform: rotate(90deg); }
+details.read-more > summary:hover, details.read-more > summary:focus-visible { color: var(--text); }
+details.read-more .rm-body { padding: 0 12px 4px; }
+details.read-more .rm-body > *:first-child { margin-top: .4rem; }
+
+/* --- Assessment scope: the picker under each Track 2 figure and the toggled figure boxes -------- */
+.scope-picker {
+  margin: .4rem auto 1.4rem; padding: 10px 14px 12px; max-width: 720px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg-elev); color: var(--text);
+}
+.scope-picker legend { font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); padding: 0 6px; }
+.scope-picker .scope-help { margin: 0 0 8px; font-size: .8rem; color: var(--text-muted); }
+.scope-picker .scope-item { display: inline-flex; align-items: center; gap: 6px; margin: 2px 14px 4px 0; font-size: .86rem; cursor: pointer; }
+.scope-picker .scope-item input { accent-color: var(--workload-accent); width: 15px; height: 15px; margin: 0; }
+.scope-picker .scope-item input:not(:checked) + span { color: var(--text-muted); text-decoration: line-through; }
+.scope-picker .scope-out { margin: 8px 0 0; font-size: .8rem; font-weight: 600; color: var(--text-muted); }
+.decflow.has-scope .df-scope { cursor: pointer; }
+.decflow.has-scope .df-scope:hover rect { stroke-width: 2.5; }
+.decflow .df-scope.df-off rect { fill: var(--neutral-fill); stroke: var(--text-muted); stroke-dasharray: 5 4; }
+.decflow .df-scope.df-off text { fill: var(--text-muted); opacity: .6; }
+.decflow .df-scope.df-off .df-t { text-decoration: line-through; }
+@media (prefers-reduced-motion: reduce) { details.read-more > summary::before { transition: none; } }

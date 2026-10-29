@@ -1,0 +1,569 @@
+{
+  "formatVersion": "v1.0",
+  "offerCode": "AmazonBedrock",
+  "_source": "extract of public bulk offer AmazonBedrock/20260707080509 us-west-2 (real rows, verbatim)",
+  "products": {
+    "A2WD2YA9948EURKQ": {
+      "sku": "A2WD2YA9948EURKQ",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Claude2.0-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "Claude 2.0",
+        "provider": "Anthropic",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "KBBA49UFQ9CM4ASX": {
+      "sku": "KBBA49UFQ9CM4ASX",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Claude2.1-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "Claude 2.1",
+        "provider": "Anthropic",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "PYUKD22DXU8H7FYE": {
+      "sku": "PYUKD22DXU8H7FYE",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-ClaudeInstant-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "Claude Instant",
+        "provider": "Anthropic",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "9FQGD3BYS3HA6YPX": {
+      "sku": "9FQGD3BYS3HA6YPX",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Claude3Haiku-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "Claude 3 Haiku",
+        "provider": "Anthropic",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "9466MFKTBJUDFPCU": {
+      "sku": "9466MFKTBJUDFPCU",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Claude3Sonnet-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "Claude 3 Sonnet",
+        "provider": "Anthropic",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "BUM882XYWY38Y3QY": {
+      "sku": "BUM882XYWY38Y3QY",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-NovaPro-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "Nova Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "WQNS4BUT932RY5UM": {
+      "sku": "WQNS4BUT932RY5UM",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-NovaPro-output-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Output tokens",
+        "model": "Nova Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "WPHJAQC2S9VW3FBS": {
+      "sku": "WPHJAQC2S9VW3FBS",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-NovaPro-cache-read-input-token-count",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Prompt cache read input tokens",
+        "model": "Nova Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "R34DD6DF6G4EAF9D": {
+      "sku": "R34DD6DF6G4EAF9D",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-NovaPro-cache-write-input-token-count",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Prompt cache write input tokens",
+        "model": "Nova Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "QYGBMAKK2MUV9DTV": {
+      "sku": "QYGBMAKK2MUV9DTV",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Nova2.0Pro-text-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Text Input Token",
+        "model": "Nova 2.0 Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "BFHEWFGGKCP6BTCJ": {
+      "sku": "BFHEWFGGKCP6BTCJ",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Nova2.0Pro-text-input-tokens-batch",
+        "operation": "",
+        "feature": "Batch Inference",
+        "inferenceType": "Text Input Tokens",
+        "model": "Nova 2.0 Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "43UAUTRXYWMDAHSK": {
+      "sku": "43UAUTRXYWMDAHSK",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Nova2.0Pro-text-input-tokens-flex",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Text Input Tokens Flex",
+        "model": "Nova 2.0 Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "MTUMM3A2MWFM736Q": {
+      "sku": "MTUMM3A2MWFM736Q",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Nova2.0Pro-text-input-tokens-priority",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Text Input Tokens Priority",
+        "model": "Nova 2.0 Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "RDFMT62NNFCKC2U2": {
+      "sku": "RDFMT62NNFCKC2U2",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Nova2.0Pro-text-input-tokens-cross-region-global",
+        "operation": "",
+        "inferenceType": "Text Input Tokens",
+        "model": "Nova 2.0 Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "6FSTCH3VGRDDMC28": {
+      "sku": "6FSTCH3VGRDDMC28",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "US West (Oregon)",
+        "locationType": "AWS Region",
+        "usagetype": "USW2-Nova2.0Pro-text-input-tokens-flex-cross-region-global",
+        "operation": "",
+        "inferenceType": "Text Input Tokens Flex",
+        "model": "Nova 2.0 Pro",
+        "regionCode": "us-west-2",
+        "servicename": "Amazon Bedrock"
+      }
+    }
+  },
+  "terms": {
+    "OnDemand": {
+      "A2WD2YA9948EURKQ": {
+        "A2WD2YA9948EURKQ.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "A2WD2YA9948EURKQ",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "A2WD2YA9948EURKQ.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "A2WD2YA9948EURKQ.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00800 per 1K tokens for Claude2.0-input-tokens inUS West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0080000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "KBBA49UFQ9CM4ASX": {
+        "KBBA49UFQ9CM4ASX.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "KBBA49UFQ9CM4ASX",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "KBBA49UFQ9CM4ASX.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "KBBA49UFQ9CM4ASX.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00800 per 1K tokens for Claude2.1-input-tokens inUS West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0080000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "PYUKD22DXU8H7FYE": {
+        "PYUKD22DXU8H7FYE.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "PYUKD22DXU8H7FYE",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "PYUKD22DXU8H7FYE.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "PYUKD22DXU8H7FYE.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00080 per 1K tokens for ClaudeInstant-input-tokens inUS West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0008000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "9FQGD3BYS3HA6YPX": {
+        "9FQGD3BYS3HA6YPX.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "9FQGD3BYS3HA6YPX",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "9FQGD3BYS3HA6YPX.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "9FQGD3BYS3HA6YPX.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00025 per 1K tokens for Claude3Haiku-input-tokens inUS West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0002500000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "9466MFKTBJUDFPCU": {
+        "9466MFKTBJUDFPCU.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "9466MFKTBJUDFPCU",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "9466MFKTBJUDFPCU.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "9466MFKTBJUDFPCU.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00300 per 1K tokens for Claude3Sonnet-input-tokens inUS West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0030000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "BUM882XYWY38Y3QY": {
+        "BUM882XYWY38Y3QY.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "BUM882XYWY38Y3QY",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "BUM882XYWY38Y3QY.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "BUM882XYWY38Y3QY.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$ 0.0008 per 1K tokens for Nova Pro-input-tokens in us-west-2 (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0008000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "WQNS4BUT932RY5UM": {
+        "WQNS4BUT932RY5UM.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "WQNS4BUT932RY5UM",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "WQNS4BUT932RY5UM.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "WQNS4BUT932RY5UM.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$ 0.0008 per 1K tokens for Nova Pro-input-tokens in us-west-2 (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0032000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "WPHJAQC2S9VW3FBS": {
+        "WPHJAQC2S9VW3FBS.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "WPHJAQC2S9VW3FBS",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "WPHJAQC2S9VW3FBS.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "WPHJAQC2S9VW3FBS.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.0002 per 1K cache read input tokens of Nova Pro in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0002000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "R34DD6DF6G4EAF9D": {
+        "R34DD6DF6G4EAF9D.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "R34DD6DF6G4EAF9D",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "R34DD6DF6G4EAF9D.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "R34DD6DF6G4EAF9D.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00 per 1K tokens for USW2-NovaPro-cache-write-input-token-count in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0000000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "QYGBMAKK2MUV9DTV": {
+        "QYGBMAKK2MUV9DTV.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "QYGBMAKK2MUV9DTV",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "QYGBMAKK2MUV9DTV.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "QYGBMAKK2MUV9DTV.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.001375 per 1K tokens for USW2-Nova2.0Pro-text-input-tokens in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0013750000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "BFHEWFGGKCP6BTCJ": {
+        "BFHEWFGGKCP6BTCJ.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "BFHEWFGGKCP6BTCJ",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "BFHEWFGGKCP6BTCJ.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "BFHEWFGGKCP6BTCJ.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.0006875 per 1K tokens for USW2-Nova2.0Pro-text-input-tokens-batch in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0006875000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "43UAUTRXYWMDAHSK": {
+        "43UAUTRXYWMDAHSK.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "43UAUTRXYWMDAHSK",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "43UAUTRXYWMDAHSK.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "43UAUTRXYWMDAHSK.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.0006875 per 1K tokens for USW2-Nova2.0Pro-text-input-tokens-flex in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0006875000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "MTUMM3A2MWFM736Q": {
+        "MTUMM3A2MWFM736Q.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "MTUMM3A2MWFM736Q",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "MTUMM3A2MWFM736Q.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "MTUMM3A2MWFM736Q.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00240625 per 1K tokens for USW2-Nova2.0Pro-text-input-tokens-priority in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0024062500"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "RDFMT62NNFCKC2U2": {
+        "RDFMT62NNFCKC2U2.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "RDFMT62NNFCKC2U2",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "RDFMT62NNFCKC2U2.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "RDFMT62NNFCKC2U2.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00125 per 1K token for Nova2.0Pro-text-input-tokens-cross-region-global in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0012500000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "6FSTCH3VGRDDMC28": {
+        "6FSTCH3VGRDDMC28.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "6FSTCH3VGRDDMC28",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "6FSTCH3VGRDDMC28.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "6FSTCH3VGRDDMC28.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.000625 per 1K token for Nova2.0Pro-text-input-tokens-flex-cross-region-global in US West (Oregon)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0006250000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      }
+    }
+  }
+}

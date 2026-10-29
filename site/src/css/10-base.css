@@ -1,0 +1,31 @@
+/* 10-base.css — Reset, document defaults, links, focus ring, skip link.
+   Extracted verbatim from the runbook's original single inline style block, lines 72-92 of the block. */
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  font-family: Calibri, "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.65;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+strong { color: var(--heading); }
+:focus-visible { outline: 2px solid var(--workload-accent); outline-offset: 2px; border-radius: 3px; }
+
+.skip-link {
+  position: absolute; left: -999px; top: 8px; z-index: 200;
+  background: var(--workload-accent); color: #fff; padding: 8px 14px; border-radius: 6px;
+}
+.skip-link:focus { left: 12px; }
+
+
+/* The `hidden` attribute is only honoured by the UA rule `[hidden] { display: none }`, which ANY class
+   rule that sets `display` beats on specificity. That is a silent and nasty failure: JS sets
+   `el.hidden = true`, the IDL property reads back true, and the element stays on screen anyway. It bit
+   a top-bar chip that set `display: inline-flex` and rendered empty on the real site, and the dashboard rows (`.ad-rows { display: grid }`). This makes the attribute
+   mean what it says, everywhere, once. */
+[hidden] { display: none !important; }

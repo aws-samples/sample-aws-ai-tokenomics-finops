@@ -1,0 +1,77 @@
+/* 40-mapcard.css — The at-a-glance 2x3 track/layer map and its legend.
+   Extracted verbatim from the runbook's original single inline style block, lines 205-244 of the block. */
+
+/* ---- at-a-glance mapcard ---- */
+.mapcard {
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface);
+  box-shadow: var(--shadow); padding: 18px 18px 20px; margin: 8px 0 30px;
+}
+.mapcard .maphd { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.mapcard .maphd h2 { border: 0; margin: 0; padding: 0; font-size: 1.02rem; color: var(--heading); }
+.mapcard .maphd .hint { font-size: .8rem; color: var(--text-muted); }
+.mapgrid { display: grid; grid-template-columns: 132px repeat(3, 1fr); gap: 8px; }
+.mapgrid .col-h, .mapgrid .row-h {
+  font-size: .74rem; text-transform: uppercase; letter-spacing: .06em;
+  font-weight: 700; color: var(--text-muted); display: flex; align-items: center;
+}
+.mapgrid .col-h { justify-content: center; padding: 4px; }
+.mapgrid .corner { background: transparent; }
+.mapgrid .row-h {
+  padding: 10px 12px; border-radius: 9px; color: #fff; font-weight: 700;
+  text-transform: none; letter-spacing: 0; font-size: .84rem; line-height: 1.25;
+}
+.mapgrid .row-h.t1 { background: linear-gradient(135deg, var(--model-accent), #d97a06); }
+.mapgrid .row-h.t2 { background: linear-gradient(135deg, var(--token-accent), #6d28d9); }
+.mapgrid a.cell {
+  display: flex; flex-direction: column; justify-content: center; gap: 2px;
+  padding: 12px 12px; border-radius: 9px; border: 1px solid var(--border);
+  background: var(--bg-elev); color: var(--text); font-size: .84rem; font-weight: 600;
+  min-height: 62px;
+}
+.mapgrid a.cell:hover { text-decoration: none; border-color: var(--workload-accent); background: var(--workload-fill); transform: translateY(-1px); }
+.mapgrid a.cell .cell-hint { font-size: .82rem; font-weight: 600; color: var(--text-muted); line-height: 1.3; }
+.mapgrid a.cell:hover .cell-hint { color: var(--workload-accent); }
+a.sf-bar {
+  grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 10px 14px; border-radius: 9px; border: 1px dashed var(--positive-accent);
+  background: var(--positive-fill); color: var(--positive-accent); font-size: .86rem; font-weight: 700;
+}
+a.sf-bar:hover { text-decoration: none; border-style: solid; transform: translateY(-1px); }
+a.sf-bar .sf-note { font-weight: 500; color: var(--text-muted); font-size: .78rem; }
+a.sf-bar.rs-bar { border-color: var(--workload-accent); background: var(--workload-fill); color: var(--workload-accent); }
+.maplegend { margin-top: 12px; font-size: .8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+
+/* ---- polish: layer glyphs, per-cell weight, track-aware hover ----
+   The map was a static picture of the taxonomy. These additions make it say how much work each cell holds
+   and, once the reader has begun, how far through it they are -- see decorateMapcard() in
+   site/src/js/wayfinder.mjs. */
+
+.mapgrid .col-h { display: flex; align-items: center; justify-content: center; gap: .4rem; }
+/* Each glyph states something true about its layer: a call crossing a priced boundary, a loop that
+   repeats, a person deciding how often it runs. Stroked with currentColor so it inherits the header's
+   colour in both themes and prints. */
+.col-glyph { width: 15px; height: 15px; flex: 0 0 auto; overflow: visible; }
+.col-glyph .cg-arrow { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.col-glyph .cg-head { fill: currentColor; stroke: none; }
+.col-glyph .cg-edge { stroke: currentColor; stroke-width: 1.4; opacity: .35; stroke-dasharray: 2.5 2.5; }
+.mapgrid .col-h-t { white-space: nowrap; }
+
+.mapgrid a.cell { display: flex; flex-direction: column; justify-content: space-between; gap: .5rem; }
+.cell-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .55rem; font-variant-numeric: tabular-nums; }
+.cell-n { font-size: .72rem; font-weight: 700; color: var(--text-muted); }
+.cell-cov { font-size: .72rem; font-weight: 800; color: var(--heading); }
+.cell-gaps {
+  font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;
+  color: var(--expensive); border: 1px solid var(--expensive); background: var(--expensive-fill);
+  border-radius: 999px; padding: 0 6px;
+}
+
+/* Hover in the cell's OWN track colour rather than one accent for all six, so the grid keeps saying which
+   row you are reaching into. */
+.mapgrid a.cell[data-track="t1"]:hover { border-color: var(--model-accent); }
+.mapgrid a.cell[data-track="t1"]:hover .cell-hint { color: var(--model-accent); }
+.mapgrid a.cell[data-track="t2"]:hover { border-color: var(--token-accent); }
+.mapgrid a.cell[data-track="t2"]:hover .cell-hint { color: var(--token-heading); }
+
+@media (max-width: 620px) { .mapgrid .col-h { justify-content: flex-start; } }

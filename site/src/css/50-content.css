@@ -1,0 +1,168 @@
+/* Anchor landing offset. Every heading and section offsets its scroll target by --anchor-offset so a jumped-to
+   heading is not left underneath the sticky bars. This was a hard-coded 120px, tuned when the sticky stack was
+   the top bar plus the breadcrumb; adding the tab bar made the stack ~44px taller and every anchor landed with
+   its heading hidden. Derived from --sticky-2 (the measured bottom of the breadcrumb, which itself tracks the
+   tab bar's height) so it cannot go stale the next time a sticky layer is added or removed. */
+/* 50-content.css — Runbook prose: headings, callouts, checklists, tables, worked-cost cards, references.
+   Extracted verbatim from the runbook's original single inline style block, lines 245-399 of the block. */
+
+.disclaimer {
+  font-size: .85rem; color: var(--text-muted);
+  border-left: 3px solid var(--border); background: var(--bg-elev);
+  padding: .45rem .9rem; margin: 1rem 0 1.2rem; border-radius: 0 6px 6px 0;
+  max-width: var(--measure);
+}
+
+/* headings inside content */
+main.content h2 {
+  font-size: 1.5rem; margin: 2.6rem 0 .7rem; padding-bottom: .35rem;
+  border-bottom: 3px solid var(--workload-accent); color: var(--heading);
+  scroll-margin-top: var(--anchor-offset); font-weight: 750;
+}
+main.content section { scroll-margin-top: var(--anchor-offset); }
+main.content h3 { font-size: 1.16rem; margin: 1.9rem 0 .4rem; color: var(--heading); scroll-margin-top: var(--anchor-offset); }
+main.content h3.layer {
+  font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 800;
+  color: var(--workload-accent); margin: 2.2rem 0 .3rem;
+  padding-bottom: .3rem; border-bottom: 1px dashed var(--border);
+}
+main.content h4 { font-size: 1.14rem; margin: 1.9rem 0 .45rem; color: var(--heading); font-weight: 700; scroll-margin-top: var(--anchor-offset); }
+main.content h5 { font-size: 1.02rem; margin: 1.5rem 0 .4rem; color: var(--token-heading); font-weight: 700; scroll-margin-top: var(--anchor-offset); }
+main.content p { margin: .7rem 0; max-width: var(--measure); }
+
+/* hover/focus anchor affordance (added by JS) */
+.heading-anchor {
+  opacity: 0; margin-left: .4rem; font-weight: 400; color: var(--text-muted);
+  text-decoration: none; transition: opacity .12s;
+}
+h2:hover .heading-anchor, h3:hover .heading-anchor, h4:hover .heading-anchor, h5:hover .heading-anchor,
+.heading-anchor:focus { opacity: .7; }
+.heading-anchor:hover { opacity: 1; text-decoration: none; }
+
+/* last-verified badge */
+.verified {
+  display: inline-block; font-size: .66rem; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--text-muted); background: var(--neutral-fill);
+  border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px;
+  margin-left: .55rem; vertical-align: middle; white-space: nowrap;
+}
+
+/* action checklist */
+ul.checklist {
+  list-style: none; margin: .6rem 0 .9rem; padding: .75rem .95rem .75rem .95rem;
+  max-width: var(--measure); background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: 10px;
+}
+ul.checklist li {
+  margin: .3rem 0; padding-left: 1.55rem; position: relative; font-size: .95rem;
+}
+ul.checklist li::before {
+  content: "\2713"; position: absolute; left: .2rem; top: 0;
+  color: var(--positive-accent); font-weight: 800;
+}
+ul.checklist .cl-title {
+  display: block; font-size: .68rem; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--positive-accent); margin-bottom: .3rem; padding-left: 0;
+}
+ul.checklist li.cl-title::before { content: none; }
+
+/* collapsed challenge / why-it-costs narrative */
+details.lever-why { margin: .5rem 0 .8rem; max-width: var(--measure); }
+details.lever-why > summary {
+  cursor: pointer; list-style: none; user-select: none; font-size: .86rem; font-weight: 700;
+  color: var(--text-muted); padding: .35rem .6rem; border-radius: 7px;
+  border: 1px dashed var(--border); display: inline-block;
+}
+details.lever-why > summary::-webkit-details-marker { display: none; }
+details.lever-why > summary::before { content: "\25B8"; margin-right: .45rem; color: var(--workload-accent); display: inline-block; transition: transform .15s; }
+details.lever-why[open] > summary::before { transform: rotate(90deg); }
+details.lever-why > summary:hover { color: var(--text); border-color: var(--workload-accent); }
+details.lever-why .why-body { border-left: 3px solid var(--border); margin: .5rem 0 0 .3rem; padding: .1rem 0 .1rem 1rem; }
+
+p.saves {
+  background: var(--positive-fill); border-left: 4px solid var(--positive-accent);
+  padding: .55rem .95rem; margin: .8rem 0 1.4rem; border-radius: 0 6px 6px 0; max-width: var(--measure);
+}
+.note {
+  background: var(--neutral-fill); border: 1px solid var(--border);
+  border-left: 4px solid var(--ink); padding: .95rem 1.15rem; border-radius: 0 8px 8px 0;
+  margin: 1.4rem 0; max-width: var(--measure);
+}
+html[data-theme="dark"] .note { border-left-color: var(--text-muted); }
+.note.track   { background: var(--workload-fill); border-left-color: var(--workload-accent); }
+.note.callout { background: var(--token-fill);    border-left-color: var(--token-heading); }
+.note p { margin: .3rem 0; }
+
+.track-banner { border-radius: 12px; padding: 1rem 1.2rem; margin: 1rem 0 1.5rem; max-width: var(--measure); }
+.track-banner p { max-width: none; }
+/* Replaces two static inline margin attributes that the site build had to hoist into generated
+   .rb-sN classes, because style-src 'self' blocks inline style attributes. Authoring them as real
+   classes means the hoister has nothing to do. */
+.track-banner p.tb-lead { margin: 0; }
+.track-banner p.tb-note { margin: .7rem 0 0; }
+.track-banner.t1 { background: var(--model-fill);  border: 1px solid var(--model-accent); }
+.track-banner.t2 { background: var(--token-fill);  border: 1px solid var(--token-accent); }
+.track-banner.shared { background: var(--neutral-fill); border: 1px solid var(--border); }
+
+figure {
+  margin: 1.7rem 0; padding: 1.1rem; border: 1px solid var(--border);
+  border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); overflow-x: auto;
+}
+figcaption {
+  margin-top: .85rem; font-size: .9rem; font-style: italic; color: var(--text-muted);
+  border-top: 1px dashed var(--border); padding-top: .6rem;
+}
+figure.diagram { max-width: 860px; margin-left: auto; margin-right: auto; }
+
+/* worked-example cards */
+.worked-card {
+  border: 1px solid var(--token-accent); border-radius: 12px; background: var(--surface);
+  box-shadow: var(--shadow); padding: 1rem 1.2rem 1.1rem; margin: 1.4rem 0; max-width: 780px;
+  overflow-x: auto;
+}
+.worked-card .wc-badge {
+  display: inline-block; font-size: .68rem; font-weight: 800; letter-spacing: .07em;
+  text-transform: uppercase; color: #fff; background: var(--token-accent);
+  border-radius: 999px; padding: 2px 10px; margin-bottom: .4rem;
+}
+.worked-card .wc-title { font-size: 1.05rem; font-weight: 750; color: var(--heading); margin: 0 0 .5rem; }
+.worked-card table { margin: .8rem 0; }
+.worked-card p, .worked-card ul { max-width: none; }
+
+table { border-collapse: collapse; width: 100%; margin: 1.2rem 0; font-size: .94rem; }
+thead th { background: var(--ink); color: #fff; text-align: left; padding: .55rem .7rem; font-weight: 600; }
+html[data-theme="dark"] thead th { background: #0a0f15; }
+tbody td { padding: .5rem .7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:nth-child(even) { background: var(--zebra); }
+
+.tag {
+  display: inline-block; font-size: .78rem; font-weight: 600;
+  padding: .12rem .55rem; border-radius: 999px; white-space: nowrap;
+}
+.tag.shared { background: var(--positive-fill); color: var(--positive-accent); border: 1px solid var(--positive-accent); }
+
+pre.code {
+  background: var(--code-bg); color: var(--code-fg); padding: 1rem 1.1rem; border-radius: 10px;
+  overflow-x: auto; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: .89rem; line-height: 1.55; border: 1px solid var(--border); max-width: var(--measure);
+}
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  background: var(--neutral-fill); padding: .05rem .35rem; border-radius: 4px; font-size: .9em;
+}
+pre.code code { background: none; padding: 0; }
+
+main.content ul { margin: .7rem 0; padding-left: 1.4rem; max-width: var(--measure); }
+main.content li { margin: .35rem 0; }
+
+/* references */
+a.ref { font-size: .8em; vertical-align: super; line-height: 1; font-weight: 600; white-space: nowrap; }
+section#references ol { padding-left: 1.6rem; max-width: none; }
+section#references li { margin: .45rem 0; font-size: .93rem; scroll-margin-top: var(--anchor-offset); }
+section#references li:target { background: var(--workload-fill); border-radius: 6px; }
+
+footer.page {
+  margin-top: 4rem; padding: 1.6rem 0 0; border-top: 2px solid var(--border);
+  font-size: .9rem; color: var(--text-muted); max-width: var(--measure);
+}
+

@@ -1,0 +1,84 @@
+/* 95-print.css — the exported assessment report.
+
+   "Export as PDF" is the browser's own print-to-PDF over a purpose-built DOM, not a vendored PDF
+   library. That choice is about maintenance: the report is real markup styled by the same tokens as
+   the page, so adding a lever or a field costs the export nothing, whereas a jsPDF implementation is a
+   second layout engine to keep in step and ~400KB to vendor under a CSP that forbids CDNs. The cost is
+   that the print dialog appears; site/src/js/assessment.mjs mitigates it by swapping document.title,
+   which is what the browser derives the suggested filename from.
+
+   Everything here is deliberately ink-on-white rather than themed. A reader printing from dark mode
+   wants a legible document, not a black page, and these values are fixed rather than var()-driven so
+   the output does not depend on which theme happened to be active. */
+
+#assess-print-root { display: none; }
+
+@media print {
+  @page { size: A4; margin: 14mm 13mm 16mm; }
+
+  /* Only the report prints. Everything else -- sidebar, top bar, 34 levers -- is hidden. */
+  body.assess-printing > *:not(#assess-print-root) { display: none !important; }
+  body.assess-printing #assess-print-root { display: block !important; color: #111; }
+
+  #assess-print-root { font-size: 10.5pt; line-height: 1.45; }
+
+  /* --- cover block --- */
+  #assess-print-root .apr-cover { border-bottom: 2px solid #232F3E; padding-bottom: 8px; margin-bottom: 16px; }
+  #assess-print-root h1 { font-size: 17pt; margin: 0 0 4px; color: #232F3E; }
+  #assess-print-root .rb-beta-tag { font-size: .5em; vertical-align: middle; }
+  #assess-print-root .apr-scope { font-size: 12pt; font-weight: 700; margin: 0 0 6px; color: #232F3E; }
+  /* Who ran the assessment. See assessorLine() in site/src/js/stamp.mjs. */
+  #assess-print-root .apr-by { font-size: 9.5pt; color: #444; margin: 0 0 4px; }
+  #assess-print-root .apr-cov { font-size: 9.5pt; color: #444; margin: 0; }
+  #assess-print-root .apr-out { font-size: 9.5pt; color: #444; margin: 4px 0 0; font-style: italic; }
+  #assess-print-root .apr-incomplete {
+    margin: 10px 0 14px; padding: 8px 10px; border: 1px solid #8A5A12;
+    border-left: 4px solid #8A5A12; background: #FFF8D8; color: #3b2b0c;
+  }
+  #assess-print-root .apr-appendix {
+    margin: 16px 0 0; padding-top: 8px; border-top: 1px solid #999;
+    color: #444; font-style: italic;
+  }
+
+  #assess-print-root h2 {
+    font-size: 12.5pt; margin: 18px 0 6px; padding-bottom: 3px;
+    border-bottom: 1px solid #999; color: #232F3E;
+    /* A heading stranded at the foot of a page is the most common print defect. */
+    break-after: avoid; page-break-after: avoid;
+  }
+  #assess-print-root h3 { font-size: 11pt; margin: 14px 0 4px; color: #232F3E; break-after: avoid; page-break-after: avoid; }
+  #assess-print-root h4 { font-size: 10pt; margin: 10px 0 3px; color: #333; break-after: avoid; page-break-after: avoid; }
+
+  /* --- tables: the coverage-by-layer summary and the gap lists --- */
+  #assess-print-root table.apr-table {
+    width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: 9pt;
+  }
+  #assess-print-root table.apr-table thead th {
+    background: #232F3E; color: #fff; text-align: left; padding: 4px 6px; font-weight: 600;
+    /* Repeat the header when a long gap table spans pages. */
+    break-inside: avoid;
+  }
+  #assess-print-root table.apr-table thead { display: table-header-group; }
+  #assess-print-root table.apr-table td { padding: 4px 6px; border-bottom: 1px solid #ccc; vertical-align: top; }
+  #assess-print-root table.apr-table tr { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Status stays legible in greyscale: the word is the signal, the weight reinforces it. */
+  #assess-print-root .apr-st { font-weight: 700; white-space: nowrap; }
+  #assess-print-root .apr-st-no { color: #B32D0F; }
+  #assess-print-root .apr-st-wip { color: #8A5A12; }
+
+  #assess-print-root .apr-none { font-style: italic; color: #444; }
+
+  /* --- full answer log --- */
+  #assess-print-root .apr-q { margin: 0 0 7px; break-inside: avoid; page-break-inside: avoid; }
+  #assess-print-root .apr-state { font-weight: 700; }
+  #assess-print-root .apr-note { font-style: italic; color: #444; }
+
+  /* Links print as plain text: a blue underline that cannot be clicked is noise on paper. */
+  #assess-print-root a { color: #111; text-decoration: none; }
+
+  /* --- "Suggest a change" links do not belong on paper --- */
+  /* They are controls that open GitHub; on paper they are noise. The runbook's content prints. */
+  .suggest-change,
+  .suggest-footer { display: none !important; }
+}

@@ -1,0 +1,31 @@
+/* Bundle entry for the runbook stylesheet.
+
+   Order is load-bearing: the original single inline style block was one cascade, and these files are
+   contiguous slices of it in their original order. Reordering them can change which rule wins.
+   scripts/build-runbook.mjs concatenates them in the order listed here. */
+
+@import "./00-tokens.css";
+@import "./10-base.css";
+@import "./20-topbar.css";
+@import "./30-shell.css";
+@import "./40-mapcard.css";
+@import "./50-content.css";
+@import "./60-chrome.css";
+@import "./60-dashboard.css";
+@import "./65-wayfinder.css";
+/* Panes and the tab bar. After 65-wayfinder because it extends the same `data-scope` attribute from
+   filtering navigation to filtering content, and reads as the continuation of those rules. */
+@import "./66-tabs.css";
+/* The TLDR pane's two instruments. After the chrome so they beat 50-content.css's element styling, and
+   before 70-lever-index so the lever index keeps the last word on its own table. */
+@import "./67-lever-sheet.css";
+@import "./68-heatmap.css";
+@import "./70-lever-index.css";
+@import "./80-costmap.css";
+@import "./85-figures.css";
+@import "./90-assess.css";
+@import "./91-track-routes.css";
+/* After 90-assess so these rules beat the element styling in 50-content.css; before 95-print so
+   print keeps the last word. */
+@import "./92-suggest.css";
+@import "./95-print.css";

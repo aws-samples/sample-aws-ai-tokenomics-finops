@@ -1,0 +1,252 @@
+/* 65-wayfinder.css — "where am I in this runbook", at two scales.
+
+   Reuses Figure 2's metro metaphor (a station on a spine per actor-layer) as a persistent instrument
+   rather than a one-off illustration in the overview. See site/src/js/wayfinder.mjs for why.
+
+   Motion: the spine of the CURRENT layer fills as the reader scrolls through it, driven by a
+   --trk-progress custom property the module writes once per animation frame. Stations transition when
+   the active layer changes. Everything is disabled wholesale under prefers-reduced-motion at the foot of
+   this file — the map stays fully readable without any of it, because position is carried by weight,
+   colour and a filled dot, never by movement. */
+
+/* ---- the "enter a track" choice ---- */
+.trk-choose {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin: 1.2rem 0 1.6rem; max-width: var(--measure);
+}
+.trk-card {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 1rem 1.1rem 1.1rem; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--surface);
+  box-shadow: var(--shadow); text-decoration: none;
+  border-top: 4px solid var(--border);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.trk-card:hover { text-decoration: none; transform: translateY(-2px); box-shadow: 0 6px 22px rgba(16,24,40,.10); }
+.trk-card-t1 { border-top-color: var(--model-accent); }
+.trk-card-t2 { border-top-color: var(--token-accent); }
+.trk-card-t1:hover { border-color: var(--model-accent); }
+.trk-card-t2:hover { border-color: var(--token-accent); }
+.trk-card-num { font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); }
+.trk-card-name { font-size: 1.05rem; font-weight: 750; color: var(--heading); line-height: 1.25; }
+.trk-card-econ { font-size: .86rem; color: var(--text-muted); }
+.trk-card-meta { font-size: .76rem; color: var(--text-muted); margin-top: .35rem; font-variant-numeric: tabular-nums; }
+.trk-card-go { font-size: .82rem; font-weight: 700; color: var(--link); margin-top: .5rem; }
+/* The card for the track you are already focused on says so, instead of inviting the same choice again. */
+html[data-scope="t1"] .trk-card-t1::after,
+html[data-scope="t2"] .trk-card-t2::after {
+  content: "You are working here"; align-self: flex-start; margin-top: .45rem;
+  font-size: .66rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--positive-accent); border: 1px solid var(--positive-accent);
+  background: var(--positive-fill); border-radius: 999px; padding: 1px 8px;
+}
+@media (max-width: 720px) { .trk-choose { grid-template-columns: 1fr; } }
+
+/* ---- sidebar: scope filtering and depth ---- */
+/* The sidebar used to stack two navigations: a document table of contents listing both tracks, and a
+   track chooser above it. They undercut each other. One scope at a time makes the mode explicit and drops
+   levers from three levels of indentation to two. See site/src/js/wayfinder.mjs.
+
+   The in-sidebar scope SWITCHER those rules described is gone, along with its `.scope-switch` / `.scope-opt`
+   styling. The tab bar (66-tabs.css) names all five panes at the top of the content, so a switcher naming
+   three of them in the left rail was the second instrument answering one question -- the same duplication
+   that got the coverage counts removed from here. The filtering it drove is now driven by the tab bar, and it
+   got stricter with the move: see "THE SIDEBAR SHOWS ONLY THE PANE YOU ARE IN" below. */
+
+/* No counts here. The rows used to carry `10 levers 3/30 3g`, duplicating in the left periphery what the
+   right rail states live -- so the sidebar is navigation and the numbers live on one side. Progress on the
+   track you are NOT in is answered by the cost structure map's per-track chips, which also name the gaps
+   and let you jump to them. See site/src/js/wayfinder.mjs. */
+
+/* ---- sidebar: the link to the lever board ---- */
+/* This group used to be shown in every scope, on the reasoning that "take me to a specific lever" is a need
+   that does not depend on which track you picked. That held while the sidebar was the only route to the board.
+   It does not now: the tab bar names the Assessment pane from everywhere, so the group appeared in four panes
+   it did not belong to, each time as a heading for a pane the reader was not in. It shows in its own pane
+   only -- see the filtering rule below. */
+/* `a.nav-map`, not `.nav-map`: `.sidebar a.nav-link` in 30-shell.css sets `display: block` at the same
+   specificity plus an element, so a class-only selector loses and the sub-label runs on into the label. */
+.sidebar a.nav-map { display: grid; gap: 1px; }
+.sidebar a.nav-map .nav-map-sub { font-size: .7rem; color: var(--text-muted); font-weight: 400; line-height: 1.3; }
+.sidebar a.nav-map.active .nav-map-sub { color: var(--workload-accent); }
+
+/* THE SIDEBAR SHOWS ONLY THE PANE YOU ARE IN. ONE RULE, NOT TWENTY PAIRS.
+   A link in a pane's own navigation that jumps you to a different pane is not navigation, it is a trapdoor:
+   the reader clicks a heading in the list they are reading and the whole surface changes under them. The tab
+   bar is the thing that changes pane, and it says so.
+
+   Written as "hide every group, then show the one that matches" rather than as a hide-rule per (scope, group)
+   pair. The pair form needed 20 selectors for 5 panes, was missing several, and would have needed 6 more the
+   next time a pane was added — the Assessment group shipped visible in four panes it did not belong to for
+   exactly that reason. This form cannot be incomplete: a group with no matching scope is simply never shown.
+
+   NAVIGATION only. Which sections are in the document is untouched, and a pane's content is hidden by
+   66-tabs.css, never removed — see the docblock in site/src/js/tabs.mjs. */
+html[data-scope] .sidebar [data-nav-scope] { display: none; }
+html[data-scope="overview"] .sidebar [data-nav-scope="overview"],
+html[data-scope="t1"]       .sidebar [data-nav-scope="t1"],
+html[data-scope="t2"]       .sidebar [data-nav-scope="t2"] { display: revert; }
+
+/* NO GROUP TITLE IN ANY PANE, once the tab bar exists.
+   Only the Overview title used to be hidden, because the switcher sat directly above it saying the same word.
+   The tab bar replaced the switcher and names all five panes, so every remaining title repeats what is already
+   on screen -- and two of them had drifted from it: the TLDR pane's sidebar said "Overview" while its tab said
+   "TLDR", and the track panes showed no title at all, so the treatment was inconsistent as well as redundant.
+
+   Only while a pane is active. With JavaScript off there is no tab bar and no pane, and these titles are the
+   only structure the sidebar has, so `html[data-scope]` gates the rule rather than hiding them outright. */
+html[data-scope] .sidebar .nav-group-title { display: none; }
+
+/* Orientation mode is a short list. A search box over four links is chrome pretending to be a feature, and
+   the Cost map pane's two links are shorter still. */
+html[data-scope="overview"] .sidebar .filter,
+html[data-scope="map"] .sidebar .filter { display: none; }
+
+/* `.sidebar .nav-results` used to style a call-to-action link to the dashboard here. The dashboard sits in the
+   Assessment pane now, which the tab bar names from everywhere, so the route to it is the tab -- not a link in
+   another pane's sidebar, and not the rail footer either. A DOM check asserts no link in any pane's sidebar or
+   rail leaves that pane. */
+
+/* Depth reduction. In a track scope the layer link IS the section header, so it stops looking like a
+   sibling of the levers underneath it and the levers lose a level of indent. */
+html[data-scope="t1"] .sidebar .nav-link.lvl-lever,
+html[data-scope="t2"] .sidebar .nav-link.lvl-lever {
+  font-size: .68rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--text-muted); margin-top: .5rem;
+}
+html[data-scope="t1"] .sidebar .nav-link.lvl-sub,
+html[data-scope="t2"] .sidebar .nav-link.lvl-sub { padding-left: 14px; }
+/* The group title repeats what the switcher already states in bold directly above it. Hidden rather than
+   restyled, because two headings for one thing is the clutter this redesign set out to remove. */
+html[data-scope="t1"] .sidebar .nav-group-title[data-nav-scope="t1"],
+html[data-scope="t2"] .sidebar .nav-group-title[data-nav-scope="t2"] { display: none; }
+
+/* The track's own <h2> link is a footnote once the track IS the scope. */
+html[data-scope="t1"] .sidebar .nav-link.lvl-layer,
+html[data-scope="t2"] .sidebar .nav-link.lvl-layer { font-size: .76rem; font-weight: 600; color: var(--text-muted); }
+
+/* ---- the rail map ---- */
+.rail-fallback[hidden] { display: none; }
+.trk-map { margin: 2px 0 0; }
+
+.trk-stop {
+  position: relative; display: flex; gap: 10px;
+  padding: 0 0 14px 0;
+}
+/* The spine. Drawn on the row so it connects consecutive stations, and stops at the last one. */
+.trk-stop::before {
+  content: ""; position: absolute; left: 5px; top: 14px; bottom: 0; width: 2px;
+  background: var(--border);
+}
+.trk-stop:last-of-type::before { display: none; }
+/* The travelled part of the current layer's spine, scaled by scroll progress. */
+.trk-stop.is-here::after {
+  content: ""; position: absolute; left: 5px; top: 14px; width: 2px;
+  height: calc(var(--trk-progress, 0) * 100%);
+  background: var(--workload-accent);
+  transition: height .12s linear;
+}
+
+.trk-dot {
+  flex: 0 0 auto; width: 12px; height: 12px; margin-top: 3px; border-radius: 50%;
+  background: var(--bg-elev); border: 2px solid var(--border);
+  transition: background .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.trk-stop.is-here .trk-dot {
+  background: var(--workload-accent); border-color: var(--workload-accent);
+  transform: scale(1.18);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--workload-accent) 18%, transparent);
+}
+
+.trk-stop-body { min-width: 0; flex: 1 1 auto; }
+.trk-stop-name { font-size: .82rem; font-weight: 700; color: var(--text-muted); text-decoration: none; }
+.trk-stop-name:hover { text-decoration: none; color: var(--text); }
+.trk-stop.is-here .trk-stop-name { color: var(--heading); }
+.trk-stop-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.trk-stop-n { font-size: .72rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.trk-stop-gaps {
+  font-size: .64rem; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;
+  color: var(--expensive); border: 1px solid var(--expensive); background: var(--expensive-fill);
+  border-radius: 999px; padding: 0 6px;
+}
+
+/* Coverage ring */
+.trk-ring { flex: 0 0 auto; display: block; }
+.trk-ring-track { fill: none; stroke: var(--border); stroke-width: 3; }
+.trk-ring-fill {
+  fill: none; stroke: var(--workload-accent); stroke-width: 3; stroke-linecap: round;
+  transition: stroke-dashoffset .5s cubic-bezier(.4, 0, .2, 1);
+}
+.trk-ring.is-done .trk-ring-fill { stroke: var(--cov-yes); }
+
+/* Only the current layer lists its levers; 24 of them at once would rebuild the problem the old static
+   rail had. */
+.trk-levers { list-style: none; margin: 7px 0 0; padding: 0 0 0 1px; display: grid; gap: 3px; }
+/* Two lines maximum. Several lever names run to three lines in a 212px rail, and nine of those turns the
+   map into a wall of text that has to be scrolled to see the next station -- which defeats the point of a
+   map. The full name is on the heading it links to, and in the title attribute. */
+.trk-lever {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: .74rem; line-height: 1.32; color: var(--text-muted);
+  text-decoration: none; padding: 1px 0 1px 9px; border-left: 2px solid transparent;
+}
+.trk-lever:hover { text-decoration: none; color: var(--text); border-left-color: var(--border); }
+.trk-lever.is-here {
+  color: var(--heading); font-weight: 700; border-left-color: var(--workload-accent);
+}
+/* The rail footer's two "ways out" (the dashboard, the lever board) are gone with the styles that dressed
+   them. Both destinations moved to the Assessment pane, so a rail titled "On this page" was offering links
+   that were not on the page. See renderRail() in site/src/js/wayfinder.mjs. */
+
+
+/* ---- the sticky stepper ---- */
+/* Shown only where the rail is not: below the 1180px breakpoint that hides the rail (see 60-chrome.css). */
+.trk-stepper { display: none; }
+@media (max-width: 1180px) {
+  .trk-stepper:not([hidden]) {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    /* Same measured offset as the breadcrumb -- see --sticky-1 in tabs.mjs. */
+    position: sticky; top: var(--sticky-1, 56px); z-index: 40;
+    margin: 0 0 4px; padding: 7px 0;
+    background: var(--surface);
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+.stp-track { font-size: .66rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--text-muted); }
+.stp-status { display: none; font-size: .72rem; font-weight: 700; color: var(--text); }
+.stp-steps { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.stp-step {
+  display: flex; align-items: center; gap: 5px; text-decoration: none;
+  font-size: .74rem; color: var(--text-muted); padding: 2px 8px 2px 6px; border-radius: 999px;
+  transition: background .18s ease, color .18s ease;
+}
+.stp-step:hover { text-decoration: none; background: var(--bg-elev); color: var(--text); }
+.stp-step + .stp-step { margin-left: 10px; position: relative; }
+/* The connector between steps, so it reads as one line rather than three chips. */
+.stp-step + .stp-step::before {
+  content: ""; position: absolute; left: -12px; top: 50%; width: 10px; height: 2px;
+  background: var(--border);
+}
+.stp-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg-elev); border: 2px solid var(--border);
+  transition: background .2s ease, border-color .2s ease;
+}
+.stp-step.is-here { background: var(--workload-fill); color: var(--heading); font-weight: 700; }
+.stp-step.is-here .stp-dot { background: var(--workload-accent); border-color: var(--workload-accent); }
+.stp-name { white-space: nowrap; }
+.stp-n { font-variant-numeric: tabular-nums; opacity: .8; }
+@media (max-width: 520px) {
+  .stp-status { display: inline; flex: 1 1 auto; }
+  .stp-name { display: none; }
+}
+
+/* ---- motion off ---- */
+/* Position is never carried by movement alone, so removing all of it costs the reader nothing. */
+@media (prefers-reduced-motion: reduce) {
+  .trk-card, .trk-dot, .trk-ring-fill, .stp-step, .stp-dot, .trk-stop.is-here::after { transition: none; }
+  .trk-card:hover { transform: none; }
+  .trk-stop.is-here .trk-dot { transform: none; }
+  .trk-stop.is-here::after { display: none; }
+}
