@@ -30,7 +30,7 @@ import { readFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
 import { dirname, join, extname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import puppeteer from 'puppeteer-core';
-import { SITE_CSP } from './build-site.mjs';
+import { SITE_CSP, SITE_URL, OG_IMAGE } from './build-site.mjs';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const UPSTREAM = join(REPO_ROOT, 'content', 'index.html');
@@ -139,8 +139,25 @@ const MIME = {
   '.css': 'text/css; charset=utf-8',
   '.js': 'application/javascript; charset=utf-8',
   '.svg': 'image/svg+xml',
-  '.json': 'application/json'
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.xml': 'application/xml; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8'
 };
+
+/**
+ * The discoverability contract, asserted independently of build-site.mjs where it can be: the live URL is
+ * stated here as a literal, so a build that drifts off the Pages address fails rather than agreeing with
+ * itself. Only the image FILE NAME is imported, and its bytes are checked for the 1200x630 size below.
+ */
+const LIVE_URL = 'https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/';
+
+/** Read width/height from a PNG's IHDR chunk; null when the bytes are not a PNG. */
+function pngSize(buf) {
+  const sig = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+  if (!buf || buf.length < 24 || !sig.every((b, i) => buf[i] === b)) return null;
+  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
 
 function serve(dir) {
   return new Promise((resolve) => {
@@ -2121,7 +2138,77 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
   check(label, 'no console errors', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | ') || 'none');
   check(label, 'no CSP violations', cspViolations.length === 0, cspViolations.slice(0, 3).join(' | ') || 'none');
 
+  // --- discoverability: canonical, link previews, structured data, crawler files ---------------
+  const seo = await page.evaluate(() => {
+    const meta = (sel) => (document.querySelector(sel) || {}).content || null;
+    const ld = [...document.querySelectorAll('script[type="application/ld+json"]')].map((n) => {
+      try { return JSON.parse(n.textContent); } catch { return 'unparseable'; }
+    });
+    return {
+      title: document.title,
+      description: meta('meta[name="description"]'),
+      canonical: (document.querySelector('link[rel="canonical"]') || {}).href || null,
+      canonicalCount: document.querySelectorAll('link[rel="canonical"]').length,
+      ogTitle: meta('meta[property="og:title"]'),
+      ogDescription: meta('meta[property="og:description"]'),
+      ogUrl: meta('meta[property="og:url"]'),
+      ogType: meta('meta[property="og:type"]'),
+      ogImage: meta('meta[property="og:image"]'),
+      ogImageW: meta('meta[property="og:image:width"]'),
+      ogImageH: meta('meta[property="og:image:height"]'),
+      twCard: meta('meta[name="twitter:card"]'),
+      twImage: meta('meta[name="twitter:image"]'),
+      ld,
+      disclaimer: /not official AWS documentation/.test((document.querySelector('.hero .beta-note') || {}).textContent || '')
+    };
+  });
+  check(label, 'title and description carry the brand and the search phrasing',
+    /^AI Tokenomics FinOps/.test(seo.title) && /Amazon Bedrock cost optimization/.test(seo.title)
+      && /GenAI FinOps/.test(seo.description || '') && /LLM token cost/.test(seo.description || '')
+      && (seo.description || '').length <= 160,
+    `"${seo.title}" / ${(seo.description || '').length} chars`);
+  check(label, 'the as-is, not-official-AWS-documentation disclaimer is still shown', seo.disclaimer, String(seo.disclaimer));
+
   if (expectSplitBuild) {
+    const ldDoc = seo.ld.length === 1 && typeof seo.ld[0] === 'object' ? seo.ld[0] : null;
+    check(label, 'canonical link names the live Pages URL', seo.canonicalCount === 1 && seo.canonical === LIVE_URL && SITE_URL === LIVE_URL,
+      `${seo.canonicalCount} canonical: ${seo.canonical}`);
+    check(label, 'Open Graph tags are complete and absolute',
+      seo.ogTitle === seo.title && seo.ogDescription === seo.description && seo.ogUrl === LIVE_URL && seo.ogType === 'website'
+        && seo.ogImage === LIVE_URL + OG_IMAGE && seo.ogImageW === '1200' && seo.ogImageH === '630',
+      `og:url=${seo.ogUrl}, og:image=${seo.ogImage}`);
+    check(label, 'Twitter card is a large-image summary of the same image',
+      seo.twCard === 'summary_large_image' && seo.twImage === seo.ogImage, `${seo.twCard}, ${seo.twImage}`);
+    check(label, 'JSON-LD parses and describes the project, not an official AWS publication',
+      !!ldDoc && ldDoc['@context'] === 'https://schema.org' && ['TechArticle', 'WebSite'].includes(ldDoc['@type'])
+        && ldDoc.url === LIVE_URL && ldDoc.inLanguage === 'en' && /MIT-0/.test(ldDoc.license || '')
+        && !!ldDoc.name && !!ldDoc.description
+        && !!ldDoc.publisher && !/^(Amazon|AWS|Amazon Web Services)(\.com)?(,? Inc\.?)?$/i.test(ldDoc.publisher.name || ''),
+      ldDoc ? `${ldDoc['@type']}, publisher "${(ldDoc.publisher || {}).name}"` : `${seo.ld.length} block(s)`);
+
+    // The crawler files and the preview image are served from the same sub-path as the page.
+    const get = async (name) => {
+      try {
+        const r = await fetch(new URL(name, url));
+        return { status: r.status, type: r.headers.get('content-type') || '', body: Buffer.from(await r.arrayBuffer()) };
+      } catch (e) { return { status: 0, type: '', body: Buffer.alloc(0), error: e.message }; }
+    };
+    const [sitemap, robots, image] = await Promise.all([get('sitemap.xml'), get('robots.txt'), get(OG_IMAGE)]);
+    const sitemapLocs = [...sitemap.body.toString('utf8').matchAll(/<loc>([^<]*)<\/loc>/g)].map((m) => m[1]);
+    check(label, 'sitemap.xml is served and lists the canonical URL',
+      sitemap.status === 200 && /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/.test(sitemap.body.toString('utf8'))
+        && sitemapLocs.length > 0 && sitemapLocs.includes(LIVE_URL) && sitemapLocs.every((l) => l.startsWith(LIVE_URL)),
+      `HTTP ${sitemap.status}, <loc>: ${sitemapLocs.join(' ')}`);
+    const robotsText = robots.body.toString('utf8');
+    check(label, 'robots.txt is served, allows crawling and names the sitemap',
+      robots.status === 200 && new RegExp(`^Sitemap: ${LIVE_URL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}sitemap\\.xml$`, 'm').test(robotsText)
+        && !/^Disallow:\s*\/\s*$/m.test(robotsText),
+      `HTTP ${robots.status}`);
+    const size = pngSize(image.body);
+    check(label, 'the preview image is served as a 1200x630 PNG',
+      image.status === 200 && !!size && size.width === 1200 && size.height === 630,
+      size ? `HTTP ${image.status}, ${size.width}x${size.height}, ${(image.body.length / 1024).toFixed(0)} KB` : `HTTP ${image.status}, not a PNG`);
+
     check(label, 'served page uses the split same-origin assets', counts.linkTags === 1 && counts.styleTags === 0,
       `${counts.linkTags} stylesheet link(s), ${counts.styleTags} inline style block(s)`);
     check(label, 'served page carries the site CSP <meta>', counts.cspMeta === SITE_CSP,
@@ -2132,6 +2219,10 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
   } else {
     check(label, 'the self-contained file carries no CSP <meta> (it would block its own inline blocks)', counts.cspMeta === null,
       counts.cspMeta ? 'present' : 'absent');
+    // Canonical and preview tags name the live URL, which is wrong for a copy opened from disk: published site only.
+    check(label, 'the self-contained file carries no canonical, Open Graph or JSON-LD tags (published site only)',
+      seo.canonicalCount === 0 && seo.ogUrl === null && seo.ld.length === 0,
+      `${seo.canonicalCount} canonical, og:url=${seo.ogUrl}, ${seo.ld.length} JSON-LD`);
   }
 
   // --- artefacts for eyeballing -------------------------------------------

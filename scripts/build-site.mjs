@@ -9,6 +9,8 @@
  *        -> dist/styles.css             (generated)
  *        -> dist/script.js              (generated)
  *        -> dist/.nojekyll              (Pages: serve the files as-is, no Jekyll pass)
+ *   site/static/og-image.png -> dist/og-image.png (link-preview image, committed source)
+ *        -> dist/sitemap.xml, dist/robots.txt (crawler files, absolute URLs under SITE_URL)
  *
  * Why the split
  * -------------
@@ -31,13 +33,23 @@
  * assumptions about the upstream shape and aborts loudly rather than silently emitting a broken page.
  */
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const UPSTREAM = join(REPO_ROOT, 'content', 'index.html');
 const OUT_DIR = join(REPO_ROOT, 'dist');
+const STATIC_DIR = join(REPO_ROOT, 'site', 'static');
+
+/**
+ * The canonical public address of the site (GitHub Pages project URL, trailing slash). Search engines and
+ * link previews need ABSOLUTE URLs, so this is the one place the published origin + base path is stated;
+ * page assets themselves stay relative. Exported so verify-runbook-dom.mjs asserts against the same value.
+ */
+export const SITE_URL = 'https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/';
+/** The link-preview image, committed in site/static/ (rendered by scripts/make-og-image.mjs). */
+export const OG_IMAGE = 'og-image.png';
 
 /**
  * The policy the published page runs under. Exported so verify-runbook-dom.mjs serves dist/ with the
@@ -176,7 +188,65 @@ function main() {
     `<meta charset="utf-8">\n  <meta http-equiv="Content-Security-Policy" content="${SITE_CSP}">`, 'charset <meta>');
 
   // -------------------------------------------------------------------------
-  // 5. Write
+  // 5. Discoverability head tags: canonical, Open Graph, Twitter card, JSON-LD
+  // -------------------------------------------------------------------------
+  // Published-site only: they name the live URL, which is wrong for a copy opened from disk. Title and
+  // description are read from content/index.html so there is one statement of each.
+  const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1];
+  const description = (html.match(/<meta name="description" content="([^"]*)">/) || [])[1];
+  if (!title || !description) abort('content/index.html needs a <title> and a <meta name="description">.');
+  if (/rel\s*=\s*"canonical"|property\s*=\s*"og:|application\/ld\+json/i.test(html)) {
+    abort('content/index.html already carries canonical/Open Graph/JSON-LD tags; this script owns them.');
+  }
+  const ogImageUrl = SITE_URL + OG_IMAGE;
+  const attr = (v) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  // Entities in the authored attributes are decoded for JSON-LD (plain text, not HTML).
+  const plain = (v) => v.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    name: plain(title),
+    headline: 'AI Tokenomics FinOps',
+    description: plain(description),
+    url: SITE_URL,
+    image: ogImageUrl,
+    inLanguage: 'en',
+    license: 'https://spdx.org/licenses/MIT-0.html',
+    isAccessibleForFree: true,
+    keywords: 'Amazon Bedrock cost optimization, GenAI FinOps, LLM token cost, AI cost optimization, agentic AI, token economics',
+    // The publisher is the open-source project itself: this is a sample, not official AWS documentation.
+    publisher: {
+      '@type': 'Organization',
+      name: 'AI Tokenomics FinOps (aws-samples open-source project)',
+      url: 'https://github.com/aws-samples/sample-aws-ai-tokenomics-finops'
+    },
+    isBasedOn: 'https://github.com/aws-samples/sample-aws-ai-tokenomics-finops'
+  };
+  const SEO_HEAD = [
+    `<link rel="canonical" href="${SITE_URL}">`,
+    '<meta property="og:type" content="website">',
+    '<meta property="og:site_name" content="AI Tokenomics FinOps">',
+    `<meta property="og:title" content="${title}">`,
+    `<meta property="og:description" content="${description}">`,
+    `<meta property="og:url" content="${SITE_URL}">`,
+    `<meta property="og:image" content="${ogImageUrl}">`,
+    '<meta property="og:image:type" content="image/png">',
+    '<meta property="og:image:width" content="1200">',
+    '<meta property="og:image:height" content="630">',
+    '<meta property="og:image:alt" content="AI Tokenomics FinOps: a self-assessment runbook for cutting LLM token cost on Amazon Bedrock">',
+    '<meta property="og:locale" content="en_US">',
+    '<meta name="twitter:card" content="summary_large_image">',
+    `<meta name="twitter:title" content="${title}">`,
+    `<meta name="twitter:description" content="${description}">`,
+    `<meta name="twitter:image" content="${ogImageUrl}">`,
+    '<meta name="twitter:image:alt" content="AI Tokenomics FinOps: a self-assessment runbook for cutting LLM token cost on Amazon Bedrock">',
+    // A data block, not a script: CSP script-src does not govern it and the browser never executes it.
+    `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`
+  ].map((l) => `  ${l}`).join('\n');
+  html = replaceOnce(html, '</head>', `${SEO_HEAD}\n</head>`, '</head> tag');
+
+  // -------------------------------------------------------------------------
+  // 6. Write
   // -------------------------------------------------------------------------
   const BANNER = 'GENERATED FILE — do not edit. Source: content/index.html '
     + '(itself partly generated from site/src/ — regenerate the lot with `npm run build`)';
@@ -186,6 +256,21 @@ function main() {
   writeFileSync(join(OUT_DIR, 'index.html'), html.replace(/^<!DOCTYPE html>/i, `<!DOCTYPE html>\n<!-- ${BANNER} -->`));
   writeFileSync(join(OUT_DIR, '.nojekyll'), '');
 
+  // Static assets committed in site/static/ (the link-preview image) are copied as-is.
+  if (!existsSync(join(STATIC_DIR, OG_IMAGE))) abort(`missing site/static/${OG_IMAGE}`, 'Run scripts/make-og-image.mjs.');
+  for (const name of readdirSync(STATIC_DIR)) copyFileSync(join(STATIC_DIR, name), join(OUT_DIR, name));
+
+  // Crawler files. The site is one page, so the sitemap lists exactly the canonical URL. No <lastmod>:
+  // the build stays deterministic, and a guessed date is worse than none.
+  writeFileSync(join(OUT_DIR, 'sitemap.xml'),
+    '<?xml version="1.0" encoding="UTF-8"?>\n'
+    + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    + `  <url>\n    <loc>${SITE_URL}</loc>\n  </url>\n`
+    + '</urlset>\n');
+  // A project site's robots.txt is not at the host root, so crawlers do not read it there; it still
+  // documents the sitemap location, and search consoles accept the sitemap URL directly.
+  writeFileSync(join(OUT_DIR, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}sitemap.xml\n`);
+
   const kb = (s) => `${(Buffer.byteLength(s, 'utf8') / 1024).toFixed(1)} KB`;
   console.log('✔ build-site');
   console.log(`  dist/index.html  ${kb(html)}`);
@@ -194,6 +279,7 @@ function main() {
   console.log(`  hoisted ${declToClass.size} inline-style declaration(s) into classes`
     + `${declToClass.size === 0 ? ' (expected: they are authored in site/src/css)' : ' — move these into site/src/css'}`);
   console.log(`  CSP <meta>: ${SITE_CSP}`);
+  console.log(`  canonical + Open Graph + JSON-LD -> ${SITE_URL}; sitemap.xml, robots.txt, ${OG_IMAGE}`);
 }
 
 // Run only when executed, so verify-runbook-dom.mjs can import SITE_CSP without rebuilding.
