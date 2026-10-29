@@ -1,0 +1,20 @@
+# Dependabot version updates: GitHub Actions (pinned by SHA in .github/workflows) and the npm
+# dev dependencies used to build and verify the site. Weekly, grouped to keep the PR count low.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      npm-dev-dependencies:
+        dependency-type: development
