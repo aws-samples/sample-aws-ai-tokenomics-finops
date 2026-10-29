@@ -282,7 +282,7 @@ export function assessment() {
 
       // The browser suggests a filename from document.title, so this is the only handle we have on it.
       var prevTitle = document.title;
-      document.title = 'genai-cost-assessment-' + (slug || 'assessment');
+      document.title = 'ai-tokenomics-assessment-' + (slug || 'assessment');
       document.body.classList.add('assess-printing');
       var cleanup = function () {
         document.body.classList.remove('assess-printing');
@@ -607,7 +607,7 @@ export function assessment() {
         var report = markdownReport(reportTitle(), sectionsFor(getScopes()));
         var blob = new Blob([report], { type: 'text/markdown' });
         var url = URL.createObjectURL(blob);
-        var a = document.createElement('a'); a.href = url; a.download = 'genai-cost-assessment-' + fileSlug() + '.md';
+        var a = document.createElement('a'); a.href = url; a.download = 'ai-tokenomics-assessment-' + fileSlug() + '.md';
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
         flash(dlBtn, 'Downloaded ✓');

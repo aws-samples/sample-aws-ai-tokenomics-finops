@@ -134,12 +134,9 @@ try {
 /**
  * Inline style attributes still tolerated in the generated JS, as a ratchet rather than a ban.
  *
- * These are not safe — `style-src 'self'` blocks them — they are the ones
- * `scripts/build-site.mjs` currently rewrites for us with byte-exact string patches: four
- * coverage-bar `style="width:N%"` writes and the old version tag. That coupling is fragile (edit
- * the string, break the deploy), so both are being removed: the coverage bar moves to SVG geometry
- * attributes and the beta tag to a class, after which this must go to 0 and the two `replaceOnce`
- * calls in the app build get deleted.
+ * These are not safe — `style-src 'self'` blocks them. The upstream build once rewrote two of them
+ * with byte-exact string patches (the coverage-bar widths and an old version tag); both are now
+ * authored correctly at source, so the tolerance is 0 and the site build carries no patches.
  *
  * The number only ever goes down. A new inline style is a hard failure, because the app build has
  * no patch for it and it would reach the browser and be blocked silently.

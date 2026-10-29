@@ -25,9 +25,8 @@
   /* --- cover block --- */
   #assess-print-root .apr-cover { border-bottom: 2px solid #232F3E; padding-bottom: 8px; margin-bottom: 16px; }
   #assess-print-root h1 { font-size: 17pt; margin: 0 0 4px; color: #232F3E; }
-  #assess-print-root .rb-beta-tag { font-size: .5em; vertical-align: middle; }
   #assess-print-root .apr-scope { font-size: 12pt; font-weight: 700; margin: 0 0 6px; color: #232F3E; }
-  /* Who ran the assessment. See assessorLine() in site/src/js/stamp.mjs. */
+  /* When the assessment was run (a date only). See assessorLine() in site/src/js/stamp.mjs. */
   #assess-print-root .apr-by { font-size: 9.5pt; color: #444; margin: 0 0 4px; }
   #assess-print-root .apr-cov { font-size: 9.5pt; color: #444; margin: 0; }
   #assess-print-root .apr-out { font-size: 9.5pt; color: #444; margin: 4px 0 0; font-style: italic; }

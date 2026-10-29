@@ -172,9 +172,6 @@ html[data-theme="dark"] {
 .assess-report p.ar-intro { margin: 6px 0 0; }
 
 #assess-print-root { display: none; }
-/* The version marker class once used in the exported report heading. Kept as a class (never an inline
-   style, which the site CSP blocks) in case a version marker returns. */
-.rb-beta-tag { font-size: .5em; vertical-align: middle; }
 
 /* --- Equation-first gap guidance ------------------------------------------------------------
    Each gap panel opens with one short answer (the equation, the rule, the table or the worked example),

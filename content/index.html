@@ -1795,9 +1795,6 @@ html[data-theme="dark"] {
 .assess-report p.ar-intro { margin: 6px 0 0; }
 
 #assess-print-root { display: none; }
-/* The version marker class once used in the exported report heading. Kept as a class (never an inline
-   style, which the site CSP blocks) in case a version marker returns. */
-.rb-beta-tag { font-size: .5em; vertical-align: middle; }
 
 /* --- Equation-first gap guidance ------------------------------------------------------------
    Each gap panel opens with one short answer (the equation, the rule, the table or the worked example),
@@ -2025,9 +2022,8 @@ details.assess-gap { margin-top: 12px; }
   /* --- cover block --- */
   #assess-print-root .apr-cover { border-bottom: 2px solid #232F3E; padding-bottom: 8px; margin-bottom: 16px; }
   #assess-print-root h1 { font-size: 17pt; margin: 0 0 4px; color: #232F3E; }
-  #assess-print-root .rb-beta-tag { font-size: .5em; vertical-align: middle; }
   #assess-print-root .apr-scope { font-size: 12pt; font-weight: 700; margin: 0 0 6px; color: #232F3E; }
-  /* Who ran the assessment. See assessorLine() in site/src/js/stamp.mjs. */
+  /* When the assessment was run (a date only). See assessorLine() in site/src/js/stamp.mjs. */
   #assess-print-root .apr-by { font-size: 9.5pt; color: #444; margin: 0 0 4px; }
   #assess-print-root .apr-cov { font-size: 9.5pt; color: #444; margin: 0; }
   #assess-print-root .apr-out { font-size: 9.5pt; color: #444; margin: 4px 0 0; font-style: italic; }
@@ -7365,7 +7361,7 @@ details.assess-gap { margin-top: 12px; }
       }
       root.innerHTML = html.join("\n");
       var prevTitle = document.title;
-      document.title = "genai-cost-assessment-" + (slug || "assessment");
+      document.title = "ai-tokenomics-assessment-" + (slug || "assessment");
       document.body.classList.add("assess-printing");
       var cleanup = function() {
         document.body.classList.remove("assess-printing");
@@ -7646,7 +7642,7 @@ details.assess-gap { margin-top: 12px; }
         var url = URL.createObjectURL(blob);
         var a = document.createElement("a");
         a.href = url;
-        a.download = "genai-cost-assessment-" + fileSlug() + ".md";
+        a.download = "ai-tokenomics-assessment-" + fileSlug() + ".md";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

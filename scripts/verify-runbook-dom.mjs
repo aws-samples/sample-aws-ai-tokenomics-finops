@@ -50,6 +50,37 @@ const ISSUE_FORM = 'https://github.com/aws-samples/sample-aws-ai-tokenomics-fino
  */
 const SITE_CSP_HEADER = SITE_CSP;
 
+/**
+ * The policy itself is asserted here, independently of build-site.mjs, so loosening SITE_CSP cannot pass
+ * by agreeing with itself. Each listed directive must be EXACTLY these sources; no directive may carry an
+ * `unsafe-*` keyword, a wildcard, or a scheme/host source other than the listed data:/blob:.
+ */
+const REQUIRED_CSP = {
+  'default-src': ["'self'"],
+  'script-src': ["'self'"],
+  'style-src': ["'self'"],
+  'connect-src': ["'self'"],
+  'object-src': ["'none'"],
+  'base-uri': ["'self'"],
+  'form-action': ["'none'"]
+};
+function cspProblems(policy) {
+  const problems = [];
+  const dirs = new Map(policy.split(';').map((d) => d.trim()).filter(Boolean)
+    .map((d) => { const [name, ...src] = d.split(/\s+/); return [name.toLowerCase(), src]; }));
+  for (const [name, want] of Object.entries(REQUIRED_CSP)) {
+    const got = dirs.get(name);
+    if (!got) problems.push(`${name} missing`);
+    else if (got.length !== want.length || want.some((w) => !got.includes(w))) problems.push(`${name} is "${got.join(' ')}", want "${want.join(' ')}"`);
+  }
+  for (const [name, src] of dirs) {
+    for (const s of src) {
+      if (/unsafe-/i.test(s) || s.includes('*') || (/:/.test(s) && !/^(data|blob):$/.test(s))) problems.push(`${name} allows ${s}`);
+    }
+  }
+  return problems;
+}
+
 const bold = (s) => `\x1b[1m${s}\x1b[0m`;
 const red = (s) => `\x1b[31m${s}\x1b[0m`;
 const green = (s) => `\x1b[32m${s}\x1b[0m`;
@@ -1042,6 +1073,7 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
   // The static site has no sign-in, so the report is dated rather than attributed.
   check(label, 'markdown carries an assessor/date stamp', !!md && /^Assessed on \d/m.test(md),
     (md || '').split('\n').find((l) => l.startsWith('Assessed')) || 'missing');
+  check(label, 'markdown report carries no injected link text', !!md && !/Suggest a change/.test(md), 'clean');
   check(label, 'markdown report heading carries the public brand',
     !!md && /^# AI Tokenomics FinOps assessment — /.test(md), (md || '').split('\n')[0]);
 
@@ -1425,7 +1457,7 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
     `${(dashboards.t1Markdown || '').length} chars`);
   check(label, 'Track 2 print is concise, track-only and explicitly incomplete',
     dashboards.print.printed && dashboards.print.cover
-      && /genai-cost-assessment-track-2/.test(dashboards.print.titleDuringPrint)
+      && /ai-tokenomics-assessment-track-2/.test(dashboards.print.titleDuringPrint)
       && /Track 2/.test(dashboards.print.text) && !/Track 1/.test(dashboards.print.text)
       && /Incomplete assessment/.test(dashboards.print.text)
       && /omits 31 unanswered questions/.test(dashboards.print.text)
@@ -2053,6 +2085,26 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
   check(label, 'Suggest a change carries no inline style', suggest.inlineStyles === 0, `${suggest.inlineStyles} found`);
   check(label, 'the footer carries a general Suggest a change link', suggest.footer === true, String(suggest.footer));
   check(label, 'no identity greeting or feedback controls remain', suggest.legacy === 0, `${suggest.legacy} element(s) (want 0)`);
+  // The model still reads clean names: the injected links changed nothing that derives from the document.
+  // Scroll to a lever first so the scroll-spy has re-rendered the rail, breadcrumb and stepper from it.
+  await page.evaluate(() => { const h = document.querySelector('#track-2 h4[id]'); if (h) h.scrollIntoView({ block: 'start', behavior: 'instant' }); });
+  await new Promise((r) => setTimeout(r, 250));
+  const leaked = await page.evaluate(() => {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const places = [];
+    let n;
+    while ((n = walker.nextNode())) {
+      if (!/Suggest a change/.test(n.nodeValue || '')) continue;
+      const p = n.parentElement;
+      // The only legitimate homes: the injected link bars, the footer line, and the hero note that names them.
+      if (!p || p.closest('script, style')) continue; // source text, not rendered text
+      if (p && p.closest('.suggest-change, .suggest-footer, .beta-note')) continue;
+      places.push((p && (p.id || p.className || p.tagName)) || '?');
+    }
+    return places;
+  });
+  check(label, 'lever names and derived views are unpolluted by the injected links', leaked.length === 0,
+    leaked.length ? leaked.slice(0, 5).join(', ') : 'no link text in the rail, sidebar, cost map, lever sheet or dashboards');
   await page.emulateMediaType('print');
   const suggestPrinted = await page.evaluate(() => [...document.querySelectorAll('.suggest-change, .suggest-footer')]
     .filter((n) => getComputedStyle(n).display !== 'none').length);
@@ -2074,6 +2126,9 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
       `${counts.linkTags} stylesheet link(s), ${counts.styleTags} inline style block(s)`);
     check(label, 'served page carries the site CSP <meta>', counts.cspMeta === SITE_CSP,
       counts.cspMeta ? 'matches build-site.mjs SITE_CSP' : 'missing');
+    const problems = cspProblems(counts.cspMeta || '');
+    check(label, 'the site CSP is strict (self-only scripts, styles and connections; nothing unsafe)', problems.length === 0,
+      problems.join('; ') || 'strict');
   } else {
     check(label, 'the self-contained file carries no CSP <meta> (it would block its own inline blocks)', counts.cspMeta === null,
       counts.cspMeta ? 'present' : 'absent');

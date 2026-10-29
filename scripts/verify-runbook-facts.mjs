@@ -53,6 +53,10 @@ const HTML_DIR = join(REPO_ROOT, 'content');
 const LIVE = join(HTML_DIR, 'index.html');
 // Same override as verify-runbook.mjs, so both checks always read the same baseline.
 const ARCHIVE_DIR = process.env.RUNBOOK_ARCHIVE_DIR || join(HTML_DIR, 'archive');
+if (process.env.RUNBOOK_ARCHIVE_DIR) {
+  // Never silent: a different floor changes what "nothing was lost" means. CI refuses to set it.
+  console.log(`\x1b[33m! baseline overridden by RUNBOOK_ARCHIVE_DIR=${process.env.RUNBOOK_ARCHIVE_DIR}\x1b[0m`);
+}
 const OUT_DIR = join(REPO_ROOT, '.verify-out');
 const BASELINE = join(OUT_DIR, 'runbook-facts-baseline.json');
 
