@@ -1,8 +1,9 @@
 # AI Tokenomics FinOps
 
-A self-assessment runbook for AI cost optimization on AWS. Generative AI is billed by the token, so cost
-follows usage directly and rises as adoption spreads. This runbook sets out the decisions that move the
-bill for two kinds of team, as two tracks:
+A GenAI FinOps self-assessment runbook for AI cost optimization on AWS, focused on Amazon Bedrock cost
+optimization and the LLM token cost of AI coding assistants and agentic AI applications. Generative AI is
+billed by the token, so cost follows usage directly and rises as adoption spreads. This runbook sets out
+the decisions that move the bill for two kinds of team, as two tracks:
 
 - **Track 1, AI Coding Assistant:** teams that adopt an AI coding assistant and tune how it is used.
 - **Track 2, Purpose-Built Agentic AI Application:** teams that build and operate an agent of their own on
@@ -41,8 +42,9 @@ no network calls of its own (the build enforces this under a strict Content-Secu
 | `content/archive/` | The content baseline the verifiers diff against. See its README before changing it. |
 | `site/src/css/`, `site/src/js/` | The runbook's presentation and behaviour as modules. `npm run build:runbook` bundles them into the generated regions of `content/index.html`. |
 | `scripts/` | `build-runbook.mjs`, `build-site.mjs` and the three verifiers. |
+| `site/static/` | Committed static assets copied into the site as-is: `og-image.png`, the 1200x630 link-preview image (regenerate with `scripts/make-og-image.mjs`). |
 | `tools/calculators/` | A stdlib-only Python resolver from Bedrock model IDs to AWS Price List rows, with tests. |
-| `dist/` | Build output (git-ignored). This is what is published to GitHub Pages. |
+| `dist/` | Build output (git-ignored). This is what is published to GitHub Pages, including the canonical, Open Graph and JSON-LD head tags, `sitemap.xml` and `robots.txt` that `build-site.mjs` emits. |
 
 Never edit inside the `@generated:*` markers in `content/index.html`: the next build overwrites them.
 Edit `site/src/` and rebuild.
