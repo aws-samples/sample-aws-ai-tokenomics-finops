@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "_about": "Canonical Bedrock model-ID to AWS Price List join map (issue #14). Rows are keyed by the structured tuple (model_id, region, dimension) and store the EXACT structured join fields (usagetype + regionCode, with service_tier/operation as supplementary confirmations). The resolver matches offer rows by structured equality on these fields; it never parses the free-text description or the model display name. See pricing/README.md for the finding, the join method, and the maintenance note. Prices are per 1,000,000 tokens (USD). status=verified rows carry a real usagetype read from the 2026-07-07 bulk offer plus a resolvable source_url and verified_date; status=unverified_pending_join rows are in scope but not yet resolvable (join.usagetype, price_per_1M_usd, verified_date are all null) and must be populated from a signed GetProducts or the dated pricing page.",
+  "_about": "Canonical Bedrock model-ID to AWS Price List join map (issue #14). Rows are keyed by the structured tuple (model_id, region, dimension) and store the EXACT structured join fields (usagetype + regionCode, with service_tier/operation as supplementary confirmations). The resolver matches offer rows by structured equality on these fields; it never parses the free-text description or the model display name. See pricing/README.md for the finding, the join method, and the maintenance note. Prices are per 1,000,000 tokens (USD). status=verified rows carry a real usagetype read from the public bulk offer that prices that model (AmazonBedrock for the legacy display-name rows, AmazonBedrockFoundationModels for the current Claude MP: rows, which also pin join.servicename because their usagetype is shared by every model in the Region) plus a resolvable source_url and verified_date; status=unverified_pending_join rows are in scope but not yet resolvable (join.usagetype, price_per_1M_usd, verified_date are all null) and must be populated from a signed GetProducts or the dated pricing page.",
   "rows": [
     {
       "model_id": "anthropic.claude-v2:0",
@@ -14,8 +14,8 @@
       },
       "price_per_1M_usd": 8.00,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "legacy Claude family; base model ID from the AWS Bedrock model catalogue",
       "note": "Legacy display-name usagetype convention (no service_tier). Illustrative legacy figure, not a current-generation price."
@@ -32,8 +32,8 @@
       },
       "price_per_1M_usd": 8.00,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "legacy Claude family; base model ID from the AWS Bedrock model catalogue",
       "note": "Legacy display-name usagetype convention (no service_tier)."
@@ -50,8 +50,8 @@
       },
       "price_per_1M_usd": 0.80,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "legacy Claude family; base model ID from the AWS Bedrock model catalogue",
       "note": "Legacy display-name usagetype convention (no service_tier)."
@@ -68,8 +68,8 @@
       },
       "price_per_1M_usd": 0.25,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "VERIFIED base model ID (AWS model-lifecycle page)",
       "note": "Legacy display-name usagetype convention (no service_tier)."
@@ -86,8 +86,8 @@
       },
       "price_per_1M_usd": 3.00,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "base model ID from the AWS Bedrock model catalogue",
       "note": "Legacy display-name usagetype convention (no service_tier). Read this pass at 0.00300 per 1K tokens, so 3.00 per 1M tokens."
@@ -104,8 +104,8 @@
       },
       "price_per_1M_usd": 0.80,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "base model ID from the AWS Bedrock model catalogue",
       "note": "Included so the map carries a full four-dimension (input, output, cache_read, cache_write) example that the legacy Claude rows lack."
@@ -122,8 +122,8 @@
       },
       "price_per_1M_usd": 3.20,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "base model ID from the AWS Bedrock model catalogue",
       "note": "Output dimension. The offer row's description text mislabels this as input-tokens, which is exactly why matching keys on usagetype (output-tokens), not on the description prose."
@@ -140,8 +140,8 @@
       },
       "price_per_1M_usd": 0.20,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "base model ID from the AWS Bedrock model catalogue",
       "note": "Prompt cache read dimension."
@@ -158,11 +158,11 @@
       },
       "price_per_1M_usd": 0.00,
       "unit_source": "1K tokens",
-      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20260707080509/us-west-2/index.json",
-      "verified_date": "2026-07-07",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/20261102165015/us-west-2/index.json",
+      "verified_date": "2026-11-05",
       "status": "verified",
       "id_status": "base model ID from the AWS Bedrock model catalogue",
-      "note": "Prompt cache write dimension; the 2026-07-07 offer lists this at 0.00 per 1K tokens."
+      "note": "Prompt cache write dimension; the 2026-11-02 offer (version 20261102165015) still lists this at 0.00 per 1K tokens."
     },
     {
       "model_id": "anthropic.claude-sonnet-4-5-20250929-v1:0",
@@ -170,17 +170,18 @@
       "region": "ap-southeast-2",
       "dimension": "input",
       "join": {
-        "usagetype": null,
+        "usagetype": "APS2-MP:APS2_InputTokenCount-Units",
         "service_tier": null,
-        "operation": null
+        "operation": "",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
       },
-      "price_per_1M_usd": null,
-      "unit_source": null,
-      "source_url": null,
-      "verified_date": null,
-      "status": "unverified_pending_join",
-      "id_status": "date-stamp 20250929 from issue #14 text; UNVERIFIED against the model card (Active family, not on the model-lifecycle page)",
-      "note": "Not present in the 2026-07-07 bulk offer, and ap-southeast-2 has zero Anthropic offer rows today. Populate join.usagetype, price_per_1M_usd, and verified_date from a signed GetProducts (ServiceCode=AmazonBedrock, filter regionCode) or the dated Bedrock pricing page."
+      "price_per_1M_usd": 3.30,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/ap-southeast-2/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card for Claude Sonnet 4.5)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU PCX565G8NSREY48M, offer description 'Million Input Tokens Regional'. The global. profile is a separate row at 3.00 (APS2-MP:APS2_InputTokenCount_Global-Units) and is not mapped here."
     },
     {
       "model_id": "anthropic.claude-sonnet-4-5-20250929-v1:0",
@@ -188,17 +189,18 @@
       "region": "ap-southeast-2",
       "dimension": "output",
       "join": {
-        "usagetype": null,
+        "usagetype": "APS2-MP:APS2_OutputTokenCount-Units",
         "service_tier": null,
-        "operation": null
+        "operation": "",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
       },
-      "price_per_1M_usd": null,
-      "unit_source": null,
-      "source_url": null,
-      "verified_date": null,
-      "status": "unverified_pending_join",
-      "id_status": "date-stamp 20250929 from issue #14 text; UNVERIFIED against the model card (Active family, not on the model-lifecycle page)",
-      "note": "See the matching input row. Populate from a signed GetProducts or the dated pricing page."
+      "price_per_1M_usd": 16.50,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/ap-southeast-2/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card for Claude Sonnet 4.5)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU 4XD5362TX5X4EBU3, offer description 'Million Response Tokens Regional'. The global. profile is a separate row at 15.00 and is not mapped here."
     },
     {
       "model_id": "anthropic.claude-opus-4-1-20250805-v1:0",
@@ -216,7 +218,7 @@
       "verified_date": null,
       "status": "unverified_pending_join",
       "id_status": "VERIFIED base model ID (AWS model-lifecycle page; Legacy 2026-07-08, EOL 2027-01-08)",
-      "note": "Verified model ID, but no resolvable offer row in scope yet. Populate from a signed GetProducts or the dated pricing page."
+      "note": "Still pending, checked 2026-11-05: the AmazonBedrockFoundationModels offer (version 20261012084008) prices Claude Opus 4.1 in us-west-2 (USW2-MP:USW2_InputTokenCount-Units, 15.00) but has no ap-southeast-2 SKU for it, and the AmazonBedrock offer has none either. Do not copy the us-west-2 price into a Sydney row. Populate only when an ap-southeast-2 SKU appears, or re-key this row to a Region the offer prices."
     },
     {
       "model_id": "anthropic.claude-opus-4-1-20250805-v1:0",
@@ -234,10 +236,10 @@
       "verified_date": null,
       "status": "unverified_pending_join",
       "id_status": "VERIFIED base model ID (AWS model-lifecycle page; Legacy 2026-07-08, EOL 2027-01-08)",
-      "note": "See the matching input row."
+      "note": "Still pending for the same reason as the matching input row: no ap-southeast-2 SKU in either bulk offer (us-west-2 lists USW2-MP:USW2_OutputTokenCount-Units at 75.00)."
     },
     {
-      "model_id": "anthropic.claude-opus-4-5-UNVERIFIED_DATE-v1:0",
+      "model_id": "anthropic.claude-opus-4-5-20251101-v1:0",
       "display_name": "Claude Opus 4.5",
       "region": "ap-southeast-2",
       "dimension": "input",
@@ -251,11 +253,11 @@
       "source_url": null,
       "verified_date": null,
       "status": "unverified_pending_join",
-      "id_status": "PLACEHOLDER date segment (UNVERIFIED_DATE). Do NOT invent the date-stamp; confirm the exact anthropic.claude-opus-4-5-YYYYMMDD-v1:0 string on the AWS model card before use.",
-      "note": "Active family, not on the model-lifecycle page. The date segment is a labelled placeholder, not a real date. Replace it and populate join.usagetype/price/verified_date from a signed GetProducts or the model card."
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card for Claude Opus 4.5, checked 2026-11-05); replaces the earlier UNVERIFIED_DATE placeholder",
+      "note": "Still pending, checked 2026-11-05: the AmazonBedrockFoundationModels offer (version 20261012084008) prices Claude Opus 4.5 in us-west-2 (USW2-MP:USW2_InputTokenCount-Units, 5.50 In-Region; 5.00 global) but has no ap-southeast-2 SKU for it, and the AmazonBedrock offer has none either. Do not copy the us-west-2 price into a Sydney row. Populate only when an ap-southeast-2 SKU appears, or re-key this row to a Region the offer prices."
     },
     {
-      "model_id": "anthropic.claude-opus-4-5-UNVERIFIED_DATE-v1:0",
+      "model_id": "anthropic.claude-opus-4-5-20251101-v1:0",
       "display_name": "Claude Opus 4.5",
       "region": "ap-southeast-2",
       "dimension": "output",
@@ -269,44 +271,46 @@
       "source_url": null,
       "verified_date": null,
       "status": "unverified_pending_join",
-      "id_status": "PLACEHOLDER date segment (UNVERIFIED_DATE); confirm the exact ID on the AWS model card before use.",
-      "note": "See the matching input row. The date segment is a labelled placeholder, not a real date."
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card for Claude Opus 4.5, checked 2026-11-05); replaces the earlier UNVERIFIED_DATE placeholder",
+      "note": "Still pending for the same reason as the matching input row: no ap-southeast-2 SKU in either bulk offer (us-west-2 lists USW2-MP:USW2_OutputTokenCount-Units at 27.50 In-Region; 25.00 global)."
     },
     {
-      "model_id": "anthropic.claude-haiku-4-5-UNVERIFIED_DATE-v1:0",
+      "model_id": "anthropic.claude-haiku-4-5-20251001-v1:0",
       "display_name": "Claude Haiku 4.5",
       "region": "ap-southeast-2",
       "dimension": "input",
       "join": {
-        "usagetype": null,
+        "usagetype": "APS2-MP:APS2_InputTokenCount-Units",
         "service_tier": null,
-        "operation": null
+        "operation": "",
+        "servicename": "Claude Haiku 4.5 (Amazon Bedrock Edition)"
       },
-      "price_per_1M_usd": null,
-      "unit_source": null,
-      "source_url": null,
-      "verified_date": null,
-      "status": "unverified_pending_join",
-      "id_status": "PLACEHOLDER date segment (UNVERIFIED_DATE). Do NOT invent the date-stamp; confirm the exact anthropic.claude-haiku-4-5-YYYYMMDD-v1:0 string on the AWS model card before use.",
-      "note": "Active family, not on the model-lifecycle page. The date segment is a labelled placeholder, not a real date. Replace it and populate join.usagetype/price/verified_date from a signed GetProducts or the model card."
+      "price_per_1M_usd": 1.10,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/ap-southeast-2/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card for Claude Haiku 4.5, checked 2026-11-05); replaces the earlier UNVERIFIED_DATE placeholder",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU 2NQNKY7KEQKJPGCD, offer description 'Million Input Tokens Regional'. The global. profile is a separate row at 1.00 (APS2-MP:APS2_InputTokenCount_Global-Units) and is not mapped here."
     },
     {
-      "model_id": "anthropic.claude-haiku-4-5-UNVERIFIED_DATE-v1:0",
+      "model_id": "anthropic.claude-haiku-4-5-20251001-v1:0",
       "display_name": "Claude Haiku 4.5",
       "region": "ap-southeast-2",
       "dimension": "output",
       "join": {
-        "usagetype": null,
+        "usagetype": "APS2-MP:APS2_OutputTokenCount-Units",
         "service_tier": null,
-        "operation": null
+        "operation": "",
+        "servicename": "Claude Haiku 4.5 (Amazon Bedrock Edition)"
       },
-      "price_per_1M_usd": null,
-      "unit_source": null,
-      "source_url": null,
-      "verified_date": null,
-      "status": "unverified_pending_join",
-      "id_status": "PLACEHOLDER date segment (UNVERIFIED_DATE); confirm the exact ID on the AWS model card before use.",
-      "note": "See the matching input row. The date segment is a labelled placeholder, not a real date."
+      "price_per_1M_usd": 5.50,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/ap-southeast-2/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card for Claude Haiku 4.5, checked 2026-11-05); replaces the earlier UNVERIFIED_DATE placeholder",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU UM84PHMW42ATFREN, offer description 'Million Response Tokens Regional'. The global. profile is a separate row at 5.00 (APS2-MP:APS2_OutputTokenCount_Global-Units) and is not mapped here."
     }
   ]
 }

@@ -144,7 +144,8 @@ def resolve(
        :class:`PendingCoverageError`: the model is in scope but not yet resolvable.
     3. Otherwise match ``offer_rows`` on ``attributes.regionCode == region`` AND
        ``attributes.usagetype == entry.join.usagetype``, further constrained by
-       ``service_tier`` / ``operation`` only where the entry specifies a non-null value.
+       ``service_tier`` / ``operation`` / ``servicename`` only where the entry specifies a
+       non-null value.
        Zero matches raise :class:`MissingCoverageError`; two or more raise
        :class:`AmbiguousMatchError`; exactly one is returned.
     """
@@ -171,6 +172,11 @@ def resolve(
 
     expected_service_tier = join.get("service_tier")
     expected_operation = join.get("operation")
+    # Marketplace-style (MP:) usagetypes name only the dimension, and every model in the
+    # Region shares them, so those rows also pin the exact servicename (the Marketplace
+    # product name, which Cost and Usage Reports carry too). It is exact equality, never a
+    # pattern match. Rows that leave it null are not constrained on it.
+    expected_servicename = join.get("servicename")
 
     matches = []  # type: List[Dict[str, Any]]
     for row in offer_rows:
@@ -182,6 +188,8 @@ def resolve(
         if expected_service_tier is not None and attributes.get("service_tier") != expected_service_tier:
             continue
         if expected_operation is not None and attributes.get("operation", "") != expected_operation:
+            continue
+        if expected_servicename is not None and attributes.get("servicename") != expected_servicename:
             continue
         matches.append(row)
 
@@ -201,8 +209,10 @@ def resolve(
 def to_per_1M_usd(row: Dict[str, Any]) -> float:
     """Convert an offer row's price to USD per 1,000,000 tokens.
 
-    The bulk offer quotes token pricing per ``1K tokens``, so this multiplies by 1000.
-    An unrecognised unit raises ``ValueError`` rather than silently returning a wrong scale.
+    The ``AmazonBedrock`` offer quotes token pricing per ``1K tokens`` (multiply by 1000);
+    the ``AmazonBedrockFoundationModels`` offer quotes it per ``1M tokens`` (already per
+    1M). Any other unit (for example ``1M TPM Hour`` or ``hour``) raises ``ValueError``
+    rather than silently returning a wrong scale.
     """
     unit = row.get("unit")
     price = row.get("price_per_unit_usd")
@@ -210,7 +220,11 @@ def to_per_1M_usd(row: Dict[str, Any]) -> float:
         raise ValueError("offer row has no price_per_unit_usd")
     if unit == "1K tokens":
         return price * 1000.0
-    raise ValueError("unrecognised offer unit {0!r}; expected '1K tokens'".format(unit))
+    if unit == "1M tokens":
+        return price
+    raise ValueError(
+        "unrecognised offer unit {0!r}; expected '1K tokens' or '1M tokens'".format(unit)
+    )
 
 
 def _parse_date(value: Union[str, datetime.date]) -> datetime.date:
