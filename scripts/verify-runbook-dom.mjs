@@ -503,8 +503,8 @@ const EXPECT = {
   /** The three user-visible routes, in navigation order. */
   panes: ['overview', 't1', 't2'],
   tracks: {
-    t1: { levers: 11, questions: 35, references: 58, scopes: ['t1-model-inference', 't1-agent-harness', 't1-end-user'] },
-    t2: { levers: 15, questions: 34, references: 63, scopes: ['model-inference', 'agent-harness', 'end-user'] }
+    t1: { levers: 11, questions: 35, references: 61, scopes: ['t1-model-inference', 't1-agent-harness', 't1-end-user'] },
+    t2: { levers: 15, questions: 34, references: 76, scopes: ['model-inference', 'agent-harness', 'end-user'] }
   },
   /** Every lever states a saving since the 2026-10-02 Track 2 consolidation (no `data-lever-kind="cross-reference"` lever remains). */
   savesHeads: 26,
@@ -1832,14 +1832,14 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
     seen.overview = count();
     return seen;
   });
-  check(label, 'references are scoped to exactly 58 for Track 1 and 59 for Track 2',
+  check(label, 'references are scoped to exactly 61 for Track 1 and 76 for Track 2',
     scopedReferences.t1 === EXPECT.tracks.t1.references && scopedReferences.t2 === EXPECT.tracks.t2.references
       && scopedReferences.t1Visible && scopedReferences.t2Visible,
     `Track 1=${scopedReferences.t1}, Track 2=${scopedReferences.t2}`);
-  check(label, 'landing retains all 136 canonical references', scopedReferences.overview === 136,
+  check(label, 'landing retains all 152 canonical references', scopedReferences.overview === 152,
     `${scopedReferences.overview} visible reference entries`);
   check(label, 'reference copy names the active track and count',
-    /58 references.*Track 1/.test(scopedReferences.t1Note) && /63 references.*Track 2/.test(scopedReferences.t2Note),
+    /61 references.*Track 1/.test(scopedReferences.t1Note) && /76 references.*Track 2/.test(scopedReferences.t2Note),
     `${scopedReferences.t1Note} | ${scopedReferences.t2Note}`);
 
   // Print takes the WHOLE runbook, not the pane you happen to be on. 66-tabs.css scopes the hiding rules to
