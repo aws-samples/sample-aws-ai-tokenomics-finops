@@ -1,7 +1,7 @@
 {
   "formatVersion": "v1.0",
   "offerCode": "AmazonBedrock",
-  "_source": "extract of public bulk offer AmazonBedrock/20260707080509 us-west-2 (real rows, verbatim)",
+  "_source": "extract of public bulk offer AmazonBedrock/20261102165015 us-west-2 (real rows, verbatim)",
   "products": {
     "A2WD2YA9948EURKQ": {
       "sku": "A2WD2YA9948EURKQ",
@@ -253,7 +253,7 @@
         "A2WD2YA9948EURKQ.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "A2WD2YA9948EURKQ",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "A2WD2YA9948EURKQ.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "A2WD2YA9948EURKQ.JRTCKXETXF.6YS6EN2CT7",
@@ -274,7 +274,7 @@
         "KBBA49UFQ9CM4ASX.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "KBBA49UFQ9CM4ASX",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "KBBA49UFQ9CM4ASX.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "KBBA49UFQ9CM4ASX.JRTCKXETXF.6YS6EN2CT7",
@@ -295,7 +295,7 @@
         "PYUKD22DXU8H7FYE.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "PYUKD22DXU8H7FYE",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "PYUKD22DXU8H7FYE.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "PYUKD22DXU8H7FYE.JRTCKXETXF.6YS6EN2CT7",
@@ -316,7 +316,7 @@
         "9FQGD3BYS3HA6YPX.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "9FQGD3BYS3HA6YPX",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "9FQGD3BYS3HA6YPX.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "9FQGD3BYS3HA6YPX.JRTCKXETXF.6YS6EN2CT7",
@@ -337,7 +337,7 @@
         "9466MFKTBJUDFPCU.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "9466MFKTBJUDFPCU",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "9466MFKTBJUDFPCU.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "9466MFKTBJUDFPCU.JRTCKXETXF.6YS6EN2CT7",
@@ -358,7 +358,7 @@
         "BUM882XYWY38Y3QY.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "BUM882XYWY38Y3QY",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "BUM882XYWY38Y3QY.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "BUM882XYWY38Y3QY.JRTCKXETXF.6YS6EN2CT7",
@@ -379,7 +379,7 @@
         "WQNS4BUT932RY5UM.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "WQNS4BUT932RY5UM",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "WQNS4BUT932RY5UM.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "WQNS4BUT932RY5UM.JRTCKXETXF.6YS6EN2CT7",
@@ -400,7 +400,7 @@
         "WPHJAQC2S9VW3FBS.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "WPHJAQC2S9VW3FBS",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "WPHJAQC2S9VW3FBS.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "WPHJAQC2S9VW3FBS.JRTCKXETXF.6YS6EN2CT7",
@@ -421,7 +421,7 @@
         "R34DD6DF6G4EAF9D.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "R34DD6DF6G4EAF9D",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "R34DD6DF6G4EAF9D.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "R34DD6DF6G4EAF9D.JRTCKXETXF.6YS6EN2CT7",
@@ -442,7 +442,7 @@
         "QYGBMAKK2MUV9DTV.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "QYGBMAKK2MUV9DTV",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "QYGBMAKK2MUV9DTV.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "QYGBMAKK2MUV9DTV.JRTCKXETXF.6YS6EN2CT7",
@@ -463,7 +463,7 @@
         "BFHEWFGGKCP6BTCJ.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "BFHEWFGGKCP6BTCJ",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "BFHEWFGGKCP6BTCJ.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "BFHEWFGGKCP6BTCJ.JRTCKXETXF.6YS6EN2CT7",
@@ -484,7 +484,7 @@
         "43UAUTRXYWMDAHSK.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "43UAUTRXYWMDAHSK",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "43UAUTRXYWMDAHSK.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "43UAUTRXYWMDAHSK.JRTCKXETXF.6YS6EN2CT7",
@@ -505,7 +505,7 @@
         "MTUMM3A2MWFM736Q.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "MTUMM3A2MWFM736Q",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "MTUMM3A2MWFM736Q.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "MTUMM3A2MWFM736Q.JRTCKXETXF.6YS6EN2CT7",
@@ -526,7 +526,7 @@
         "RDFMT62NNFCKC2U2.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "RDFMT62NNFCKC2U2",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "RDFMT62NNFCKC2U2.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "RDFMT62NNFCKC2U2.JRTCKXETXF.6YS6EN2CT7",
@@ -547,7 +547,7 @@
         "6FSTCH3VGRDDMC28.JRTCKXETXF": {
           "offerTermCode": "JRTCKXETXF",
           "sku": "6FSTCH3VGRDDMC28",
-          "effectiveDate": "2026-07-01T00:00:00Z",
+          "effectiveDate": "2026-10-01T00:00:00Z",
           "priceDimensions": {
             "6FSTCH3VGRDDMC28.JRTCKXETXF.6YS6EN2CT7": {
               "rateCode": "6FSTCH3VGRDDMC28.JRTCKXETXF.6YS6EN2CT7",

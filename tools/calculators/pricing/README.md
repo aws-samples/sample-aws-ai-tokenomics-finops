@@ -43,15 +43,28 @@ all products in the 2026-07-07 `us-west-2` offer, offer version `20260707080509`
 Note what is absent: there is **no `modelId` field** (nor `model_id`, nor `apiModelId`).
 The closest structured field is `model`, which is a display name (`"Claude 3 Sonnet"`),
 not the API model ID. Empirically, **0 of 1,007 products contain `anthropic.claude`** in
-any attribute value in the `us-west-2` offer. The current Claude family (Sonnet 4.5,
-Opus 4.x, Haiku 4.5) is not in the bulk offer at all; the only Anthropic rows are five
+any attribute value in the `us-west-2` offer.
+
+The `AmazonBedrock` offer is not the only one. In it, the only Anthropic rows are five
 legacy `-input-tokens` rows (Claude 2.0, 2.1, Instant, 3 Haiku, 3 Sonnet), and
-`ap-southeast-2` has zero Anthropic rows.
+`ap-southeast-2` has none. The **current Claude family is in the public bulk Price List**,
+in the separate `AmazonBedrockFoundationModels` offer
+(`offers/v1.0/aws/AmazonBedrockFoundationModels/current/index.json`, same plain-HTTPS,
+no-credentials access, same `products{}` plus `terms.OnDemand{}` schema). Re-checked on
+2026-11-05 against offer version `20261012084008`: `ap-southeast-2` carries Sonnet 4.5,
+Haiku 4.5 and the newer Claude models under Marketplace-style `MP:` usagetypes, for
+example `APS2-MP:APS2_InputTokenCount-Units` for In-Region input tokens and
+`APS2-MP:APS2_InputTokenCount_Global-Units` for the `global.` profile. That offer has 10
+attribute keys (`feature`, `inferenceType`, `location`, `locationType`, `model`,
+`operation`, `provider`, `regionCode`, `servicename`, `usagetype`), and it still has no
+model-ID field. Opus 4.1 and Opus 4.5 are priced there in `us-west-2` but have no
+`ap-southeast-2` SKU, so those map rows stay pending.
 
 Sources: [GetProducts API reference](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_pricing_GetProducts.html),
 [GetAttributeValues API reference](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_pricing_GetAttributeValues.html),
 [Reading an offer file](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/reading-an-offer.html),
-[Bedrock pricing bulk offer region index](https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/region_index.json).
+[Bedrock pricing bulk offer region index](https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/region_index.json),
+[Bedrock foundation-models bulk offer region index](https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/current/region_index.json).
 
 ## Guidance: match usage to price without brittle regex (AC3)
 
@@ -66,12 +79,13 @@ raw usagetype versus API slug. It breaks the day AWS tweaks any string, and in a
 path a silent break ships a wrong number.
 
 Match instead by **structured equality on `usagetype` plus `regionCode`**, confirmed with
-`service_tier` and `operation` where those are present. Concretely, for a curated row:
+`service_tier`, `operation` and `servicename` where those are present. Concretely, for a
+curated row:
 
 ```
 price_row  <=  match on ( attributes.regionCode == region
                           AND attributes.usagetype == curated join.usagetype )
-               confirm with ( service_tier, operation ) where the curated row sets them
+               confirm with ( service_tier, operation, servicename ) where the curated row sets them
 ```
 
 `resolve(model_id, region, dimension, offer_rows)` does exactly this and returns exactly
@@ -89,36 +103,57 @@ Two `usagetype` conventions exist, so do not try to derive a model ID from the s
 - **Newer provider-slug style** (Mistral, Qwen, Kimi, and others):
   `USW2-mistral.mistral-large-3-675b-instruct-mantle-input-tokens-standard`, which embeds
   a provider-prefixed slug (close to, but not identical to, the invoke-time model ID, no
-  `-v1:0` suffix) and does populate `service_tier`. The `-mantle-` segment is part of the AWS billing identifier, so the parser matches it as written. Claude does not use this style, so you
-  cannot lift a Claude model ID from any usagetype. That is why a curated map is required.
+  `-v1:0` suffix) and does populate `service_tier`. The `-mantle-` segment is part of the AWS billing identifier, so the parser matches it as written.
+- **Marketplace style** (current Claude, in the `AmazonBedrockFoundationModels` offer):
+  `APS2-MP:APS2_InputTokenCount-Units`, which names only the Region and the dimension. Every
+  model in the Region shares it (Sonnet 4.5, Sonnet 4.6, Haiku 4.5 and Claude 3 Haiku all
+  bill input as `APS2-MP:APS2_InputTokenCount-Units`), so `usagetype` plus `regionCode`
+  alone is ambiguous by design. These rows also pin `join.servicename`, the exact
+  Marketplace product name (`"Claude Sonnet 4.5 (Amazon Bedrock Edition)"`), which is the
+  same product name Cost and Usage Reports carry. It is compared by exact equality, never by
+  pattern, and a row that leaves it null is not constrained on it. Without it the resolver
+  raises `AmbiguousMatchError`, which a test asserts.
 
-Unit: token rows are priced per `1K tokens`, so multiply by 1000 to reach per-1M tokens.
-`to_per_1M_usd(row)` does this and rejects an unrecognised unit rather than silently
-returning a wrong scale.
+Neither Claude convention embeds the API model ID, so you cannot lift a Claude model ID from
+any usagetype. That is why a curated map is required.
+
+Unit: `AmazonBedrock` token rows are priced per `1K tokens` (multiply by 1000 to reach
+per-1M tokens); `AmazonBedrockFoundationModels` token rows are priced per `1M tokens`
+(already per 1M). `to_per_1M_usd(row)` handles both and rejects any other unit (such as the
+`1M TPM Hour` reserved rows) rather than silently returning a wrong scale.
 
 Cross-region: a geographic inference profile (`us.` / `eu.` / `apac.` prefix) is billed
-at the source Region and adds no premium, so the resolver strips the prefix to the base
-model ID rather than duplicating a row per prefix. Only the `global.` profile has its own
-lower-priced `-cross-region-global` usagetype, so only that warrants its own row, and only
-for models where AWS publishes it.
+at the source Region and adds no premium over In-Region, so the resolver strips the prefix
+to the base model ID rather than duplicating a row per prefix. Only the `global.` profile
+has its own lower-priced usagetype (`-cross-region-global` in `AmazonBedrock`, `_Global` in
+`AmazonBedrockFoundationModels`), so only that warrants its own row, and only for models
+where AWS publishes it. The mapped Sonnet 4.5 and Haiku 4.5 rows are the In-Region / Geo
+price; the `global.` price is about 10% lower and is not mapped yet.
 
 ## Price discipline (AC4)
 
-The map does not hardcode volatile current-generation per-token prices. Every
+The map does not hardcode volatile current-generation per-token prices from memory. Every
 `status == unverified_pending_join` row has `price_per_1M_usd` set to `null`; every row
 that does carry a non-null `price_per_1M_usd` carries a resolvable AWS `source_url` and a
-`verified_date`. The only priced rows are the legacy figures read directly from the
-2026-07-07 bulk offer (for example Claude 3 Sonnet at `$3.00 / 1M input tokens`, that is
-`0.00300 per 1K tokens` times 1000). Current Opus 4.x, Sonnet 4.5, and Haiku 4.5 numbers
-are left as `unverified_pending_join` for a maintainer to read live and date.
+`verified_date`, and a test asserts that price equals the price on the offer row it
+resolves to. As of 2026-11-05:
 
-Model IDs for the Active Claude family (Opus 4.5, Haiku 4.5, and 3.5 Haiku) are marked
-UNVERIFIED: their exact date-stamps are not on the AWS model-lifecycle page, which lists
-only Legacy models. Those rows carry a clearly labelled placeholder date segment
-(`UNVERIFIED_DATE`) instead of an invented date; confirm the exact
-`anthropic.claude-...-YYYYMMDD-v1:0` string on the model card before use. Claude Sonnet
-4.5 (`20250929`) and Opus 4.1 (`20250805`) use the IDs from the original request and the
-model-lifecycle page respectively.
+- The legacy figures are read from the `AmazonBedrock` offer, version `20261102165015`
+  (for example Claude 3 Sonnet at `$3.00 / 1M input tokens`, that is `0.00300 per 1K
+  tokens` times 1000). They are unchanged since the 2026-07-07 offer.
+- Sonnet 4.5 and Haiku 4.5 in `ap-southeast-2` are read from the
+  `AmazonBedrockFoundationModels` offer, version `20261012084008` (Sonnet 4.5 `$3.30` input
+  and `$16.50` output, Haiku 4.5 `$1.10` input and `$5.50` output, per 1M tokens,
+  In-Region).
+- Opus 4.1 and Opus 4.5 in `ap-southeast-2` stay `unverified_pending_join`: neither offer
+  has a Sydney SKU for them. Do not copy a `us-west-2` price into a Sydney row.
+
+Model IDs: Sonnet 4.5 (`anthropic.claude-sonnet-4-5-20250929-v1:0`), Haiku 4.5
+(`anthropic.claude-haiku-4-5-20251001-v1:0`) and Opus 4.5
+(`anthropic.claude-opus-4-5-20251101-v1:0`) were confirmed on their Amazon Bedrock model
+cards on 2026-11-05, which replaces the earlier `UNVERIFIED_DATE` placeholders. Opus 4.1
+(`20250805`) is from the model-lifecycle page. Never invent a date-stamp: if a new model's
+card is not yet published, use a clearly labelled placeholder as before.
 
 ## Maintenance note: new model launches (AC3)
 
@@ -128,9 +163,12 @@ When a new model launches:
    cache_read, and cache_write dimensions) with `status = unverified_pending_join` and
    `join.usagetype`, `price_per_1M_usd`, and `verified_date` all `null`. This makes a
    missing model a visible flagged row, not a silent gap.
-2. Populate `join.usagetype`, `price_per_1M_usd`, and `verified_date` from a signed
-   `GetProducts` (`ServiceCode=AmazonBedrock`, filter `regionCode`) or the dated Bedrock
-   pricing page, then set `status = verified`.
+2. Populate `join.usagetype`, `price_per_1M_usd`, `unit_source`, `source_url` and
+   `verified_date` from the dated public bulk offer that prices the model (`AmazonBedrock`
+   or `AmazonBedrockFoundationModels`; a signed `GetProducts` with the same `ServiceCode`
+   works too), then set `status = verified`. For an `MP:` usagetype also set
+   `join.servicename` to the row's exact `servicename`, and add the real offer rows to the
+   matching fixture under `../tests/fixtures/`.
 3. Re-run `python3 -m unittest discover` from `tools/calculators/`. The
    coverage-manifest test flags any supported model still lacking input and output rows,
    and the exactly-one-resolution test turns a renamed `usagetype` into a red test rather
