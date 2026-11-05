@@ -2155,10 +2155,12 @@ details.assess-gap { margin-top: 12px; }
         <li><a class="nav-link lvl-sub" href="#route-to-the-right-model">Route to the right model</a></li>
         <li><a class="nav-link lvl-sub" href="#route-to-the-right-price">Route to the right price</a></li>
         <li><a class="nav-link lvl-sub" href="#cache-what-repeats">Cache what repeats</a></li>
+        <li><a class="nav-link lvl-sub" href="#set-reasoning-effort-per-call">Set reasoning effort per call</a></li>
         <li><a class="nav-link lvl-sub" href="#distill-when-volume-justifies-it">Self-host or distill when volume justifies it</a></li>
         <li><a class="nav-link lvl-lever" href="#t2-agent-harness">Agent Harness</a></li>
         <li><a class="nav-link lvl-sub" href="#system-prompt">System prompt</a></li>
         <li><a class="nav-link lvl-sub" href="#context-budget">Context</a></li>
+        <li><a class="nav-link lvl-sub" href="#retrieval-cost">Retrieval</a></li>
         <li><a class="nav-link lvl-sub" href="#design-memory-and-compaction-as-architecture">Memory</a></li>
         <li><a class="nav-link lvl-sub" href="#budget-the-tool-definition-weight">Tool design</a></li>
         <li><a class="nav-link lvl-sub" href="#bound-the-reasoning-loop">Orchestration</a></li>
@@ -2209,8 +2211,8 @@ details.assess-gap { margin-top: 12px; }
 
 <section id="key-levers" data-tab="overview">
       <h2>What you can change to optimise the cost</h2>
-      <p>A <strong>lever</strong> is one change you can make to spend less. This runbook holds 35 of them. Each one either lowers the price of a model call or cuts how many tokens that call spends.</p>
-      <p>The grid below ranks the levers this runbook has scored, cheapest effort first, so you can see which ones pay off before you fund any engineering work. The list under it names all 35, with what each one saves, grouped by the team that owns the decision.</p>
+      <p>A <strong>lever</strong> is one change you can make to spend less. This runbook holds 37 of them. Each one either lowers the price of a model call or cuts how many tokens that call spends.</p>
+      <p>The grid below ranks the levers this runbook has scored, cheapest effort first, so you can see which ones pay off before you fund any engineering work. The list under it names all 37, with what each one saves, grouped by the team that owns the decision.</p>
       <!-- Built by web/src/js/heatmap.mjs and web/src/js/levers-sheet.mjs from the document itself. Authored
            hidden, with a visible fallback below that the builders switch off, which is the same
            progressive-enhancement pattern as the rail map and Figure 2. -->
@@ -3324,10 +3326,10 @@ details.assess-gap { margin-top: 12px; }
       <figure class="diagram">
         <!-- Inline SVG lifecycle chart. Uses the same .decflow colour tokens as Figure 3
              (workload-fill / workload-accent for boxes, heading / text-muted for type).
-             Five boxes connected by downward arrows; each box carries a phase tag, bold
+             Six boxes connected by downward arrows; each box carries a phase tag, bold
              title, and a muted subtitle listing the key actions. -->
-        <svg id="model-inference-lifecycle" class="decflow" role="img" viewBox="0 0 600 650" preserveAspectRatio="xMidYMid meet"
-             aria-label="Model Inference lifecycle: five levers. Foundation: know what you spend and what it buys. Before the call: route to the right model. At the call boundary: route to the right price. On the payload: cache what repeats. At scale: self-host or distill when volume justifies it.">
+        <svg id="model-inference-lifecycle" class="decflow" role="img" viewBox="0 0 600 780" preserveAspectRatio="xMidYMid meet"
+             aria-label="Model Inference lifecycle: six levers. Foundation: know what you spend and what it buys. Before the call: route to the right model. At the call boundary: route to the right price. On the payload: cache what repeats. On the output: set reasoning effort per call. At scale: self-host or distill when volume justifies it.">
 
           <!-- Box 1: Know what you spend and what it buys -->
           <g class="df-q df-scope" data-scope-lever="know-what-you-spend">
@@ -3377,17 +3379,29 @@ details.assess-gap { margin-top: 12px; }
           <line class="df-edge" x1="300" y1="480" x2="300" y2="520" />
           <polygon class="df-arrowhead" points="293,515 300,527 307,515" />
 
-          <!-- Box 5: Self-host or distill when volume justifies it -->
-          <g class="df-q df-scope" data-scope-lever="distill-when-volume-justifies-it">
+          <!-- Box 5: Set reasoning effort per call -->
+          <g class="df-q df-scope" data-scope-lever="set-reasoning-effort-per-call">
             <rect x="40" y="530" width="520" height="80" rx="8" />
-            <text class="df-tag" x="300" y="550" text-anchor="middle">AT SCALE</text>
-            <text class="df-t" x="300" y="568" text-anchor="middle">5. Self-host or distill</text>
-            <text class="df-t" x="300" y="584" text-anchor="middle">when volume justifies it</text>
-            <text class="df-s" x="300" y="600" text-anchor="middle">run your own model or train a smaller one from the frontier teacher</text>
+            <text class="df-tag" x="300" y="550" text-anchor="middle">ON THE OUTPUT</text>
+            <text class="df-t" x="300" y="572" text-anchor="middle">5. Set reasoning effort per call</text>
+            <text class="df-s" x="300" y="592" text-anchor="middle">effort level per step type, thinking off where allowed, measure output tokens</text>
+          </g>
+
+          <!-- Arrow 5 -> 6 -->
+          <line class="df-edge" x1="300" y1="610" x2="300" y2="650" />
+          <polygon class="df-arrowhead" points="293,645 300,657 307,645" />
+
+          <!-- Box 6: Self-host or distill when volume justifies it -->
+          <g class="df-q df-scope" data-scope-lever="distill-when-volume-justifies-it">
+            <rect x="40" y="660" width="520" height="80" rx="8" />
+            <text class="df-tag" x="300" y="680" text-anchor="middle">AT SCALE</text>
+            <text class="df-t" x="300" y="698" text-anchor="middle">6. Self-host or distill</text>
+            <text class="df-t" x="300" y="714" text-anchor="middle">when volume justifies it</text>
+            <text class="df-s" x="300" y="730" text-anchor="middle">run your own model or train a smaller one from the frontier teacher</text>
           </g>
 
         </svg>
-        <figcaption>Figure 3: The Model Inference lifecycle. Five levers in the order a workload meets them: know what you spend (foundation), route to the right model (before the call), route to the right price (at the call boundary), cache what repeats (on the payload), and self-host or distill (at scale).</figcaption>
+        <figcaption>Figure 3: The Model Inference lifecycle. Six levers in the order a workload meets them: know what you spend (foundation), route to the right model (before the call), route to the right price (at the call boundary), cache what repeats (on the payload), set reasoning effort per call (on the output), and self-host or distill (at scale).</figcaption>
       </figure>      <fieldset class="scope-picker" data-scope-picker data-scope-figure="model-inference-lifecycle">
         <legend>Include in this assessment: Model Inference</legend>
         <p class="scope-help">Untick a lever that does not apply to your workload. Its questions are hidden and left out of every count, summary and export; the choice is saved in this browser. Clicking a box in the figure above does the same.</p>
@@ -3395,6 +3409,7 @@ details.assess-gap { margin-top: 12px; }
         <label class="scope-item"><input type="checkbox" data-scope-lever="route-to-the-right-model" checked> <span>Route to the right model</span></label>
         <label class="scope-item"><input type="checkbox" data-scope-lever="route-to-the-right-price" checked> <span>Route to the right price</span></label>
         <label class="scope-item"><input type="checkbox" data-scope-lever="cache-what-repeats" checked> <span>Cache what repeats</span></label>
+        <label class="scope-item"><input type="checkbox" data-scope-lever="set-reasoning-effort-per-call" checked> <span>Set reasoning effort per call</span></label>
         <label class="scope-item"><input type="checkbox" data-scope-lever="distill-when-volume-justifies-it" checked> <span>Self-host or distill when volume justifies it</span></label>
         <p class="scope-out" data-scope-out-note hidden></p>
       </fieldset>
@@ -3712,18 +3727,18 @@ details.assess-gap { margin-top: 12px; }
           <details class="assess-gap">
             <summary>How to close this gap <span class="gap-tag">best practice</span></summary>
             <div class="gap-body">
-              <p class="gap-lead" id="cross-region-inference" data-fact-owner="cross-region-inference"><strong>The short answer.</strong> Call a cross-region inference profile: Geographic where data residency requires it, Global (about 10% below the source-Region price) where it does not. You pay the source Region’s token price with no routing charge.</p>
+              <p class="gap-lead" id="cross-region-inference" data-fact-owner="cross-region-inference"><strong>The short answer.</strong> Call a cross-region inference profile instead of a single-Region model ID, so a busy Region does not throttle you. There are two kinds. A <strong>Geographic</strong> profile (for example US, EU or APAC) only sends requests to Regions inside that geography, so use it when data residency matters; it costs the same as calling the model in the Region you call from. A <strong>Global</strong> profile can send requests to any supported commercial Region, so use it when residency does not matter; it costs about 10% less. Neither adds a routing charge (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">Cross-Region inference, Amazon Bedrock User Guide</a> <a class="ref" href="#ref-22">[22]</a>, accessed 5 November 2026).</p>
               <table>
                 <thead>
                   <tr><th>Profile</th><th>Where requests can run</th><th>What you must configure, and the price</th></tr>
                 </thead>
                 <tbody>
-                  <tr><td><strong>Geographic</strong></td><td>Within a single geography, which most compliance regimes require.</td><td>Nothing beyond enabling the profile; standard source-Region price.</td></tr>
-                  <tr><td><strong>Global</strong></td><td>Any commercial Region, including opt-in Regions where prompts and outputs can be stored for abuse detection (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html">inference profiles</a> <a class="ref" href="#ref-26">[26]</a>).</td><td>An SCP that permits an unspecified <code>aws:RequestedRegion</code>. Approximately 10% below source Region.</td></tr>
+                  <tr><td><strong>Geographic</strong></td><td>Within a single geography, which most compliance regimes require.</td><td>An SCP that allows every destination Region in the profile. Standard price: the same per-token rate as the Region you call from.</td></tr>
+                  <tr><td><strong>Global</strong></td><td>Any commercial Region, including opt-in Regions where prompts and outputs can be stored for abuse detection (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html">inference profiles</a> <a class="ref" href="#ref-26">[26]</a>).</td><td>An SCP that permits an unspecified <code>aws:RequestedRegion</code>. About 10% below the standard price. For example, Claude Haiku 5.5 input from US East (N. Virginia) is $0.11 per 1M tokens on a geographic profile and $0.10 on the Global profile (AWS Price List <a class="ref" href="#ref-150">[150]</a>, accessed 5 November 2026).</td></tr>
                 </tbody>
               </table>
               <details class="read-more"><summary>Read more for the self-serve reader</summary><div class="rm-body">
-                <p><strong>Best practice.</strong> Cross-region inference sends each request to a Region that has capacity. You pay your source Region's per-token price, with no routing, data-transfer, or network charge (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">CRIS pricing</a> <a class="ref" href="#ref-22">[22]</a>). A <strong>Geographic</strong> profile keeps routing within one geography at the standard price; a <strong>Global</strong> profile is documented at approximately 10% below source-Region price.</p>
+                <p><strong>Best practice.</strong> Cross-region inference sends each request to a Region that has capacity. Price is worked out from the Region you call the profile from (the source Region), whichever Region actually runs the request, and there is no routing, data-transfer, or network charge (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">CRIS pricing</a> <a class="ref" href="#ref-22">[22]</a>). On top of that, the two profile types differ: a <strong>Geographic</strong> profile is billed at the standard price, and a <strong>Global</strong> profile is documented at approximately 10% savings against it.</p>
                 <p>In both cases data at rest stays in the source Region, and only transient compute crosses (<a href="https://aws.amazon.com/blogs/machine-learning/securing-amazon-bedrock-cross-region-inference-geographic-and-global/">CRIS security</a> <a class="ref" href="#ref-27">[27]</a>). A throttled 429 is refused before inference runs, so it is not billed (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/troubleshooting-api-error-codes.html">429 errors</a> <a class="ref" href="#ref-23">[23]</a>; <a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/on-demand-inference.html">on-demand billing</a> <a class="ref" href="#ref-24">[24]</a>). Chronic throttling's real cost is user-facing latency and forced escalation to the Priority tier.</p>
               </div></details>
             </div>
@@ -3848,7 +3863,90 @@ details.assess-gap { margin-top: 12px; }
 
 
       <!-- ============================================================
-           LEVER 5: Self-host or distill when volume justifies it
+           LEVER 5: Set reasoning effort per call
+           Phase: On the output
+           ============================================================ -->
+      <h4 id="set-reasoning-effort-per-call">Set reasoning effort per call</h4>
+      <details class="lever-why">
+        <summary>Challenge and why it costs</summary>
+        <div class="why-body">
+          <p><strong>Challenge.</strong> Current models think before they answer, and how much they think is a request setting. Leave it out and you get the model’s default, and the defaults differ. On Amazon Bedrock, Claude Sonnet 5.5 defaults to high effort, Claude Opus 5.5 and Claude Haiku 5.5 to medium, and Opus 5.5 cannot turn thinking off at all (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html">Claude Sonnet 5.5 model card</a> <a class="ref" href="#ref-149">[149]</a>; <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html">Claude Opus 5.5 model card</a> <a class="ref" href="#ref-162">[162]</a>; <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html">Claude Haiku 5.5 model card</a> <a class="ref" href="#ref-146">[146]</a>, all accessed 5 November 2026).</p>
+          <p><strong>Why it costs.</strong> Thinking tokens are billed as output tokens, the dearest tokens on the bill. An agent that runs every step at the default, from a one-word classification to a final summary, pays for deep reasoning on steps that need none. A model upgrade can add the cost with no code change: on Claude Sonnet 5 and Claude Opus 5 a request that omits the <code>thinking</code> field runs with adaptive thinking, where the same request on Claude Sonnet 4.6 ran without it, and the thinking is billed as output (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html">Adaptive thinking, Amazon Bedrock User Guide</a> <a class="ref" href="#ref-163">[163]</a>, accessed 5 November 2026).</p>
+        </div>
+      </details>
+      <div class="assess" data-assess-group="model-inference" data-assess-lever="Set reasoning effort per call">
+        <div class="assess-head">
+          <span class="assess-title">Assessment</span>
+          <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
+          <span class="assess-tally" data-assess-tally aria-live="polite"></span>
+        </div>
+
+        <!-- Q1: Explicit effort per step type -->
+                <div class="assess-q" data-assess-q data-key="eff-q1" data-lever="Set reasoning effort per call" data-anchor="set-reasoning-effort-per-call">
+          <div class="assess-qrow">
+            <div class="assess-qtext"><span class="qid">Q1</span>Do you set reasoning effort for each type of step, rather than taking the model default?</div>
+            <div class="seg" role="group" aria-label="Status for Q1">
+              <button type="button" data-v="yes" aria-pressed="false">Fully covered</button>
+              <button type="button" data-v="wip" aria-pressed="false">Partially</button>
+              <button type="button" data-v="no" aria-pressed="false">Not covered</button>
+              <button type="button" data-v="na" aria-pressed="false">N/A</button>
+            </div>
+          </div>
+          <details class="assess-gap">
+            <summary>How to close this gap <span class="gap-tag">best practice</span></summary>
+            <div class="gap-body">
+              <p class="gap-lead" id="reasoning-effort-defaults"><strong>The short answer.</strong> Put the effort level in every request, chosen by what the step does: low for routing, extraction and formatting, and the default or higher only for steps that plan, debug or decide. Where the model lets you, turn thinking off for steps that need no reasoning.</p>
+              <table>
+                <thead>
+                  <tr><th>Model</th><th>Control</th><th>Default</th><th>Thinking</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Claude Opus 5.5</td><td><code>output_config.effort</code>: low, medium, high, xhigh, max</td><td>medium</td><td>Adaptive thinking is always on and cannot be disabled <a class="ref" href="#ref-162">[162]</a></td></tr>
+                  <tr><td>Claude Sonnet 5.5</td><td><code>output_config.effort</code>: low, medium, high, xhigh, max</td><td>high</td><td>Adaptive thinking is on by default <a class="ref" href="#ref-149">[149]</a></td></tr>
+                  <tr><td>Claude Haiku 5.5</td><td><code>output_config.effort</code>: low, medium, high, xhigh, max</td><td>medium</td><td>On by default; can be turned off, and effort is then capped at high <a class="ref" href="#ref-146">[146]</a></td></tr>
+                  <tr><td>OpenAI GPT-6 Sol</td><td>Reasoning effort: none, low, medium, high, xhigh, max</td><td>medium</td><td><code>none</code> is one of the levels <a class="ref" href="#ref-147">[147]</a></td></tr>
+                </tbody>
+              </table>
+              <details class="read-more"><summary>Read more for the self-serve reader</summary><div class="rm-body">
+                <p><strong>Effort is guidance, not a budget.</strong> In adaptive mode Claude decides per request whether and how much to think. At high effort it almost always thinks; at lower levels it may skip thinking for simple problems. On the InvokeModel and Messages format the level goes in a separate <code>output_config</code> object, not inside <code>thinking</code>; on Converse both go in <code>additionalModelRequestFields</code>. On the 5.5 models a beta lets the harness lower effort partway through a conversation, for the turns that follow (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html">Adaptive thinking</a> <a class="ref" href="#ref-163">[163]</a>).</p>
+                <p><strong>Vary the level, not the mode.</strong> Consecutive adaptive-thinking requests keep their prompt-cache breakpoints, but switching between adaptive and enabled or disabled thinking breaks the cache breakpoints on messages; system prompts and tool definitions stay cached <a class="ref" href="#ref-163">[163]</a>. So within one conversation, change effort rather than toggling thinking on and off (see <a href="#cache-what-repeats">Cache what repeats</a>).</p>
+                <p><strong>Re-check <code>max_tokens</code>.</strong> It caps thinking and answer together, so a workload that ran without thinking before needs a fresh limit <a class="ref" href="#ref-163">[163]</a>. The coding-assistant version of this choice is <a href="#match-reasoning-effort-to-task-complexity">Match reasoning effort to task complexity</a> in Track 1.</p>
+              </div></details>
+            </div>
+          </details>
+          <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
+        </div>
+
+        <!-- Q2: Measure the effect -->
+                <div class="assess-q" data-assess-q data-key="eff-q2" data-lever="Set reasoning effort per call" data-anchor="set-reasoning-effort-per-call">
+          <div class="assess-qrow">
+            <div class="assess-qtext"><span class="qid">Q2</span>Do you compare output tokens per successful task before you change an effort level?</div>
+            <div class="seg" role="group" aria-label="Status for Q2">
+              <button type="button" data-v="yes" aria-pressed="false">Fully covered</button>
+              <button type="button" data-v="wip" aria-pressed="false">Partially</button>
+              <button type="button" data-v="no" aria-pressed="false">Not covered</button>
+              <button type="button" data-v="na" aria-pressed="false">N/A</button>
+            </div>
+          </div>
+          <details class="assess-gap">
+            <summary>How to close this gap <span class="gap-tag">best practice</span></summary>
+            <div class="gap-body">
+              <p class="gap-lead"><strong>The short answer.</strong> Treat effort as a tuned setting. Run a representative set of each step type at two levels, compare <code>output tokens per successful task</code>, latency and task success, and keep the lowest level that still clears your quality bar.</p>
+              <details class="read-more"><summary>Read more for the self-serve reader</summary><div class="rm-body">
+                <p><strong>Measure from the token count, not the visible text.</strong> By default the response carries a thinking block with empty text, so the reasoning you pay for does not show up in what you read; take the output token count from the response usage instead (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html">Adaptive thinking</a> <a class="ref" href="#ref-163">[163]</a>).</p>
+                <p><strong>Lower effort can cost quality.</strong> AWS warns that steering Claude to think less often may reduce quality on tasks that benefit from reasoning, and recommends measuring on your own workload and trying lower effort levels before prompt-based tuning <a class="ref" href="#ref-163">[163]</a>. A step that fails and retries at low effort can cost more than one pass at the default, so judge the change on <a href="#measure-cost-per-successful-task-not-cost-per-call">cost per successful task</a>, not cost per call.</p>
+              </div></details>
+            </div>
+          </details>
+          <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
+        </div>
+
+      </div><!-- end .assess for Set reasoning effort per call -->
+      <p class="saves"><strong>What it saves:</strong> <span class="saves-head">Fewer billed thinking tokens</span> on the steps that do not need deep reasoning. Thinking is billed as output, so the saving lands on the most expensive token type.</p>
+
+
+      <!-- ============================================================
+           LEVER 6: Self-host or distill when volume justifies it
            Phase: At scale
            ============================================================ -->
       <h4 id="distill-when-volume-justifies-it" data-effort="high" data-impact="medium">Self-host or distill when volume justifies it</h4>
@@ -3983,11 +4081,11 @@ details.assess-gap { margin-top: 12px; }
       </div>
 
             <figure class="diagram">
-        <!-- Inline SVG, same .decflow tokens as Figure 3. Two columns: the four components that decide what
+        <!-- Inline SVG, same .decflow tokens as Figure 3. Two columns: the five components that decide what
              every model call carries (billed on every call), and the three that decide how many calls a task
              makes and whether each one is accounted for. Each box is a scope toggle (see the picker below). -->
-        <svg id="agent-harness-components" class="decflow" role="img" viewBox="0 0 600 470" preserveAspectRatio="xMidYMid meet"
-             aria-label="Agent Harness: seven components. What every call carries: system prompt, context, memory, tool design. How calls multiply: orchestration, guardrails and limits, observability. Cost per task is roughly the context each call carries multiplied by the number of calls the orchestration makes.">
+        <svg id="agent-harness-components" class="decflow" role="img" viewBox="0 0 600 560" preserveAspectRatio="xMidYMid meet"
+             aria-label="Agent Harness: eight components. What every call carries: system prompt, context, retrieval, memory, tool design. How calls multiply: orchestration, guardrails and limits, observability. Cost per task is roughly the context each call carries multiplied by the number of calls the orchestration makes.">
           <text class="df-leg" x="145" y="22" text-anchor="middle">WHAT EVERY CALL CARRIES</text>
           <text class="df-leg" x="455" y="22" text-anchor="middle">HOW CALLS MULTIPLY</text>
           <g class="df-q df-scope" data-scope-lever="system-prompt">
@@ -3997,53 +4095,60 @@ details.assess-gap { margin-top: 12px; }
             <text class="df-s" x="145" y="98" text-anchor="middle">minimum instructions, versioned, cache-stable</text>
           </g>
           <g class="df-q df-scope" data-scope-lever="context-budget">
-            <rect x="20" y="140" width="250" height="78" rx="8" />
-            <text class="df-tag" x="145" y="158" text-anchor="middle">ASSEMBLED PER CALL</text>
-            <text class="df-t" x="145" y="180" text-anchor="middle">2. Context</text>
-            <text class="df-s" x="145" y="198" text-anchor="middle">measure by source, bound what tools return</text>
+            <rect x="20" y="130" width="250" height="78" rx="8" />
+            <text class="df-tag" x="145" y="148" text-anchor="middle">ASSEMBLED PER CALL</text>
+            <text class="df-t" x="145" y="170" text-anchor="middle">2. Context</text>
+            <text class="df-s" x="145" y="188" text-anchor="middle">measure by source, bound what tools return</text>
+          </g>
+          <g class="df-q df-scope" data-scope-lever="retrieval-cost">
+            <rect x="20" y="220" width="250" height="78" rx="8" />
+            <text class="df-tag" x="145" y="238" text-anchor="middle">FETCHED PER CALL</text>
+            <text class="df-t" x="145" y="260" text-anchor="middle">3. Retrieval</text>
+            <text class="df-s" x="145" y="278" text-anchor="middle">vector store, chunks per call, rerank, re-embedding</text>
           </g>
           <g class="df-q df-scope" data-scope-lever="design-memory-and-compaction-as-architecture">
-            <rect x="20" y="240" width="250" height="78" rx="8" />
-            <text class="df-tag" x="145" y="258" text-anchor="middle">CARRIED ACROSS TURNS</text>
-            <text class="df-t" x="145" y="280" text-anchor="middle">3. Memory</text>
-            <text class="df-s" x="145" y="298" text-anchor="middle">window, summary or retrieval</text>
+            <rect x="20" y="310" width="250" height="78" rx="8" />
+            <text class="df-tag" x="145" y="328" text-anchor="middle">CARRIED ACROSS TURNS</text>
+            <text class="df-t" x="145" y="350" text-anchor="middle">4. Memory</text>
+            <text class="df-s" x="145" y="368" text-anchor="middle">window, summary or retrieval</text>
           </g>
           <g class="df-q df-scope" data-scope-lever="budget-the-tool-definition-weight">
-            <rect x="20" y="340" width="250" height="78" rx="8" />
-            <text class="df-tag" x="145" y="358" text-anchor="middle">DEFINITIONS PER CALL</text>
-            <text class="df-t" x="145" y="380" text-anchor="middle">4. Tool design</text>
-            <text class="df-s" x="145" y="398" text-anchor="middle">costed inventory, only the tools the call needs</text>
+            <rect x="20" y="400" width="250" height="78" rx="8" />
+            <text class="df-tag" x="145" y="418" text-anchor="middle">DEFINITIONS PER CALL</text>
+            <text class="df-t" x="145" y="440" text-anchor="middle">5. Tool design</text>
+            <text class="df-s" x="145" y="458" text-anchor="middle">costed inventory, only the tools the call needs</text>
           </g>
           <g class="df-q df-scope" data-scope-lever="bound-the-reasoning-loop">
             <rect x="330" y="40" width="250" height="78" rx="8" />
             <text class="df-tag" x="455" y="58" text-anchor="middle">CALLS PER TASK</text>
-            <text class="df-t" x="455" y="80" text-anchor="middle">5. Orchestration</text>
+            <text class="df-t" x="455" y="80" text-anchor="middle">6. Orchestration</text>
             <text class="df-s" x="455" y="98" text-anchor="middle">termination, retries, rules before models</text>
           </g>
           <g class="df-q df-scope" data-scope-lever="enforce-per-user-ceilings-at-the-gateway">
-            <rect x="330" y="190" width="250" height="78" rx="8" />
-            <text class="df-tag" x="455" y="208" text-anchor="middle">CALLS IN FLIGHT</text>
-            <text class="df-t" x="455" y="230" text-anchor="middle">6. Guardrails and limits</text>
-            <text class="df-s" x="455" y="248" text-anchor="middle">concurrency, fan-out, per-caller token limits</text>
+            <rect x="330" y="220" width="250" height="78" rx="8" />
+            <text class="df-tag" x="455" y="238" text-anchor="middle">CALLS IN FLIGHT</text>
+            <text class="df-t" x="455" y="260" text-anchor="middle">7. Guardrails and limits</text>
+            <text class="df-s" x="455" y="278" text-anchor="middle">concurrency, fan-out, per-caller token limits</text>
           </g>
           <g class="df-q df-scope" data-scope-lever="audit-your-orchestration-for-hidden-invocations">
-            <rect x="330" y="340" width="250" height="78" rx="8" />
-            <text class="df-tag" x="455" y="358" text-anchor="middle">CALLS ACCOUNTED FOR</text>
-            <text class="df-t" x="455" y="380" text-anchor="middle">7. Observability</text>
-            <text class="df-s" x="455" y="398" text-anchor="middle">trace every call to a task; find the orphans</text>
+            <rect x="330" y="400" width="250" height="78" rx="8" />
+            <text class="df-tag" x="455" y="418" text-anchor="middle">CALLS ACCOUNTED FOR</text>
+            <text class="df-t" x="455" y="440" text-anchor="middle">8. Observability</text>
+            <text class="df-s" x="455" y="458" text-anchor="middle">trace every call to a task; find the orphans</text>
           </g>
-          <line class="df-edge" x1="270" y1="229" x2="330" y2="229" />
-          <polygon class="df-arrowhead" points="325,222 337,229 325,236" />
-          <text class="df-edge-l" x="300" y="218" text-anchor="middle">&times;</text>
-          <text class="df-leg" x="300" y="455" text-anchor="middle">cost per task &asymp; context per call &times; calls per task &times; input price</text>
+          <line class="df-edge" x1="270" y1="259" x2="330" y2="259" />
+          <polygon class="df-arrowhead" points="325,252 337,259 325,266" />
+          <text class="df-edge-l" x="300" y="248" text-anchor="middle">&times;</text>
+          <text class="df-leg" x="300" y="545" text-anchor="middle">cost per task &asymp; context per call &times; calls per task &times; input price</text>
         </svg>
-        <figcaption>Figure 4: The Agent Harness as seven components. The left column decides what every model call carries, and is billed again on every call: system prompt, context, memory and tool design. The right column decides how many calls a task makes and whether each one is accounted for: orchestration, guardrails and limits, observability.</figcaption>
+        <figcaption>Figure 4: The Agent Harness as eight components. The left column decides what every model call carries, and is billed again on every call: system prompt, context, retrieval, memory and tool design. The right column decides how many calls a task makes and whether each one is accounted for: orchestration, guardrails and limits, observability.</figcaption>
       </figure>
       <fieldset class="scope-picker" data-scope-picker data-scope-figure="agent-harness-components">
         <legend>Include in this assessment: Agent Harness</legend>
         <p class="scope-help">Untick a lever that does not apply to your workload. Its questions are hidden and left out of every count, summary and export; the choice is saved in this browser. Clicking a box in the figure above does the same.</p>
         <label class="scope-item"><input type="checkbox" data-scope-lever="system-prompt" checked> <span>System prompt</span></label>
         <label class="scope-item"><input type="checkbox" data-scope-lever="context-budget" checked> <span>Context</span></label>
+        <label class="scope-item"><input type="checkbox" data-scope-lever="retrieval-cost" checked> <span>Retrieval</span></label>
         <label class="scope-item"><input type="checkbox" data-scope-lever="design-memory-and-compaction-as-architecture" checked> <span>Memory</span></label>
         <label class="scope-item"><input type="checkbox" data-scope-lever="budget-the-tool-definition-weight" checked> <span>Tool design</span></label>
         <label class="scope-item"><input type="checkbox" data-scope-lever="bound-the-reasoning-loop" checked> <span>Orchestration</span></label>
@@ -4211,6 +4316,106 @@ details.assess-gap { margin-top: 12px; }
 
       </div><!-- end .assess for Context -->
       <p class="saves"><strong>What it saves:</strong> <span class="saves-head">Keeps per-round input bounded</span>, so context cost tracks the task rather than the age of the session.</p>
+
+      <!-- ============================================================
+           HARNESS COMPONENT: Retrieval
+           ============================================================ -->
+      <h4 id="retrieval-cost">Retrieval</h4>
+      <details class="lever-why">
+        <summary>Challenge and why it costs</summary>
+        <div class="why-body">
+          <p><strong>Challenge.</strong> A retrieval (RAG) pipeline bills in four places: the vector store that holds the corpus, the embedding calls that turn documents into vectors on every ingest and re-ingest, any reranking per query, and the retrieved chunks themselves, which enter the model request as input tokens.</p>
+          <p><strong>Why it costs.</strong> An always-on vector store bills whether or not anyone asks a question, and embedding cost follows how often the corpus changes, not how often it is used. The retrieved text then rides on every call that needs it. <a href="#context-budget">Context</a> measures retrieved material as one source of a request and decides how long it stays; this lever decides what the pipeline costs to keep and how much it hands over.</p>
+        </div>
+      </details>
+      <div class="assess" data-assess-group="agent-harness" data-assess-lever="Retrieval">
+        <div class="assess-head">
+          <span class="assess-title">Assessment</span>
+          <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
+          <span class="assess-tally" data-assess-tally aria-live="polite"></span>
+        </div>
+
+        <div class="assess-q" data-assess-q data-key="rag-q1" data-lever="Retrieval" data-anchor="retrieval-cost">
+          <div class="assess-qrow">
+            <div class="assess-qtext"><span class="qid">Q1</span>Does your vector store’s pricing model fit your query volume?</div>
+            <div class="seg" role="group" aria-label="Status for Q1">
+              <button type="button" data-v="yes" aria-pressed="false">Fully covered</button>
+              <button type="button" data-v="wip" aria-pressed="false">Partially</button>
+              <button type="button" data-v="no" aria-pressed="false">Not covered</button>
+              <button type="button" data-v="na" aria-pressed="false">N/A</button>
+            </div>
+          </div>
+          <details class="assess-gap">
+            <summary>How to close this gap <span class="gap-tag">best practice</span></summary>
+            <div class="gap-body">
+              <p class="gap-lead" id="choose-the-vector-store-by-query-volume"><strong>The short answer.</strong> Choose the store by how it is queried. A large corpus with low or uneven query volume suits pay-per-use storage; only steady, high query rates that need millisecond answers justify capacity billed by the hour.</p>
+              <table>
+                <thead>
+                  <tr><th>Option</th><th>How it bills</th><th>Fits</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Amazon Bedrock Managed Knowledge Base</td><td>Usage-based: storage of your raw data, standard retrieval calls and Agentic Retrieval. The managed parser, embedding model and re-ranker are included; choosing another Bedrock model for embedding, reranking or orchestration bills that model at its standard rate (<a href="https://aws.amazon.com/blogs/machine-learning/build-enterprise-search-for-agents-with-amazon-bedrock-managed-knowledge-base/">AWS ML Blog, Managed Knowledge Base</a> <a class="ref" href="#ref-164">[164]</a>).</td><td>Teams that would rather not choose or run a vector store</td></tr>
+                  <tr><td>Bedrock Knowledge Bases on Amazon S3 Vectors</td><td>Pay-as-you-go storage and queries. AWS reports up to 90% lower vector upload, storage and query cost than alternatives, with subsecond rather than millisecond queries (<a href="https://aws.amazon.com/blogs/machine-learning/building-cost-effective-rag-applications-with-amazon-bedrock-knowledge-bases-and-amazon-s3-vectors/">AWS ML Blog, Bedrock Knowledge Bases and S3 Vectors</a> <a class="ref" href="#ref-165">[165]</a>; reported vendor figure).</td><td>Large or archival corpora that can wait a second for an answer</td></tr>
+                  <tr><td>A vector database you provision</td><td>Capacity billed while it runs, queried or not</td><td>Sustained high query rates that need millisecond latency</td></tr>
+                </tbody>
+              </table>
+              <details class="read-more"><summary>Read more for the self-serve reader</summary><div class="rm-body">
+                <p><strong>Agentic Retrieval adds model calls.</strong> On a Managed Knowledge Base, Agentic Retrieval uses a foundation model to split a question into sub-queries, retrieves, and checks whether the results are enough, running up to five rounds by default (<code>maxAgentIteration</code>, 1 to 10). Use the plain Retrieve call for direct lookups and FAQ-style questions, and cap the rounds where a multi-hop answer is rare <a class="ref" href="#ref-164">[164]</a>. Both blogs were accessed 5 November 2026; recheck the Amazon Bedrock pricing page for the current rates.</p>
+              </div></details>
+            </div>
+          </details>
+          <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
+        </div>
+
+        <div class="assess-q" data-assess-q data-key="rag-q2" data-lever="Retrieval" data-anchor="retrieval-cost">
+          <div class="assess-qrow">
+            <div class="assess-qtext"><span class="qid">Q2</span>Do you retrieve the fewest, smallest chunks that answer the question?</div>
+            <div class="seg" role="group" aria-label="Status for Q2">
+              <button type="button" data-v="yes" aria-pressed="false">Fully covered</button>
+              <button type="button" data-v="wip" aria-pressed="false">Partially</button>
+              <button type="button" data-v="no" aria-pressed="false">Not covered</button>
+              <button type="button" data-v="na" aria-pressed="false">N/A</button>
+            </div>
+          </div>
+          <details class="assess-gap">
+            <summary>How to close this gap <span class="gap-tag">best practice</span></summary>
+            <div class="gap-body">
+              <p class="gap-lead"><strong>The short answer.</strong> Retrieved input per call is roughly <code>chunks returned &times; tokens per chunk</code>. Set the number of results on purpose, size chunks to the answer, and where quality needs a wide search, rerank a larger candidate set down to a few before generation.</p>
+              <details class="read-more"><summary>Read more for the self-serve reader</summary><div class="rm-body">
+                <p><strong>The default is a choice too.</strong> A Bedrock knowledge base returns up to five results by default, and <code>numberOfResults</code> is a maximum. With hierarchical chunking it counts child chunks, and children that share a parent are replaced by the larger parent chunk, so the tokens handed over can be more than the result count suggests (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-config.html">Configure retrieval, Amazon Bedrock User Guide</a> <a class="ref" href="#ref-166">[166]</a>, accessed 5 November 2026).</p>
+                <p><strong>Rerank when it removes more than it costs.</strong> A reranker scores retrieved chunks against the query so you can pass fewer, more relevant ones to the model, which AWS notes can cut cost and latency (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/rerank.html">Reranker models, Amazon Bedrock User Guide</a> <a class="ref" href="#ref-167">[167]</a>). It is billed per query: Amazon Rerank 1.0 in US West (Oregon) lists $1 per 1,000 search units in the AWS Price List (<code>AmazonBedrock</code> offer version 20261102165015 <a class="ref" href="#ref-168">[168]</a>), both accessed 5 November 2026. Check the pricing page for how a search unit is counted, then compare that charge with the input tokens the reranker takes out of each call.</p>
+                <p>Count the retrieved tokens as their own row in the <a href="#context-budget">Context</a> breakdown, so a rise in retrieval shows up as retrieval rather than as a longer prompt.</p>
+              </div></details>
+            </div>
+          </details>
+          <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
+        </div>
+
+        <div class="assess-q" data-assess-q data-key="rag-q3" data-lever="Retrieval" data-anchor="retrieval-cost">
+          <div class="assess-qrow">
+            <div class="assess-qtext"><span class="qid">Q3</span>Do your re-syncs embed only what changed?</div>
+            <div class="seg" role="group" aria-label="Status for Q3">
+              <button type="button" data-v="yes" aria-pressed="false">Fully covered</button>
+              <button type="button" data-v="wip" aria-pressed="false">Partially</button>
+              <button type="button" data-v="no" aria-pressed="false">Not covered</button>
+              <button type="button" data-v="na" aria-pressed="false">N/A</button>
+            </div>
+          </div>
+          <details class="assess-gap">
+            <summary>How to close this gap <span class="gap-tag">best practice</span></summary>
+            <div class="gap-body">
+              <p class="gap-lead"><strong>The short answer.</strong> Embedding cost follows corpus churn. Sync incrementally, change only metadata files when only metadata changed, and settle the parsing and chunking choices up front, because changing them later means a new knowledge base and a full re-ingest.</p>
+              <details class="read-more"><summary>Read more for the self-serve reader</summary><div class="rm-body">
+                <p><strong>What a re-sync re-embeds.</strong> Knowledge base syncs are incremental: an unchanged document is skipped, a new one is ingested, and a document whose content or metadata changed is re-parsed, re-chunked, re-embedded and re-indexed. When only <code>.metadata.json</code> files change, the content is not CSV and no custom transformation Lambda function runs, Bedrock merges the new metadata into the stored embeddings without calling the embedding model (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-data-source-sync-ingest.html">Sync your data, Amazon Bedrock User Guide</a> <a class="ref" href="#ref-169">[169]</a>, accessed 5 November 2026). A Managed Knowledge Base likewise processes only new or modified documents on later syncs <a class="ref" href="#ref-164">[164]</a>.</p>
+                <p><strong>Decide once.</strong> Parsing and chunking choices cannot be modified after the knowledge base is created <a class="ref" href="#ref-165">[165]</a>, and an existing vector store only takes embeddings of the dimension it was built for, so a model with a different dimension fails ingestion <a class="ref" href="#ref-165">[165]</a>. Test the parser, chunking and embedding model on a sample before you ingest the full corpus.</p>
+              </div></details>
+            </div>
+          </details>
+          <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
+        </div>
+
+      </div><!-- end .assess for Retrieval -->
+      <p class="saves"><strong>What it saves:</strong> <span class="saves-head">Lowers the fixed cost of a searchable corpus</span> and the retrieved input that every grounded call carries.</p>
 
       <!-- ============================================================
            HARNESS COMPONENT: Memory
@@ -5040,7 +5245,7 @@ details.assess-gap { margin-top: 12px; }
           <a class="cell" href="#t2-model-inference"><span class="cell-hint">Cross-region, routing, batch, tiers &amp; attribution</span><span class="cell-meta" data-cell-meta></span></a>
           <a class="cell" href="#t2-agent-harness"><span class="cell-hint">Loop bounds, memory &amp; orchestration</span><span class="cell-meta" data-cell-meta></span></a>
           <a class="cell" href="#t2-end-user"><span class="cell-hint">Specifications, guided prompting &amp; gates</span><span class="cell-meta" data-cell-meta></span></a>
-          <a class="sf-bar" href="#lever-progress">Lever progress &middot; all 35 levers<span class="sf-note">the same six cells at lever level, each showing how far you have got; filter to your gaps, or to the levers you have left a note on</span></a>
+          <a class="sf-bar" href="#lever-progress">Lever progress &middot; all 37 levers<span class="sf-note">the same six cells at lever level, each showing how far you have got; filter to your gaps, or to the levers you have left a note on</span></a>
           <a class="sf-bar rs-bar" href="#decision-principles">Decision principles<span class="sf-note">three principles that do not change with the track, so they are covered once</span></a>
         </div>
         <div class="maplegend">Choose your track in the rows, then the layer in the columns. Each cell opens the section that covers it. For a track-specific PDF, open that assessment and use its Print action.</div>
@@ -5049,7 +5254,7 @@ details.assess-gap { margin-top: 12px; }
 <section id="lever-progress" data-tab="overview">
       <h2>Lever progress</h2>
       <figure class="csm-figure">
-        <p class="te-intro">Every one of the 35 levers sits in the cell that owns it, and each row states how far you have got: how many of its questions you have answered, whether any answer came back a gap, and whether you left a note. Clicking a lever jumps straight to it, and <strong>Gaps</strong> is the shortest route back into the work. Hover anything marked <span class="te-sharedkey"><span class="te-badge">&rlarr; shared</span></span> to see its counterpart on the other track. A shared topic does not always sit in the same layer on both tracks, and that is the layer doing its job rather than a filing error. The layer records who holds the control. A team adopting an assistant cannot change the harness it ships with, so keeping the context small is the developer's job at the keyboard, while a team building an agent owns the harness that does the injecting.</p>
+        <p class="te-intro">Every one of the 37 levers sits in the cell that owns it, and each row states how far you have got: how many of its questions you have answered, whether any answer came back a gap, and whether you left a note. Clicking a lever jumps straight to it, and <strong>Gaps</strong> is the shortest route back into the work. Hover anything marked <span class="te-sharedkey"><span class="te-badge">&rlarr; shared</span></span> to see its counterpart on the other track. A shared topic does not always sit in the same layer on both tracks, and that is the layer doing its job rather than a filing error. The layer records who holds the control. A team adopting an assistant cannot change the harness it ships with, so keeping the context small is the developer's job at the keyboard, while a team building an agent owns the harness that does the injecting.</p>
         <div class="track-explorer csm" id="trackExplorer" hidden></div>
         <details class="lever-index is-fallback">
           <summary><span class="disc-label">Prefer a table? Show the full lever index</span><span class="disc-sub">every lever, its track and actor-layer, and a jump link</span></summary>
@@ -5073,10 +5278,12 @@ details.assess-gap { margin-top: 12px; }
             <tr><td>Track 2</td><td>Model Inference</td><td><a href="#route-to-the-right-model">Route to the right model</a></td><td><a href="#right-size-the-model-to-the-task">Right-size the model to the task</a>; <a href="#manage-the-model-lifecycle">Manage the model lifecycle</a></td></tr>
             <tr><td>Track 2</td><td>Model Inference</td><td><a href="#route-to-the-right-price">Route to the right price</a></td><td></td></tr>
             <tr><td>Track 2</td><td>Model Inference</td><td><a href="#cache-what-repeats">Cache what repeats</a></td><td><a href="#manage-the-session-and-its-context-actively">Manage the session actively</a></td></tr>
+            <tr><td>Track 2</td><td>Model Inference</td><td><a href="#set-reasoning-effort-per-call">Set reasoning effort per call</a></td><td></td></tr>
             <tr><td>Track 2</td><td>Model Inference</td><td><a href="#distill-when-volume-justifies-it">Self-host or distill when volume justifies it</a></td><td></td></tr>
             <tr><td>Track 2</td><td>Agent Harness</td><td><a href="#agent-loop-token-amplification">Agent loop token amplification</a></td><td></td></tr>
             <tr><td>Track 2</td><td>Agent Harness</td><td><a href="#system-prompt">System prompt</a></td><td></td></tr>
             <tr><td>Track 2</td><td>Agent Harness</td><td><a href="#context-budget">Context</a></td><td></td></tr>
+            <tr><td>Track 2</td><td>Agent Harness</td><td><a href="#retrieval-cost">Retrieval</a></td><td></td></tr>
             <tr><td>Track 2</td><td>Agent Harness</td><td><a href="#bound-the-reasoning-loop">Orchestration</a></td><td></td></tr>
             <tr><td>Track 2</td><td>Agent Harness</td><td><a href="#cap-concurrency-in-the-code-you-own">Cap concurrency in the code you own</a></td><td><a href="#cost-attribution-and-spending-caps">Cost attribution and spending caps</a></td></tr>
             <tr><td>Track 2</td><td>Agent Harness</td><td><a href="#enforce-per-user-ceilings-at-the-gateway">Guardrails and limits</a></td><td></td></tr>
@@ -5457,6 +5664,14 @@ details.assess-gap { margin-top: 12px; }
         <li id="ref-159">Amazon Bedrock adds reinforcement fine-tuning simplifying how developers build smarter, more accurate AI models. AWS News Blog, December 2025; accessed 5 November 2026. <a href="https://aws.amazon.com/blogs/aws/improve-model-accuracy-with-reinforcement-fine-tuning-in-amazon-bedrock/">https://aws.amazon.com/blogs/aws/improve-model-accuracy-with-reinforcement-fine-tuning-in-amazon-bedrock/</a></li>
         <li id="ref-160">Reinforcement fine-tuning on Amazon Bedrock with OpenAI-Compatible APIs: a technical walkthrough. AWS Machine Learning Blog; accessed 5 November 2026. <a href="https://aws.amazon.com/blogs/machine-learning/reinforcement-fine-tuning-on-amazon-bedrock-with-openai-compatible-apis-a-technical-walkthrough/">https://aws.amazon.com/blogs/machine-learning/reinforcement-fine-tuning-on-amazon-bedrock-with-openai-compatible-apis-a-technical-walkthrough/</a></li>
         <li id="ref-161">Customize Amazon Nova models with Amazon Bedrock fine-tuning. AWS Machine Learning Blog; accessed 5 November 2026. <a href="https://aws.amazon.com/blogs/machine-learning/customize-amazon-nova-models-with-amazon-bedrock-fine-tuning/">https://aws.amazon.com/blogs/machine-learning/customize-amazon-nova-models-with-amazon-bedrock-fine-tuning/</a></li>
+        <li id="ref-162">Claude Opus 5.5 model card (reasoning and effort default). Amazon Bedrock User Guide, AWS; accessed 5 November 2026. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html">https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html</a></li>
+        <li id="ref-163">Adaptive thinking. Amazon Bedrock User Guide, AWS; accessed 5 November 2026. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html">https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html</a></li>
+        <li id="ref-164">Build enterprise search for agents with Amazon Bedrock Managed Knowledge Base. AWS Machine Learning Blog; accessed 5 November 2026. <a href="https://aws.amazon.com/blogs/machine-learning/build-enterprise-search-for-agents-with-amazon-bedrock-managed-knowledge-base/">https://aws.amazon.com/blogs/machine-learning/build-enterprise-search-for-agents-with-amazon-bedrock-managed-knowledge-base/</a></li>
+        <li id="ref-165">Building cost-effective RAG applications with Amazon Bedrock Knowledge Bases and Amazon S3 Vectors. AWS Machine Learning Blog, July 2025; accessed 5 November 2026. <a href="https://aws.amazon.com/blogs/machine-learning/building-cost-effective-rag-applications-with-amazon-bedrock-knowledge-bases-and-amazon-s3-vectors/">https://aws.amazon.com/blogs/machine-learning/building-cost-effective-rag-applications-with-amazon-bedrock-knowledge-bases-and-amazon-s3-vectors/</a></li>
+        <li id="ref-166">Configure and customize queries and response generation. Amazon Bedrock User Guide, AWS; accessed 5 November 2026. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-config.html">https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-config.html</a></li>
+        <li id="ref-167">Improve the relevance of query responses with a reranker model. Amazon Bedrock User Guide, AWS; accessed 5 November 2026. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/rerank.html">https://docs.aws.amazon.com/bedrock/latest/userguide/rerank.html</a></li>
+        <li id="ref-168">AWS Price List bulk offer, AmazonBedrock (offer version 20261102165015, Amazon Rerank 1.0 search units, us-west-2). AWS; accessed 5 November 2026. <a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json">https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json</a></li>
+        <li id="ref-169">Sync your data with your Amazon Bedrock knowledge base. Amazon Bedrock User Guide, AWS; accessed 5 November 2026. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-data-source-sync-ingest.html">https://docs.aws.amazon.com/bedrock/latest/userguide/kb-data-source-sync-ingest.html</a></li>
         </ol>
       </details>
     </section>

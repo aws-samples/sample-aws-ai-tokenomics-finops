@@ -388,11 +388,24 @@ const EVIDENCE = Object.freeze({});
 const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   schemaVersion: 1,
   reviewBoundary: 'Every retired section/fact owner is manually bound to exact new section-local evidence.',
-  // No retirements since the 2026-10-02 baseline (archive/index-2026-10-02-track2-consolidation-*.html).
-  // That snapshot absorbed the Track 2 consolidation and its 18 contracts / 92 owners, which all went
-  // stale the moment the live file became the floor. The archive README row for 2026-10-02 records
-  // what left the document and why; add a new contract here the next time a fact is retired on purpose.
-  contracts: []
+  // Retirements since the 2026-10-29 baseline (archive/index-2026-10-29-github-pages-b5a9736.html).
+  // 2026-11-05, content PR 2: the Track 2 levers "Set reasoning effort per call" and "Retrieval"
+  // add two rows to the lever-index table (35 -> 37). The four lever-total statements that
+  // checkLeverTotal() ties to that row count now say 37, so the stated total 35 leaves the two
+  // sections that carried it. Each owner is bound to the replacement total in the same section.
+  // These contracts go stale at the next re-baseline, like the 2026-10-02 set did.
+  contracts: [
+    {
+      id: 'lever-total-35-to-37-map',
+      section: 'map-h',
+      owners: [reviewedOwner('integers:35', reviewedFact('integers:37'))]
+    },
+    {
+      id: 'lever-total-35-to-37-front-matter',
+      section: '(front matter)',
+      owners: [reviewedOwner('integers:35', reviewedFact('integers:37'))]
+    }
+  ]
 };
 
 const canonicalJson = (value) => {
@@ -407,7 +420,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '1e5689e01f01a3ce8df2f43626ac9af467f929d56137506329a01aacd3c506ea';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '5e6aff2fee6e343e57c47892ba29f21406c79026ce5da7fbd78b4efe51013202';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**
@@ -416,9 +429,20 @@ const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
  * 36% (or any broad ratio). Required phrases capture trade-offs a raw token inventory cannot see.
  */
 const SECTION_REWRITE_CONTRACTS = [
-  // Empty since the 2026-10-02 re-baseline: the five Track 2 "current-facts" contracts (routing, batch,
-  // quota, lifecycle, cache) pinned sections the consolidation rewrote and shortened; against the new
-  // baseline nothing has shrunk, so the floors would be no-ops and the required phrases are history.
+  // 2026-11-05: the cross-region inference short answer was rewritten for clarity (Clive's review).
+  // The floor sits just below the reviewed text, and the phrases pin the three facts the rewrite
+  // states: Geographic is the standard price, Global is about 10% less, and neither adds a routing
+  // charge. It is also the section the broad-rewrite-floor proof below mutates.
+  {
+    id: 'cris-short-answer-clarity',
+    section: 'cross-region-inference',
+    minWords: 380,
+    requiredPhrases: [
+      'costs the same as calling the model in the region you call from',
+      'it costs about 10% less',
+      'neither adds a routing charge'
+    ]
+  }
 ];
 
 
@@ -745,15 +769,15 @@ const inspectRetirementCoverage = (key) => {
 };
 const excusedByReplacement = (key) => inspectRetirementCoverage(key).ok;
 
-// Positive proof: the reviewed Track 1 range retirement is section-owned even though the same
-// unique key remains in an unrelated Track 2 section. The adversarial proofs below mutate this same
+// Positive proof: the reviewed lever-total retirement in map-h is section-owned even though the same
+// unique key remains in an other sections. The adversarial proofs below mutate this same
 // contract, so they are only applicable while the manifest carries it. Immediately after a
 // re-baseline the manifest is empty and there is nothing to mutate: those proofs report as not
 // applicable (null) rather than pass. If contracts exist but this fixture does not, fail closed so
 // the fixture is re-pointed at a current contract instead of silently skipping the proofs.
-const f1Section = 'manage-the-session-and-its-context-actively';
-const f1Fact = 'percentages:60 per cent';
-const f1ContractId = 'track1-subagent-range-retirement';
+const f1Section = 'map-h';
+const f1Fact = 'integers:35';
+const f1ContractId = 'lever-total-35-to-37-map';
 const RETIREMENT_PROOFS_APPLICABLE = FACT_REPLACEMENT_CONTRACTS.length > 0;
 const retirementFixturePresent = FACT_REPLACEMENT_CONTRACTS.some((contract) => contract.id === f1ContractId
   && contract.owners.some((owner) => owner.factKey === f1Fact));
@@ -806,13 +830,14 @@ const manifestOwnerships = FACT_REPLACEMENT_CONTRACTS.flatMap((contract) =>
   contract.owners.map((owner) => retirementOwnershipKey(contract.section, owner.factKey))
 );
 const manifestSealProofPassed = productionOwnerIntegrity.manifestSeal.ok;
-const manifestInventoryProofPassed = FACT_REPLACEMENT_CONTRACTS.length === 0
-  && manifestOwnerCount === 0 && new Set(manifestOwnerships).size === 0;
+const manifestInventoryProofPassed = FACT_REPLACEMENT_CONTRACTS.length === 2
+  && manifestOwnerCount === 2 && new Set(manifestOwnerships).size === 2;
 
-const f1MutationOwner = { section: '(front matter)', key: 'integers:35' };
+// An uncontracted front-matter owner to delete. integers:35 is contracted since 2026-11-05, so the
+// proof deletes the Track 2 card's question count instead, which no contract covers.
+const f1MutationOwner = { section: '(front matter)', key: 'integers:43' };
 const removeFrontMatter35 = (source) => source
-  .replace('This runbook holds 35 of them.', 'This runbook holds thirty-five of them.')
-  .replace('names all 35, with what each one saves', 'names all thirty-five, with what each one saves');
+  .replace('20 levers &middot; 43 questions', '20 levers &middot; forty-three questions');
 const ownerDeletedRaw = removeFrontMatter35(liveRaw);
 const ownerDeletedSections = extract(ownerDeletedRaw);
 const ownerMutationPrepared = !sectionHasFact(
@@ -891,8 +916,8 @@ if (!RETIREMENT_PROOFS_APPLICABLE) {
     && alteredEvidenceResult.errors.some((error) => error.includes('manifest seal mismatch'));
 
   const staleRaw = mutateSectionHtml(liveRaw, f1Section, (section) => section.replace(
-    /Codex subagents consume more tokens than comparable single-agent runs/i,
-    (match) => `${match}; the retired estimate was 60 per cent`
+    /Lever progress &middot; all 37 levers/,
+    (match) => `${match}, up from 35`
   ));
   const staleSections = extract(staleRaw);
   const staleContractResult = evaluateOwnerIntegrity(staleSections);
@@ -1016,8 +1041,8 @@ const currentContractsProofPassed = productionOwnerIntegrity.errors.length === 0
   && productionOwnerIntegrity.complete;
 for (const [passed, label] of [
   [manifestSealProofPassed, 'reviewed manifest seal does not match its canonical JSON'],
-  [manifestInventoryProofPassed, 'reviewed manifest inventory is not exactly 0 contracts / 0 unique owners'],
-  [f1OwnerProofPassed, 'owner-pair positive proof failed for the exact Track 1 range retirement'],
+  [manifestInventoryProofPassed, 'reviewed manifest inventory is not exactly 2 contracts / 2 unique owners'],
+  [f1OwnerProofPassed, 'owner-pair positive proof failed for the exact map-h lever-total retirement'],
   [unrelatedEvidenceDeletionProofPassed, 'full-path mutation accepted unrelated same-section evidence plus owner deletion'],
   [appendedManifestProofPassed, 'full-path mutation accepted an appended unreviewed contract without a seal update'],
   [alteredEvidenceSealProofPassed, 'full-path mutation accepted an altered evidence relationship without a seal update'],
