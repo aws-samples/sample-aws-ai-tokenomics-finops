@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "_about": "Canonical Bedrock model-ID to AWS Price List join map (issue #14). Rows are keyed by the structured tuple (model_id, region, dimension) and store the EXACT structured join fields (usagetype + regionCode, with service_tier/operation as supplementary confirmations). The resolver matches offer rows by structured equality on these fields; it never parses the free-text description or the model display name. See pricing/README.md for the finding, the join method, and the maintenance note. Prices are per 1,000,000 tokens (USD). status=verified rows carry a real usagetype read from the public bulk offer that prices that model (AmazonBedrock for the legacy display-name rows, AmazonBedrockFoundationModels for the current Claude MP: rows, which also pin join.servicename because their usagetype is shared by every model in the Region) plus a resolvable source_url and verified_date; status=unverified_pending_join rows are in scope but not yet resolvable (join.usagetype, price_per_1M_usd, verified_date are all null) and must be populated from a signed GetProducts or the dated pricing page.",
+  "_about": "Canonical Bedrock model-ID to AWS Price List join map (issue #14). Rows are keyed by the structured tuple (model_id, region, dimension) and store the EXACT structured join fields (usagetype + regionCode, with service_tier/operation as supplementary confirmations). The resolver matches offer rows by structured equality on these fields; it never parses the free-text description or the model display name. See pricing/README.md for the finding, the join method, and the maintenance note. Prices are per 1,000,000 tokens (USD). status=verified rows carry a real usagetype read from the public bulk offer that prices that model (AmazonBedrock for the legacy display-name rows, AmazonBedrockFoundationModels for the current Claude and OpenAI MP: rows, which also pin join.servicename because their usagetype is shared by every model in the Region) plus a resolvable source_url and verified_date; status=unverified_pending_join rows are in scope but not yet resolvable (join.usagetype, price_per_1M_usd, verified_date are all null) and must be populated from a signed GetProducts or the dated pricing page.",
   "rows": [
     {
       "model_id": "anthropic.claude-v2:0",
@@ -311,6 +311,642 @@
       "status": "verified",
       "id_status": "VERIFIED base model ID (Amazon Bedrock model card for Claude Haiku 4.5, checked 2026-11-05); replaces the earlier UNVERIFIED_DATE placeholder",
       "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU UM84PHMW42ATFREN, offer description 'Million Response Tokens Regional'. The global. profile is a separate row at 5.00 (APS2-MP:APS2_OutputTokenCount_Global-Units) and is not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-haiku-5-5",
+      "display_name": "Claude Haiku 5.5",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": "USE1-MP:USE1_input_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Haiku 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 0.11,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU GWDHRAKM6RFD2XYJ, offer description 'Million Input Tokens Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-haiku-5-5",
+      "display_name": "Claude Haiku 5.5",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": "USE1-MP:USE1_output_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Haiku 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 0.55,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU KYPW3D8EBWFD83XS, offer description 'Million Response Tokens Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-haiku-5-5",
+      "display_name": "Claude Haiku 5.5",
+      "region": "us-east-1",
+      "dimension": "cache_read",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_read_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Haiku 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 0.011,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU U8VNEEFYKPCVZFB5, offer description 'Cache Read Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-haiku-5-5",
+      "display_name": "Claude Haiku 5.5",
+      "region": "us-east-1",
+      "dimension": "cache_write",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_write_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Haiku 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 0.1375,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU SUN5BR5NYRKSKR7N, offer description 'Cache Write Tokens - Standard'. Cache write at the default 5-minute TTL; the longer-TTL write is a separate SKU and is not mapped. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5-5",
+      "display_name": "Claude Sonnet 5.5",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": "USE1-MP:USE1_input_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 2.20,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU 6TG78WT6WYJUVS72, offer description 'Input Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5-5",
+      "display_name": "Claude Sonnet 5.5",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": "USE1-MP:USE1_output_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 11.00,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU ZNY2E4B6MTPHYXVH, offer description 'Output Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5-5",
+      "display_name": "Claude Sonnet 5.5",
+      "region": "us-east-1",
+      "dimension": "cache_read",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_read_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 0.11,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU H6MJYZQS5DCKBCCM, offer description 'Cache Read Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5-5",
+      "display_name": "Claude Sonnet 5.5",
+      "region": "us-east-1",
+      "dimension": "cache_write",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_write_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 2.75,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU 99NPNFEPJP2AB79S, offer description 'Cache Write Tokens - Standard'. Cache write at the default 5-minute TTL; the longer-TTL write is a separate SKU and is not mapped. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-opus-5-5",
+      "display_name": "Claude Opus 5.5",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": "USE1-MP:USE1_input_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Opus 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 4.40,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU J9QFZT8WAQABG9ZX, offer description 'Input Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-opus-5-5",
+      "display_name": "Claude Opus 5.5",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": "USE1-MP:USE1_output_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Opus 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 22.00,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU FCRGDQ596BG7EQKH, offer description 'Output Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-opus-5-5",
+      "display_name": "Claude Opus 5.5",
+      "region": "us-east-1",
+      "dimension": "cache_read",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_read_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Opus 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 0.22,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU E5RCDXA3KP96TBAZ, offer description 'Cache Read Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-opus-5-5",
+      "display_name": "Claude Opus 5.5",
+      "region": "us-east-1",
+      "dimension": "cache_write",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_write_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Opus 5.5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 5.50,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-5-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU WXH7FJ56PSA2AT5S, offer description 'Cache Write Tokens - Standard'. Cache write at the default 5-minute TTL; the longer-TTL write is a separate SKU and is not mapped. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5",
+      "display_name": "Claude Sonnet 5",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": "USE1-MP:USE1_input_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 2.20,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU 9D9A29KAR2Y2YD2K, offer description 'Million Input Tokens Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5",
+      "display_name": "Claude Sonnet 5",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": "USE1-MP:USE1_output_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 11.00,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU HRWQFS82WPV9M4QM, offer description 'Million Response Tokens Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5",
+      "display_name": "Claude Sonnet 5",
+      "region": "us-east-1",
+      "dimension": "cache_read",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_read_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 0.22,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU V4N6FGM4HBYCGZET, offer description 'Cache Read Tokens - Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-5",
+      "display_name": "Claude Sonnet 5",
+      "region": "us-east-1",
+      "dimension": "cache_write",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_write_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 5 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 2.75,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-5.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU TS3R2YYGETPSTFJH, offer description 'Cache Write Tokens - Standard'. Cache write at the default 5-minute TTL; the longer-TTL write is a separate SKU and is not mapped. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "openai.gpt-6-astra",
+      "display_name": "GPT-6 Astra",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": "USE1-MP:USE1_input_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "OpenAI GPT-6 Astra (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 11.00,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-astra.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU YRUJS5WTF6Z78DNT, offer description 'input_tokens_standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "openai.gpt-6-astra",
+      "display_name": "GPT-6 Astra",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": "USE1-MP:USE1_output_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "OpenAI GPT-6 Astra (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 55.00,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-astra.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU 5XZWVV3E94UEHZGC, offer description 'output_tokens_standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "openai.gpt-6-astra",
+      "display_name": "GPT-6 Astra",
+      "region": "us-east-1",
+      "dimension": "cache_read",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_read_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "OpenAI GPT-6 Astra (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 1.10,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-astra.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU CMDQQY8FV38RU84G, offer description 'cache_read_tokens_standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "openai.gpt-6-astra",
+      "display_name": "GPT-6 Astra",
+      "region": "us-east-1",
+      "dimension": "cache_write",
+      "join": {
+        "usagetype": "USE1-MP:USE1_cache_write_tokens_30m_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "OpenAI GPT-6 Astra (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 13.75,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-astra.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU B9ND98JUZS4WTSPZ, offer description 'cache_write_tokens_30m_standard'. Cache write at the default 30-minute retention; the longer-TTL write is a separate SKU and is not mapped. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-4-6",
+      "display_name": "Claude Sonnet 4.6",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": "USE1-MP:USE1_InputTokenCount-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 4.6 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 3.30,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-4-6.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU KPFGPZJ8VWMREGAV, offer description 'Million Input Tokens Regional CRIS'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-sonnet-4-6",
+      "display_name": "Claude Sonnet 4.6",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": "USE1-MP:USE1_OutputTokenCount-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Sonnet 4.6 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 16.50,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-sonnet-4-6.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU GMB9AQ5DYNAGYZEC, offer description 'Million Response Tokens Regional CRIS'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-opus-4-8",
+      "display_name": "Claude Opus 4.8",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": "USE1-MP:USE1_input_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Opus 4.8 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 5.50,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-4-8.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU 4AVHTD2NXFKSU6HU, offer description 'Million Input Tokens Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "anthropic.claude-opus-4-8",
+      "display_name": "Claude Opus 4.8",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": "USE1-MP:USE1_output_tokens_standard-Units",
+        "service_tier": null,
+        "operation": "",
+        "servicename": "Claude Opus 4.8 (Amazon Bedrock Edition)"
+      },
+      "price_per_1M_usd": 27.50,
+      "unit_source": "1M tokens",
+      "source_url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/20261012084008/us-east-1/index.json",
+      "verified_date": "2026-11-05",
+      "status": "verified",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-opus-4-8.html, checked 2026-11-05)",
+      "note": "In-Region (and Geo cross-Region) Standard on-demand price, SKU YKJ5FPMCZAQF5BHF, offer description 'Million Response Tokens Standard'. The global. profile and any long-context rows are separate SKUs and are not mapped here."
+    },
+    {
+      "model_id": "openai.gpt-6-sol",
+      "display_name": "GPT-6 Sol",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-sol.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-6 Sol in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-6-sol",
+      "display_name": "GPT-6 Sol",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-sol.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-6 Sol in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-6-luna",
+      "display_name": "GPT-6 Luna",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-luna.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-6 Luna in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-6-luna",
+      "display_name": "GPT-6 Luna",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-luna.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-6 Luna in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-6.1-sol",
+      "display_name": "GPT-6.1 Sol",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-1-sol.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-6.1 Sol in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-6.1-sol",
+      "display_name": "GPT-6.1 Sol",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-1-sol.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-6.1 Sol in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-5.6-sol",
+      "display_name": "GPT-5.6 Sol",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-56-sol.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-5.6 Sol in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-5.6-sol",
+      "display_name": "GPT-5.6 Sol",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-56-sol.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: Neither bulk offer (AmazonBedrockFoundationModels 20261012084008, AmazonBedrock 20261102165015) has a SKU for GPT-5.6 Sol in any Region; it is priced only on its Amazon Bedrock model card. Populate when a SKU appears."
+    },
+    {
+      "model_id": "openai.gpt-5.6-luna",
+      "display_name": "GPT-5.6 Luna",
+      "region": "us-east-1",
+      "dimension": "input",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-56-luna.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: The AmazonBedrock offer (20261102165015) prices GPT-5.6 Luna only in us-gov-west-1, and the AmazonBedrockFoundationModels offer (20261012084008) has no SKU for it; there is no us-east-1 SKU, so it is priced only on its Amazon Bedrock model card. Do not copy the GovCloud price into this row."
+    },
+    {
+      "model_id": "openai.gpt-5.6-luna",
+      "display_name": "GPT-5.6 Luna",
+      "region": "us-east-1",
+      "dimension": "output",
+      "join": {
+        "usagetype": null,
+        "service_tier": null,
+        "operation": null
+      },
+      "price_per_1M_usd": null,
+      "unit_source": null,
+      "source_url": null,
+      "verified_date": null,
+      "status": "unverified_pending_join",
+      "id_status": "VERIFIED base model ID (Amazon Bedrock model card, https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-56-luna.html, checked 2026-11-05)",
+      "note": "Pending, checked 2026-11-05: The AmazonBedrock offer (20261102165015) prices GPT-5.6 Luna only in us-gov-west-1, and the AmazonBedrockFoundationModels offer (20261012084008) has no SKU for it; there is no us-east-1 SKU, so it is priced only on its Amazon Bedrock model card. Do not copy the GovCloud price into this row."
     }
   ]
 }
