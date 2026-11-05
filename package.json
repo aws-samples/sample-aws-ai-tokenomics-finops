@@ -5,7 +5,7 @@
   "description": "AI Tokenomics FinOps: a self-assessment runbook for AI cost optimization on AWS (AI coding assistants and agentic applications on Amazon Bedrock), built as a static site for GitHub Pages.",
   "license": "MIT-0",
   "engines": {
-    "node": ">=18"
+    "node": ">=22.12"
   },
   "scripts": {
     "build:runbook": "node scripts/build-runbook.mjs",

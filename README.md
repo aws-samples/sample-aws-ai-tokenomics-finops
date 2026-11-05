@@ -51,7 +51,7 @@ Edit `site/src/` and rebuild.
 
 ## Build and verify locally
 
-Requires Node.js 18 or later (CI uses 22) and, for the browser checks, a Chrome or Chromium binary.
+Requires Node.js 22.12 or later (CI uses 22) and, for the browser checks, a Chrome or Chromium binary.
 
 ```bash
 npm ci
