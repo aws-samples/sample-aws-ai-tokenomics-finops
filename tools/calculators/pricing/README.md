@@ -60,6 +60,13 @@ attribute keys (`feature`, `inferenceType`, `location`, `locationType`, `model`,
 model-ID field. Opus 4.1 and Opus 4.5 are priced there in `us-west-2` but have no
 `ap-southeast-2` SKU, so those map rows stay pending.
 
+The same offer prices the current generation in `us-east-1` (checked 2026-11-05, same
+version `20261012084008`): Claude Haiku, Sonnet and Opus 5.5, Claude Sonnet 5, Claude
+Opus 4.8, Claude Sonnet 4.6 and OpenAI GPT-6 Astra. OpenAI GPT-6 Sol, GPT-6 Luna, GPT-6.1
+Sol and GPT-5.6 Sol have no SKU in either bulk offer in any Region, and GPT-5.6 Luna has
+one only in `us-gov-west-1` (in the `AmazonBedrock` offer, version `20261102165015`). Those
+models are priced only on their Amazon Bedrock model cards, so their map rows stay pending.
+
 Sources: [GetProducts API reference](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_pricing_GetProducts.html),
 [GetAttributeValues API reference](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_pricing_GetAttributeValues.html),
 [Reading an offer file](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/reading-an-offer.html),
@@ -114,6 +121,16 @@ Two `usagetype` conventions exist, so do not try to derive a model ID from the s
   pattern, and a row that leaves it null is not constrained on it. Without it the resolver
   raises `AmbiguousMatchError`, which a test asserts.
 
+  Newer models in the same offer use a second `MP:` spelling that names the tier and the
+  variant: `USE1-MP:USE1_input_tokens_standard-Units` for In-Region Standard input, with
+  separate SKUs such as `..._input_tokens_global_standard-Units` (the `global.` profile),
+  `..._input_tokens_long_ctx_standard-Units` (long-context pricing, for Claude Haiku 5.5 and
+  GPT-6 Astra) and `..._cache_write_tokens_1h_standard-Units` (a 1-hour cache write; GPT-6
+  Astra has `..._cache_write_tokens_30m_standard-Units` instead). Claude Sonnet 4.6 still uses
+  the older `InputTokenCount` spelling. The map stores whichever exact string the offer row
+  carries, plus `servicename`; a test asserts each current row joins the In-Region Standard
+  SKU and not one of the variants the fixture carries beside it.
+
 Neither Claude convention embeds the API model ID, so you cannot lift a Claude model ID from
 any usagetype. That is why a curated map is required.
 
@@ -127,8 +144,10 @@ at the source Region and adds no premium over In-Region, so the resolver strips 
 to the base model ID rather than duplicating a row per prefix. Only the `global.` profile
 has its own lower-priced usagetype (`-cross-region-global` in `AmazonBedrock`, `_Global` in
 `AmazonBedrockFoundationModels`), so only that warrants its own row, and only for models
-where AWS publishes it. The mapped Sonnet 4.5 and Haiku 4.5 rows are the In-Region / Geo
-price; the `global.` price is about 10% lower and is not mapped yet.
+where AWS publishes it. Every mapped `MP:` row is the In-Region / Geo price; the `global.`
+price is about 10% lower and is not mapped yet. Long-context rates and the 1-hour (or
+30-minute) cache write are not mapped either: the map is keyed by dimension alone, so it
+carries the default short-context Standard rate.
 
 ## Price discipline (AC4)
 
@@ -147,13 +166,36 @@ resolves to. As of 2026-11-05:
   In-Region).
 - Opus 4.1 and Opus 4.5 in `ap-southeast-2` stay `unverified_pending_join`: neither offer
   has a Sydney SKU for them. Do not copy a `us-west-2` price into a Sydney row.
+- The current generation in `us-east-1` is read from the `AmazonBedrockFoundationModels`
+  offer, version `20261012084008`, In-Region Standard, USD per 1M tokens:
+
+  | Model | Input | Output | Cache read | Cache write |
+  |---|---|---|---|---|
+  | Claude Haiku 5.5 | 0.11 | 0.55 | 0.011 | 0.1375 |
+  | Claude Sonnet 5.5 | 2.20 | 11.00 | 0.11 | 2.75 |
+  | Claude Opus 5.5 | 4.40 | 22.00 | 0.22 | 5.50 |
+  | Claude Sonnet 5 | 2.20 | 11.00 | 0.22 | 2.75 |
+  | OpenAI GPT-6 Astra | 11.00 | 55.00 | 1.10 | 13.75 (30-minute) |
+  | Claude Opus 4.8 | 5.50 | 27.50 | not mapped | not mapped |
+  | Claude Sonnet 4.6 | 3.30 | 16.50 | not mapped | not mapped |
+
+  Claude cache writes are the default 5-minute write. Each row's SKU is in its `note`.
+- OpenAI GPT-6 Sol, GPT-6 Luna, GPT-6.1 Sol, GPT-5.6 Sol and GPT-5.6 Luna in `us-east-1`
+  stay `unverified_pending_join`, input and output: no bulk offer has a `us-east-1` SKU for
+  them, and they are priced only on their model cards. Do not copy a model-card or GovCloud
+  price into these rows.
 
 Model IDs: Sonnet 4.5 (`anthropic.claude-sonnet-4-5-20250929-v1:0`), Haiku 4.5
 (`anthropic.claude-haiku-4-5-20251001-v1:0`) and Opus 4.5
 (`anthropic.claude-opus-4-5-20251101-v1:0`) were confirmed on their Amazon Bedrock model
 cards on 2026-11-05, which replaces the earlier `UNVERIFIED_DATE` placeholders. Opus 4.1
-(`20250805`) is from the model-lifecycle page. Never invent a date-stamp: if a new model's
-card is not yet published, use a clearly labelled placeholder as before.
+(`20250805`) is from the model-lifecycle page. The current-generation IDs carry no date
+stamp (`anthropic.claude-haiku-5-5`, `anthropic.claude-sonnet-5-5`,
+`anthropic.claude-opus-5-5`, `anthropic.claude-sonnet-5`, `anthropic.claude-sonnet-4-6`,
+`anthropic.claude-opus-4-8`, `openai.gpt-6-astra`, `openai.gpt-6-sol`, `openai.gpt-6-luna`,
+`openai.gpt-6.1-sol`, `openai.gpt-5.6-sol`, `openai.gpt-5.6-luna`) and were read from each
+model's Amazon Bedrock card on 2026-11-05. Never invent a date-stamp: if a new model's card
+is not yet published, use a clearly labelled placeholder as before.
 
 ## Maintenance note: new model launches (AC3)
 

@@ -257,6 +257,83 @@ class ResolverTestCase(unittest.TestCase):
                 self.assertIsNone(r["join"]["usagetype"])
                 self.assertIsNone(r["verified_date"])
 
+    # 7a. Coverage manifest for the current generation in us-east-1: every model the runbook
+    # prices has input and output rows there, either verified or explicitly pending.
+    def test_coverage_manifest_current_generation_us_east_1(self):
+        expected = {
+            "anthropic.claude-haiku-5-5": "verified",
+            "anthropic.claude-sonnet-5-5": "verified",
+            "anthropic.claude-opus-5-5": "verified",
+            "anthropic.claude-sonnet-5": "verified",
+            "anthropic.claude-sonnet-4-6": "verified",
+            "anthropic.claude-opus-4-8": "verified",
+            "openai.gpt-6-astra": "verified",
+            "openai.gpt-6-sol": "unverified_pending_join",
+            "openai.gpt-6-luna": "unverified_pending_join",
+            "openai.gpt-6.1-sol": "unverified_pending_join",
+            "openai.gpt-5.6-sol": "unverified_pending_join",
+            "openai.gpt-5.6-luna": "unverified_pending_join",
+        }
+        for model_id, status in expected.items():
+            rows = [
+                r
+                for r in self.price_map
+                if r["model_id"] == model_id and r["region"] == "us-east-1"
+            ]
+            dims = {r["dimension"] for r in rows}
+            self.assertTrue({"input", "output"} <= dims, "%s lacks input/output" % model_id)
+            self.assertEqual({r["status"] for r in rows}, {status}, model_id)
+
+    # 7a2. A current-generation MP: row joins the In-Region Standard SKU, never the global.,
+    # long-context, batch or longer-TTL variant that the fixture carries beside it for the
+    # same model, and those variants really are priced differently.
+    def test_current_rows_pick_in_region_standard_sku(self):
+        current = [
+            r
+            for r in self.verified
+            if r["region"] == "us-east-1" and "-MP:" in r["join"]["usagetype"]
+        ]
+        self.assertGreaterEqual(len(current), 24)
+        for entry in current:
+            row = resolve(entry["model_id"], entry["region"], entry["dimension"], self.rows)
+            usagetype = row["attributes"]["usagetype"]
+            for variant in ("global", "Global", "long_ctx", "Batch", "_1h_"):
+                self.assertNotIn(variant, usagetype, entry)
+            siblings = [
+                r
+                for r in self.fm_rows
+                if r["attributes"].get("regionCode") == "us-east-1"
+                and r["attributes"].get("servicename") == entry["join"]["servicename"]
+                and r["attributes"].get("inferenceType") == row["attributes"]["inferenceType"]
+                and r["sku"] != row["sku"]
+            ]
+            self.assertTrue(siblings, "fixture lacks a variant beside %s" % row["sku"])
+            self.assertTrue(
+                any(s["price_per_unit_usd"] != row["price_per_unit_usd"] for s in siblings),
+                "no differently priced variant beside %s" % row["sku"],
+            )
+
+    # 7a3. The rows added from the 2026-11 offer carry their dated source.
+    def test_current_rows_provenance(self):
+        for entry in self.verified:
+            if entry["region"] != "us-east-1":
+                continue
+            self.assertEqual(entry["verified_date"], "2026-11-05")
+            self.assertIn("/AmazonBedrockFoundationModels/20261012084008/us-east-1/", entry["source_url"])
+            self.assertEqual(entry["unit_source"], "1M tokens")
+
+    # 7a4. A pending row says why it is pending, so nobody fills it with a guessed price.
+    def test_pending_rows_state_reason(self):
+        for entry in self.pending:
+            self.assertTrue(entry.get("note"), entry["model_id"])
+        for model_id in ("openai.gpt-6-sol", "openai.gpt-6-luna", "openai.gpt-6.1-sol"):
+            notes = [r["note"] for r in self.pending if r["model_id"] == model_id]
+            self.assertTrue(notes, model_id)
+            for note in notes:
+                self.assertIn("model card", note)
+            with self.assertRaises(PendingCoverageError):
+                resolve(model_id, "us-east-1", "input", self.rows)
+
     # 7b. A pending row raises PendingCoverageError, not a silent wrong price.
     def test_pending_row_raises_pending_coverage(self):
         entry = self.pending[0]
