@@ -261,7 +261,7 @@ issue32Check(
   `${(subscriptionLever.match(/data-assess-q\b/g) || []).length} found`
 );
 issue32Check(
-  (live.match(/class="assess-q"/g) || []).length === 69,
+  (live.match(/class="assess-q"/g) || []).length === 74,
   'document question count matches the consolidated structure',
   `${(live.match(/class="assess-q"/g) || []).length} found`
 );
@@ -1600,7 +1600,7 @@ const inspectIssue33Source = (sourceRaw) => {
 
 const issue33Current = inspectIssue33Source(liveRaw);
 issue33Check(issue33Current.balanced, 'question owners are balanced elements');
-issue33Check(issue33Current.questionCount === 69, 'document has exactly 69 questions', `${issue33Current.questionCount} found`);
+issue33Check(issue33Current.questionCount === 74, 'document has exactly 74 questions', `${issue33Current.questionCount} found`);
 issue33Check(issue33Current.planning.keys.join(',') === 'pbe-q1,pbe-q2',
   'planning owner keys and order are exact', issue33Current.planning.keys.join(',') || 'none');
 issue33Check(issue33Current.pbe.identityOk, 'pbe-q2 identity is on one owner opening',

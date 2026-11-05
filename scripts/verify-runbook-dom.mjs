@@ -504,24 +504,24 @@ const EXPECT = {
   panes: ['overview', 't1', 't2'],
   tracks: {
     t1: { levers: 11, questions: 35, references: 61, scopes: ['t1-model-inference', 't1-agent-harness', 't1-end-user'] },
-    t2: { levers: 15, questions: 34, references: 76, scopes: ['model-inference', 'agent-harness', 'end-user'] }
+    t2: { levers: 17, questions: 39, references: 84, scopes: ['model-inference', 'agent-harness', 'end-user'] }
   },
   /** Every lever states a saving since the 2026-10-02 Track 2 consolidation (no `data-lever-kind="cross-reference"` lever remains). */
-  savesHeads: 26,
-  levers: 26,
-  assessBlocks: 26,
-  questions: 69,
+  savesHeads: 28,
+  levers: 28,
+  assessBlocks: 28,
+  questions: 74,
   panels: 6,
   scopes: ['t1-model-inference', 't1-agent-harness', 't1-end-user', 'model-inference', 'agent-harness', 'end-user'],
-  minExplorerChips: 26,
+  minExplorerChips: 28,
   figures: 5
 };
 
 /** Track 2 lever headings in document order; the scope pickers must list exactly these. */
 const EXPECT_T2_LEVER_IDS = [
   'know-what-you-spend', 'route-to-the-right-model', 'route-to-the-right-price', 'cache-what-repeats',
-  'distill-when-volume-justifies-it',
-  'system-prompt', 'context-budget', 'design-memory-and-compaction-as-architecture', 'budget-the-tool-definition-weight',
+  'set-reasoning-effort-per-call', 'distill-when-volume-justifies-it',
+  'system-prompt', 'context-budget', 'retrieval-cost', 'design-memory-and-compaction-as-architecture', 'budget-the-tool-definition-weight',
   'bound-the-reasoning-loop', 'enforce-per-user-ceilings-at-the-gateway', 'audit-your-orchestration-for-hidden-invocations',
   'precise-specifications-to-avoid-rework', 'guided-prompting-to-reduce-input-ambiguity', 'show-the-user-what-their-session-costs'
 ];
@@ -531,6 +531,7 @@ const MODEL_INFERENCE_PHASES = [
   'BEFORE THE CALL',
   'AT THE CALL BOUNDARY',
   'ON THE PAYLOAD',
+  'ON THE OUTPUT',
   'AT SCALE'
 ];
 
@@ -539,6 +540,7 @@ const MODEL_INFERENCE_SEQUENCE = [
   'route-to-the-right-model',
   'route-to-the-right-price',
   'cache-what-repeats',
+  'set-reasoning-effort-per-call',
   'distill-when-volume-justifies-it'
 ];
 
@@ -755,19 +757,19 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
     check(label, `${name} carries no inline styles`, !!f && f.inlineStyled === 0, f ? `${f.inlineStyled}` : 'n/a');
     check(label, `${name} labels its parts as real text`, !!f && f.texts >= 8, f ? `${f.texts} <text>` : '0');
   }
-  check(label, 'Figure 3a labels the five lifecycle phases in order',
+  check(label, 'Figure 3a labels the six lifecycle phases in order',
     figs.lifecyclePhaseLabels.join('|') === MODEL_INFERENCE_PHASES.join('|'),
     figs.lifecyclePhaseLabels.join(' -> '));
-  check(label, 'Figure 3a connects all five lifecycle phases',
-    figs.lifecycleEdges === 4 && figs.lifecycleArrowheads === 4,
+  check(label, 'Figure 3a connects all six lifecycle phases',
+    figs.lifecycleEdges === 5 && figs.lifecycleArrowheads === 5,
     `${figs.lifecycleEdges} edges, ${figs.lifecycleArrowheads} arrowheads`);
-  check(label, 'Model Inference body follows the five-lever lifecycle sequence',
+  check(label, 'Model Inference body follows the six-lever lifecycle sequence',
     figs.bodySequence.join('|') === MODEL_INFERENCE_SEQUENCE.join('|'),
     figs.bodySequence.join(' -> '));
-  check(label, 'Model Inference sidebar follows the five-lever lifecycle sequence',
+  check(label, 'Model Inference sidebar follows the six-lever lifecycle sequence',
     figs.sidebarSequence.join('|') === MODEL_INFERENCE_SEQUENCE.join('|'),
     figs.sidebarSequence.join(' -> '));
-  check(label, 'no-JS Model Inference index follows the five-lever lifecycle sequence',
+  check(label, 'no-JS Model Inference index follows the six-lever lifecycle sequence',
     figs.fallbackSequence.join('|') === MODEL_INFERENCE_SEQUENCE.join('|'),
     figs.fallbackSequence.join(' -> '));
   const retiredRouting = figs.routingRetirement;
@@ -1140,14 +1142,14 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
     };
     return out;
   });
-  check(label, 'one scope picker under each Track 2 figure, one box per lever', scope.pickers === 3 && scope.boxes === 15 && scope.pickerLevers.length === 15,
+  check(label, 'one scope picker under each Track 2 figure, one box per lever', scope.pickers === 3 && scope.boxes === 17 && scope.pickerLevers.length === 17,
     `${scope.pickers} pickers, ${scope.boxes} boxes, ${scope.pickerLevers.length} inputs`);
   check(label, 'picker levers are exactly the Track 2 lever headings, in order',
     scope.pickerLevers.join(',') === EXPECT_T2_LEVER_IDS.join(','), scope.pickerLevers.join(','));
   check(label, 'scope starts complete', scope.before.qs === EXPECT.tracks.t2.questions && scope.before.max === String(EXPECT.tracks.t2.questions),
     `${scope.before.qs} visible, max ${scope.before.max}`);
   check(label, 'unticking a lever and clicking a figure box both remove their questions from every count',
-    scope.after.qs === EXPECT.tracks.t2.questions - 6 && scope.after.max === String(EXPECT.tracks.t2.questions - 6) && /0\/13 answered/.test(scope.after.harness),
+    scope.after.qs === EXPECT.tracks.t2.questions - 6 && scope.after.max === String(EXPECT.tracks.t2.questions - 6) && /0\/16 answered/.test(scope.after.harness),
     `${scope.after.qs} visible, max ${scope.after.max}, harness "${scope.after.harness}"`);
   check(label, 'an excluded lever is hidden with its sidebar entry and figure box, and its checkbox clears',
     scope.after.heading && scope.after.assess && scope.after.nav && scope.after.box && !scope.after.checkbox, JSON.stringify(scope.after));
@@ -1256,7 +1258,7 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
 
   check(label, 'map columns carry a layer glyph', mapAndLinks.glyphs === 3, `${mapAndLinks.glyphs}`);
   check(label, 'map cells state how many levers they hold',
-    mapAndLinks.counts.join(',') === '4,3,4,5,7,3', mapAndLinks.counts.join(','));
+    mapAndLinks.counts.join(',') === '4,3,4,6,8,3', mapAndLinks.counts.join(','));
   check(label, 'map shows no coverage before anything is answered', !mapAndLinks.coverageBeforeAnswering, 'counts only');
   check(label, 'map shows coverage once answered, only for that cell',
     /3\/12/.test(mapAndLinks.coverageAfterAnswering) && mapAndLinks.otherCellsStillQuiet,
@@ -1449,11 +1451,11 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
     dashboards.t1.rows === 3 && dashboards.t2.rows === 3,
     `Track 1=${dashboards.t1.rows}, Track 2=${dashboards.t2.rows}`);
   check(label, 'dashboard totals use exact per-track question counts',
-    dashboards.t1.max === '35' && dashboards.t2.max === '34' && dashboards.t1.now === '3' && dashboards.t2.now === '3',
+    dashboards.t1.max === '35' && dashboards.t2.max === '39' && dashboards.t1.now === '3' && dashboards.t2.now === '3',
     `Track 1 ${dashboards.t1.now}/${dashboards.t1.max}; Track 2 ${dashboards.t2.now}/${dashboards.t2.max}`);
   check(label, 'landing cards show isolated exact progress and continue actions',
     dashboards.cards[0].key === 't1' && dashboards.cards[0].now === '3' && dashboards.cards[0].max === '35'
-      && dashboards.cards[1].key === 't2' && dashboards.cards[1].now === '3' && dashboards.cards[1].max === '34'
+      && dashboards.cards[1].key === 't2' && dashboards.cards[1].now === '3' && dashboards.cards[1].max === '39'
       && dashboards.cards.every((card) => /Continue assessment/.test(card.action)),
     dashboards.cards.map((card) => `${card.key}:${card.now}/${card.max} ${card.action}`).join(' | '));
   check(label, 'applicable-answer score excludes N/A and unanswered questions',
@@ -1477,7 +1479,7 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
       && /ai-tokenomics-assessment-track-2/.test(dashboards.print.titleDuringPrint)
       && /Track 2/.test(dashboards.print.text) && !/Track 1/.test(dashboards.print.text)
       && /Incomplete assessment/.test(dashboards.print.text)
-      && /omits 31 unanswered questions/.test(dashboards.print.text)
+      && /omits 36 unanswered questions/.test(dashboards.print.text)
       && !/\[unanswered\]/.test(dashboards.print.text),
     dashboards.print.titleDuringPrint || 'unchanged');
   check(label, 'track print report carries no inline styles', dashboards.print.inlineStyles === 0,
@@ -1832,14 +1834,14 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
     seen.overview = count();
     return seen;
   });
-  check(label, 'references are scoped to exactly 61 for Track 1 and 76 for Track 2',
+  check(label, 'references are scoped to exactly 61 for Track 1 and 84 for Track 2',
     scopedReferences.t1 === EXPECT.tracks.t1.references && scopedReferences.t2 === EXPECT.tracks.t2.references
       && scopedReferences.t1Visible && scopedReferences.t2Visible,
     `Track 1=${scopedReferences.t1}, Track 2=${scopedReferences.t2}`);
-  check(label, 'landing retains all 152 canonical references', scopedReferences.overview === 152,
+  check(label, 'landing retains all 160 canonical references', scopedReferences.overview === 160,
     `${scopedReferences.overview} visible reference entries`);
   check(label, 'reference copy names the active track and count',
-    /61 references.*Track 1/.test(scopedReferences.t1Note) && /76 references.*Track 2/.test(scopedReferences.t2Note),
+    /61 references.*Track 1/.test(scopedReferences.t1Note) && /84 references.*Track 2/.test(scopedReferences.t2Note),
     `${scopedReferences.t1Note} | ${scopedReferences.t2Note}`);
 
   // Print takes the WHOLE runbook, not the pane you happen to be on. 66-tabs.css scopes the hiding rules to
