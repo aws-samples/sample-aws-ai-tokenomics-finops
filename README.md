@@ -1,101 +1,59 @@
 # AI Tokenomics FinOps
 
-A GenAI FinOps self-assessment runbook for AI cost optimization on AWS, focused on Amazon Bedrock cost
-optimization and the LLM token cost of AI coding assistants and agentic AI applications. Generative AI is
-billed by the token, so cost follows usage directly and rises as adoption spreads. This runbook sets out
-the decisions that move the bill for two kinds of team, as two tracks:
+**Find the decisions that move your AI token bill.**
 
-- **Track 1, AI Coding Assistant:** teams that adopt an AI coding assistant and tune how it is used.
-- **Track 2, Purpose-Built Agentic AI Application:** teams that build and operate an agent of their own on
-  Amazon Bedrock.
+A browser-only self-assessment runbook for teams that use AI coding assistants or build agents on
+Amazon Bedrock. 28 levers across 2 tracks. Answer the diagnostic questions, export a gap report.
 
-Each track is organised into actor layers and levers. For every lever you answer a few diagnostic
-questions (Fully covered, Partially, Not covered, N/A), open the detailed guidance only where there is a
-gap, and export a per-layer gap report.
+**[Open the runbook](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/)** ·
+[Contributing](CONTRIBUTING.md) ·
+[Suggest a lever](https://github.com/aws-samples/sample-aws-ai-tokenomics-finops/issues/new?template=new-lever.yml)
 
-**Live site:** [aws-samples.github.io/sample-aws-ai-tokenomics-finops](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/)
+> Sample guidance published as-is under MIT-0. Not official AWS documentation and not supported by AWS.
+> Prices change: confirm figures against the linked AWS pages. Dollar figures are illustrative unless dated and cited.
 
-> This is sample guidance published as-is under the MIT-0 licence. It is not official AWS documentation
-> and is not supported by AWS. Prices and service features change; confirm figures against the linked AWS
-> pages before relying on them. All dollar figures in the runbook are illustrative unless dated and cited.
+![Demo: pick Track 1, answer a lever's questions, read the guidance for a gap, then open the track dashboard and download the gap report](docs/assets/demo.gif)
 
-## How report generation works
+## Who it's for
 
-Everything runs in your browser. The site is a static page with no backend, no sign-in, no analytics and
-no network calls of its own (the build enforces this under a strict Content-Security-Policy).
+| Track | For teams that | Levers |
+|---|---|---|
+| 1. AI Coding Assistant | adopt an AI coding assistant and tune how it is used | 11 |
+| 2. Purpose-Built Agentic AI Application | build and operate their own agent on Amazon Bedrock | 17 |
 
-- Your answers and notes are saved in your browser's `localStorage`, so they survive a reload on the same
-  device and browser. Nothing is sent anywhere.
-- Each track's dashboard has **Download Markdown report**, which saves the raw report as a `.md` file:
-  a dated header, coverage counts, the gaps to address with links back to the guidance, and every
-  answered question with your notes. **Copy assessment summary** puts it on the clipboard instead.
-- **Print assessment** (and **Export as PDF** on each layer's summary panel) builds a print view of the
-  same report and opens your browser's print dialog, so you can save it as PDF.
-- Each layer's summary panel has **Copy report** and **Download .md** for that layer's report alone.
-- Reports are dated, not attributed: there is no sign-in, so the header says when the assessment was run.
+Each track groups its levers into three actor layers: Model Inference, Agent Harness, End User.
 
-## Repository layout
+## How to use the runbook
 
-| Path | What it is |
-|---|---|
-| `content/index.html` | The runbook. Authored content (prose, levers, tables, citations, figures) plus two generated regions, the `<style>` and `<script>` blocks. It is a self-contained file you can open from disk. |
-| `content/archive/` | The content baseline the verifiers diff against. See its README before changing it. |
-| `site/src/css/`, `site/src/js/` | The runbook's presentation and behaviour as modules. `npm run build:runbook` bundles them into the generated regions of `content/index.html`. |
-| `scripts/` | `build-runbook.mjs`, `build-site.mjs` and the three verifiers. |
-| `site/static/` | Committed static assets copied into the site as-is: `og-image.png`, the 1200x630 link-preview image (regenerate with `scripts/make-og-image.mjs`). |
-| `tools/calculators/` | A stdlib-only Python resolver from Bedrock model IDs to AWS Price List rows, with tests. |
-| `dist/` | Build output (git-ignored). This is what is published to GitHub Pages, including the canonical, Open Graph and JSON-LD head tags, `sitemap.xml` and `robots.txt` that `build-site.mjs` emits. |
+1. Open the [live site](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/). No install, no clone.
+   For offline use, download [`content/index.html`](content/index.html) and open it from disk.
+2. Pick your track. "Which track am I in?" helps if you are unsure.
+3. For each lever, answer the diagnostic questions: Fully covered, Partially, Not covered, N/A.
+4. Open the detailed guidance only where you have a gap.
+5. Export the gap report from the track dashboard as Markdown or PDF.
 
-Never edit inside the `@generated:*` markers in `content/index.html`: the next build overwrites them.
-Edit `site/src/` and rebuild.
+Run it alone, or as a quarterly session with engineering and finance.
 
-## Build and verify locally
+## What you get
 
-Requires Node.js 22.12 or later (CI uses 22) and, for the browser checks, a Chrome or Chromium binary.
+![Example gap report for Track 1: coverage by layer, then the gaps to address with each lever, question and status](docs/assets/gap-report.png)
 
-```bash
-npm ci
-npm run build        # site/src -> content/index.html, then content/index.html -> dist/
-npm run verify       # static + facts + headless-browser checks
-```
+A dated gap report: coverage counts per layer, the gaps to address with links to the guidance, and every
+answer with your notes. Download it as Markdown, copy it to the clipboard, or print it to PDF, for a whole
+track or a single layer.
 
-`npm run verify` has three parts:
+## Private by design
 
-- `verify:static` checks that every lever, question, table, citation, `id` and external URL in the
-  baseline is still present, plus the build invariants (one `<style>`, one `<script>`, no inline styles,
-  no network primitives, no internal hosts).
-- `verify:facts` checks that every quantity, price, code identifier and citation in the baseline is still
-  in the section that owns it.
-- `verify:dom` drives headless Chrome over both the self-contained file and the built site. The site is
-  served under the Pages sub-path `/sample-aws-ai-tokenomics-finops/` with the production
-  Content-Security-Policy, and the run fails on any console error, CSP violation or off-origin request.
-
-`verify:dom` looks for Chrome in the usual places; point it at a specific binary with
-`PUPPETEER_EXECUTABLE_PATH=/path/to/chrome npm run verify:dom`. Screenshots and print PDFs land in
-`.verify-out/`.
-
-To preview the built site:
-
-```bash
-npm run build
-mkdir -p /tmp/pages && ln -sfn "$PWD/dist" /tmp/pages/sample-aws-ai-tokenomics-finops
-python3 -m http.server 8000 --bind 127.0.0.1 --directory /tmp/pages
-# open http://127.0.0.1:8000/sample-aws-ai-tokenomics-finops/
-```
-
-The calculator tests need only Python 3.9 or later: `npm run test:calculators`.
-
-## Deployment
-
-`.github/workflows/ci.yml` runs the build and every verify gate on each pull request and on `main`, and
-uploads the built site as a `site-preview` artifact on pull requests. `.github/workflows/pages.yml`
-builds and deploys `dist/` to GitHub Pages on every push to `main`.
+- Runs entirely in your browser. No backend, sign-in, analytics, or network calls of its own, enforced by
+  a strict Content-Security-Policy.
+- Answers and notes stay in your browser's `localStorage`.
+- Reports are dated, not attributed.
 
 ## Contributing
 
 Corrections and new evidence are welcome. Every lever on the site has a **Suggest a change** link that
-opens a prefilled issue for that section. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to propose
-changes and how pull requests are reviewed.
+opens a prefilled issue for that section. See [CONTRIBUTING.md](CONTRIBUTING.md) to build, verify, and open
+a pull request.
 
 ## Security
 

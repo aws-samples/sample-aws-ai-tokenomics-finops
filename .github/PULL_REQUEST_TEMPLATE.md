@@ -13,7 +13,7 @@
 ## Checklist
 
 - [ ] Every new or changed fact cites a public source, and every price has a public pricing page and an as-of date.
-- [ ] `npm run verify` passes locally (see the [README](https://github.com/aws-samples/sample-aws-ai-tokenomics-finops/blob/main/README.md) for setup and commands).
+- [ ] `npm run verify` passes locally (see [CONTRIBUTING](https://github.com/aws-samples/sample-aws-ai-tokenomics-finops/blob/main/CONTRIBUTING.md#editing-content-and-checking-it-locally) for setup and commands).
 - [ ] This change contains no customer data, internal or confidential information, account IDs, or credentials.
 - [ ] The writing states facts and costs without value judgements about vendors or products.
 
