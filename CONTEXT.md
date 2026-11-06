@@ -29,5 +29,5 @@ One pass by a team through a track's diagnostic questions.
 _Avoid_: audit, review, survey
 
 **Gap report**:
-The dated output of an assessment: coverage counts, the gaps with links to guidance, and every answer with notes. Exported as Markdown or PDF.
+The dated output of an assessment: coverage counts, the gaps for each lever, and every answer with notes. Exported as Markdown or PDF.
 _Avoid_: results, output, scorecard
