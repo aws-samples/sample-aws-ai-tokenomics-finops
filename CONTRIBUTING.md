@@ -34,9 +34,67 @@ GitHub has guides on [forking a repository](https://docs.github.com/en/pull-requ
 
 ## Editing content and checking it locally
 
-The [README](README.md) describes where the runbook content lives, how to install dependencies, how to preview the site, and how to build it. Please follow it rather than a copy here, so the commands stay in one place.
+This section is the one place for the build and verify commands. Other docs link here rather than keep a copy.
+
+### Repository layout
+
+| Path | What it is |
+|---|---|
+| `content/index.html` | The runbook. Authored content (prose, levers, tables, citations, figures) plus two generated regions, the `<style>` and `<script>` blocks. It is a self-contained file you can open from disk. |
+| `content/archive/` | The content baseline the verifiers diff against. See its README before changing it. |
+| `site/src/css/`, `site/src/js/` | The runbook's presentation and behaviour as modules. `npm run build:runbook` bundles them into the generated regions of `content/index.html`. |
+| `scripts/` | `build-runbook.mjs`, `build-site.mjs` and the three verifiers. |
+| `site/static/` | Committed static assets copied into the site as-is: `og-image.png`, the 1200x630 link-preview image (regenerate with `scripts/make-og-image.mjs`). |
+| `docs/assets/` | Images used by the README. Kept out of `site/static/` so they are not published to the site. |
+| `tools/calculators/` | A stdlib-only Python resolver from Bedrock model IDs to AWS Price List rows, with tests. |
+| `dist/` | Build output (git-ignored). This is what is published to GitHub Pages, including the canonical, Open Graph and JSON-LD head tags, `sitemap.xml` and `robots.txt` that `build-site.mjs` emits. |
+
+Never edit inside the `@generated:*` markers in `content/index.html`: the next build overwrites them.
+Edit `site/src/` and rebuild.
+
+### Build and verify
+
+Requires Node.js 22.12 or later (CI uses 22) and, for the browser checks, a Chrome or Chromium binary.
+
+```bash
+npm ci
+npm run build        # site/src -> content/index.html, then content/index.html -> dist/
+npm run verify       # static + facts + headless-browser checks
+```
+
+`npm run verify` has three parts:
+
+- `verify:static` checks that every lever, question, table, citation, `id` and external URL in the
+  baseline is still present, plus the build invariants (one `<style>`, one `<script>`, no inline styles,
+  no network primitives, no internal hosts).
+- `verify:facts` checks that every quantity, price, code identifier and citation in the baseline is still
+  in the section that owns it.
+- `verify:dom` drives headless Chrome over both the self-contained file and the built site. The site is
+  served under the Pages sub-path `/sample-aws-ai-tokenomics-finops/` with the production
+  Content-Security-Policy, and the run fails on any console error, CSP violation or off-origin request.
+
+`verify:dom` looks for Chrome in the usual places; point it at a specific binary with
+`PUPPETEER_EXECUTABLE_PATH=/path/to/chrome npm run verify:dom`. Screenshots and print PDFs land in
+`.verify-out/`.
+
+To preview the built site:
+
+```bash
+npm run build
+mkdir -p /tmp/pages && ln -sfn "$PWD/dist" /tmp/pages/sample-aws-ai-tokenomics-finops
+python3 -m http.server 8000 --bind 127.0.0.1 --directory /tmp/pages
+# then browse to 127.0.0.1:8000/sample-aws-ai-tokenomics-finops/
+```
+
+The calculator tests need only Python 3.9 or later: `npm run test:calculators`.
 
 Before you open a pull request, run `npm run verify` and make sure it passes. The same checks run in CI on every pull request, and a pull request cannot be merged until they are green.
+
+### Deployment
+
+`.github/workflows/ci.yml` runs the build and every verify gate on each pull request and on `main`, and
+uploads the built site as a `site-preview` artifact on pull requests. `.github/workflows/pages.yml`
+builds and deploys `dist/` to GitHub Pages on every push to `main`.
 
 ## Writing and citation style
 
