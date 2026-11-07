@@ -44,6 +44,12 @@ A dated gap report: coverage counts per layer, the gaps to address for each leve
 your notes. Download it as Markdown, copy it to the clipboard, or print it to PDF, for a whole track or a
 single layer.
 
+## Want a prioritised plan?
+
+The runbook is a self-service assessment: it shows where your gaps are, but it does not rank or prioritise
+them. If you are an AWS customer and want a prioritised plan, share your gap report with your AWS account
+team and ask for a specialist-led engagement.
+
 ## Private by design
 
 - Runs entirely in your browser: no backend, no sign-in, no analytics and no network calls of its own
