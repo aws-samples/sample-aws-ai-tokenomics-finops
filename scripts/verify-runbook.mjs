@@ -82,7 +82,19 @@ const KNOWN_REPLACED_URLS = new Map([
  * every entry as stale. The 2026-10-02 archive README row records what each one excused.
  */
 const KNOWN_REPLACED_IDS = new Map([]);
-const KNOWN_REMOVED_IDS = new Set([]);
+// 2026-11-09 scope change (owner): the runbook covers only clients that run on Amazon Bedrock inference
+// (plus Kiro, an Amazon product). The Claude Team / Enterprise seat references [89], [96] and [97] are
+// vendor-billed, non-Bedrock guidance; their only citations were in Right-size the subscription plan,
+// which now covers Kiro plans. Each removal excuses only a baseline entry that is now absent, fails if it
+// returns, and is reported stale at the next re-baseline.
+const SCOPE_REMOVED_REFS = ['ref-89', 'ref-96', 'ref-97'];
+const KNOWN_REMOVED_IDS = new Set([...SCOPE_REMOVED_REFS]);
+const KNOWN_REMOVED_REF_IDS = new Set([...SCOPE_REMOVED_REFS]);
+const KNOWN_REMOVED_URLS = new Set([
+  'https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans',
+  'https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans',
+  'https://support.claude.com/en/articles/14782391-claude-enterprise-consumption-guide'
+]);
 
 /**
  * Track 2 consolidation transitions (Model Inference nine -> five lifecycle levers; Agent Harness
@@ -153,9 +165,9 @@ const COUNT_CHECKS = [
 ];
 
 const SET_CHECKS = [
-  ['reference entries (id="ref-N")', setOf(/id="(ref-\d+)"/g)],
+  ['reference entries (id="ref-N")', setOf(/id="(ref-\d+)"/g), undefined, KNOWN_REMOVED_REF_IDS],
   ['element ids (link targets)', setOf(/\sid="([^"]+)"/g), KNOWN_REPLACED_IDS, KNOWN_REMOVED_IDS],
-  ['external URLs', setOf(/(https?:\/\/[^"'\s<>)]+)/g), KNOWN_REPLACED_URLS],
+  ['external URLs', setOf(/(https?:\/\/[^"'\s<>)]+)/g), KNOWN_REPLACED_URLS, KNOWN_REMOVED_URLS],
   ['assessment scopes (data-ar-scope)', setOf(/data-ar-scope="([^"]+)"/g)],
   ['assessment groups (data-assess-group)', setOf(/data-assess-group="([^"]+)"/g)],
   ['question keys (data-key)', setOf(/data-key="([^"]+)"/g), KNOWN_REPLACED_QUESTION_KEYS],
@@ -206,9 +218,14 @@ const failures = [];
 // ---------------------------------------------------------------------------
 // Issue #32: Track 1 licence-tier guidance contract
 // ---------------------------------------------------------------------------
-// This repair is intentionally narrow. A broad count or URL-presence check would stay green if the
-// old Kiro pricing answer returned inside seat-q2, or if the Team and Enterprise billing models were
-// blended again. Bind the assertions to the one lever and keep its assessment identity byte-stable.
+// This repair is intentionally narrow. A broad count or URL-presence check would stay green if copied
+// prices or an unsupported multiplier returned inside seat-q2. Bind the assertions to the one lever
+// and keep its assessment identity byte-stable.
+// 2026-11-09 scope change (owner): the runbook covers only clients that run on Amazon Bedrock
+// inference, plus Kiro as an Amazon product. The lever's Claude Team / Enterprise seat guidance
+// (vendor-billed, not Bedrock) is replaced by Kiro plan and credit-pool guidance; the claims and
+// first-party citations below are pinned to that text with the same strictness. The no-prices,
+// no-multiplier rule from #32 stays.
 console.log(bold('  Track 1 licence-tier guidance'));
 const issue32Check = (ok, label, detail = '') => {
   if (ok) console.log(`  ${green('✓')} ${label.padEnd(46)} ${detail}`);
@@ -228,12 +245,7 @@ const issue32QuestionText = (
   subscriptionLever.match(/data-key="seat-q2"[\s\S]*?<div class="assess-qtext"><span class="qid">Q2<\/span>([^<]+)<\/div>/)
   || []
 )[1]?.trim() || '';
-const issue32EnterpriseStart = subscriptionLever.indexOf(
-  '<p>Do not apply this Team seat-tier rule to a usage-based Enterprise plan.'
-);
-const issue32TeamGuidance = issue32EnterpriseStart >= 0
-  ? subscriptionLever.slice(0, issue32EnterpriseStart)
-  : subscriptionLever;
+const issue32TeamGuidance = subscriptionLever;
 const issue32Text = subscriptionLever.toLowerCase().replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 const issue32RefIds = [...live.matchAll(/id="(ref-\d+)"/g)].map((m) => m[1]);
 const issue32DuplicateRefs = [...new Set(issue32RefIds.filter(
@@ -271,41 +283,40 @@ issue32Check(
   `${(subscriptionLever.match(/data-v="(?:yes|wip|no|na)"/g) || []).length} buttons`
 );
 issue32Check(
-  issue32QuestionText === 'Have you reserved Premium seats for members whose observed usage needs the higher limits, while keeping other members on Standard seats?',
+  issue32QuestionText === 'Have you matched each user’s Kiro plan tier to observed usage, or moved the team to a shared credit pool?',
   'seat-q2 asks only the licence-tier decision',
   issue32QuestionText || 'missing'
 );
 issue32Check(
   !/model default/i.test(issue32QuestionText) && !/model default/i.test(issue32TeamGuidance),
-  'Team guidance has no model-default clause',
+  'lever guidance has no model-default clause',
   'question and Team paragraphs checked'
 );
 issue32Check(
-  !/\bKiro\b|\$\s?\d|several(?:-|\s)fold|several times|every inactive seat removed saves a whole seat/i.test(subscriptionLever),
-  'legacy pricing and unsupported savings are absent',
-  'Kiro, copied prices, multipliers, immediate-seat claim'
+  !/\$\s?\d|several(?:-|\s)fold|several times|every inactive seat removed saves a whole seat/i.test(subscriptionLever),
+  'copied prices and unsupported savings are absent',
+  'copied prices, multipliers, immediate-seat claim'
 );
 for (const phrase of [
-  'standard seats include claude code and base usage limits',
-  'premium seats add higher usage limits',
-  'active members and assigned seats',
-  'per-user, per-model spend export',
-  'standard-to-premium upgrade can take effect immediately and be prorated',
-  'premium-to-standard change takes effect at renewal',
-  'removing a member frees that seat for reassignment',
-  "reducing the bill requires reducing the plan's total seat allocation"
+  'pool dashboards track seat utilisation',
+  'seat assignments update when users leave or change roles',
+  'step up from pro through pro+ and pro max to power',
+  'paid plans can buy add-on credits',
+  'credit pooling replaces per-user tier matching',
+  'per-user, group and profile limits take the place of tier choice',
+  'cannot undo the switch'
 ]) {
-  issue32Check(issue32Text.includes(phrase), `required Team claim: ${phrase}`, issue32Text.includes(phrase) ? 'present' : 'missing');
+  issue32Check(issue32Text.includes(phrase), `required Kiro claim: ${phrase}`, issue32Text.includes(phrase) ? 'present' : 'missing');
 }
 issue32Check(
-  /<p>Do not apply this Team seat-tier rule to a usage-based Enterprise plan\.[\s\S]*?shared consumption pool[\s\S]*?model defaults[\s\S]*?href="#ref-97"[\s\S]*?<\/p>/.test(subscriptionLever),
-  'Enterprise caveat is separate and cited',
-  'ref-97'
+  !/support\.claude\.com|Claude Team|Claude Enterprise|Premium seat|Standard seat/i.test(subscriptionLever),
+  'no vendor-billed (non-Bedrock) seat guidance remains',
+  'Claude Team / Enterprise seat text absent'
 );
 for (const [url, ref] of [
-  ['https://support.claude.com/en/articles/12004354-purchase-and-manage-seats-on-team-plans', 'ref-89'],
-  ['https://support.claude.com/en/articles/12883420-view-usage-analytics-for-team-and-enterprise-plans', 'ref-96'],
-  ['https://support.claude.com/en/articles/14782391-claude-enterprise-consumption-guide', 'ref-97']
+  ['https://kiro.dev/pricing/', 'ref-58'],
+  ['https://kiro.dev/changelog/general/credit-pooling/', 'ref-195'],
+  ['https://kiro.dev/blog/credit-pooling/', 'ref-196']
 ]) {
   issue32Check(
     subscriptionLever.includes(url) && subscriptionLever.includes(`href="#${ref}"`),

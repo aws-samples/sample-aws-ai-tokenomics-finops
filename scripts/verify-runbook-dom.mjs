@@ -471,7 +471,7 @@ const EXPECT = {
   /** The three user-visible routes, in navigation order. */
   panes: ['overview', 't1', 't2'],
   tracks: {
-    t1: { levers: 11, questions: 35, references: 62, scopes: ['t1-model-inference', 't1-agent-harness', 't1-end-user'] },
+    t1: { levers: 11, questions: 35, references: 61, scopes: ['t1-model-inference', 't1-agent-harness', 't1-end-user'] },
     t2: { levers: 17, questions: 39, references: 111, scopes: ['model-inference', 'agent-harness', 'end-user'] }
   },
   /** Every lever states a saving since the 2026-10-02 Track 2 consolidation (no `data-lever-kind="cross-reference"` lever remains). */
@@ -1802,14 +1802,14 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
     seen.overview = count();
     return seen;
   });
-  check(label, 'references are scoped to exactly 62 for Track 1 and 111 for Track 2',
+  check(label, 'references are scoped to exactly 61 for Track 1 and 111 for Track 2',
     scopedReferences.t1 === EXPECT.tracks.t1.references && scopedReferences.t2 === EXPECT.tracks.t2.references
       && scopedReferences.t1Visible && scopedReferences.t2Visible,
     `Track 1=${scopedReferences.t1}, Track 2=${scopedReferences.t2}`);
-  check(label, 'landing retains all 185 canonical references', scopedReferences.overview === 185,
+  check(label, 'landing retains all 183 canonical references', scopedReferences.overview === 183,
     `${scopedReferences.overview} visible reference entries`);
   check(label, 'reference copy names the active track and count',
-    /62 references.*Track 1/.test(scopedReferences.t1Note) && /111 references.*Track 2/.test(scopedReferences.t2Note),
+    /61 references.*Track 1/.test(scopedReferences.t1Note) && /111 references.*Track 2/.test(scopedReferences.t2Note),
     `${scopedReferences.t1Note} | ${scopedReferences.t2Note}`);
 
   // Print takes the WHOLE runbook, not the pane you happen to be on. 66-tabs.css scopes the hiding rules to
