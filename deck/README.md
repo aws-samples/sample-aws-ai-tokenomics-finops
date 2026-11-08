@@ -59,8 +59,9 @@ Remove material rather than hide it. `npm run verify:deck` (part of `npm run ver
 document and fails on internal markers and hosts, account-like numbers, alias handles, live-session keys,
 hidden slides, any remote image or media source, broken slide links, and slide-count drift. It then opens
 the published copy in headless Chrome under its CSP, steps through every slide, and fails on any request to
-another origin, any page error, any unexpected CSP refusal, or any error or warning from Bento's own
-`validate()`. If you add or remove slides on purpose, update the pinned counts in `scripts/verify-deck.mjs`
+another origin, any page error, any unexpected CSP refusal, or any error or structural warning from Bento's
+own `validate()`. Text overflow is reported but not failed: the deck uses the system-ui font stack, so line
+breaks depend on the machine's fonts. Check long titles on the platform you present from. If you add or remove slides on purpose, update the pinned counts in `scripts/verify-deck.mjs`
 in the same pull request.
 
 ## Security
