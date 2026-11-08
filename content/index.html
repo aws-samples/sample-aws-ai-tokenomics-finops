@@ -889,7 +889,7 @@ html[data-scope="t2"] .sidebar .nav-link.lvl-layer { font-size: .76rem; font-wei
 }
 @media print { .tabs { display: none; } }
 
-/* 67-lever-sheet.css — the TLDR pane's list of all 34 levers and what each one saves.
+/* 67-lever-sheet.css — the TLDR pane's list of all 28 levers and what each one saves.
 
    Two things this file deliberately does NOT do.
 
@@ -1101,8 +1101,8 @@ html[data-scope="t2"] .sidebar .nav-link.lvl-layer { font-size: .76rem; font-wei
 .hm-chip-saves { display: block; font-size: .7rem; color: var(--text-muted); }
 
 /* ---- coverage footer ----
-   States how many of the 34 levers are placed. A view that showed ten without saying so would read as the
-   whole picture, which is the "no silent caps" rule the cost map's "showing N of 34" bar already follows. */
+   States how many of the 28 levers are placed. A view that showed ten without saying so would read as the
+   whole picture, which is the "no silent caps" rule the cost map's "showing N of 28" bar already follows. */
 .hm-foot { margin: .6rem 0 0; font-size: .74rem; color: var(--text-muted); }
 .hm-foot-n { font-weight: 700; color: var(--heading); }
 
@@ -1151,7 +1151,7 @@ details.lever-index td a { font-weight: 600; }
 
 /* 80-costmap.css — Figure 2: the cost structure map.
 
-   A full-bleed status board: two track rows by three actor-layer columns, six cells, 34 lever rows, over a
+   A full-bleed status board: two track rows by three actor-layer columns, six cells, 28 lever rows, over a
    command bar that can narrow them to the ones that need the reader. Built by site/src/js/costmap.mjs — read
    its docblock for why the previous three-column figure became this.
 
@@ -2013,7 +2013,7 @@ details.assess-gap { margin-top: 12px; }
 @media print {
   @page { size: A4; margin: 14mm 13mm 16mm; }
 
-  /* Only the report prints. Everything else -- sidebar, top bar, 34 levers -- is hidden. */
+  /* Only the report prints. Everything else -- sidebar, top bar, 28 levers -- is hidden. */
   body.assess-printing > *:not(#assess-print-root) { display: none !important; }
   body.assess-printing #assess-print-root { display: block !important; color: #111; }
 
@@ -2211,8 +2211,8 @@ details.assess-gap { margin-top: 12px; }
 
 <section id="key-levers" data-tab="overview">
       <h2>What you can change to optimise the cost</h2>
-      <p>A <strong>lever</strong> is one change you can make to spend less. This runbook holds 37 of them. Each one either lowers the price of a model call or cuts how many tokens that call spends.</p>
-      <p>The grid below ranks the levers this runbook has scored, cheapest effort first, so you can see which ones pay off before you fund any engineering work. The list under it names all 37, with what each one saves, grouped by the team that owns the decision.</p>
+      <p>A <strong>lever</strong> is one change you can make to spend less. This runbook holds 28 levers, plus 6 sub-practices and 3 decision principles. Each lever either lowers the price of a model call or cuts how many tokens that call spends.</p>
+      <p>The grid below ranks the levers this runbook has scored, cheapest effort first, so you can see which ones pay off before you fund any engineering work. The list under it names all 28 levers, with what each one saves, grouped by the team that owns the decision.</p>
       <!-- Built by web/src/js/heatmap.mjs and web/src/js/levers-sheet.mjs from the document itself. Authored
            hidden, with a visible fallback below that the builders switch off, which is the same
            progressive-enhancement pattern as the rail map and Figure 2. -->
@@ -2235,18 +2235,18 @@ details.assess-gap { margin-top: 12px; }
           <span class="trk-card-num">Track 1</span>
           <span class="trk-card-name">AI Coding Assistant</span>
           <span class="trk-card-econ">For teams adopting and tuning coding assistants. Optimise token economics, plans, configuration and working habits.</span>
-          <span class="trk-card-meta" data-track-card-meta>10 levers &middot; 32 questions &middot; 36 references</span>
-          <span class="trk-card-progressbar" data-track-card-progressbar role="progressbar" aria-label="Track 1 assessment completion" aria-valuemin="0" aria-valuemax="32" aria-valuenow="0"><span class="trk-card-progress" data-track-card-progress></span></span>
-          <span class="trk-card-status" data-track-card-status>0/32 answered</span>
+          <span class="trk-card-meta" data-track-card-meta>11 levers &middot; 35 questions &middot; 62 references</span>
+          <span class="trk-card-progressbar" data-track-card-progressbar role="progressbar" aria-label="Track 1 assessment completion" aria-valuemin="0" aria-valuemax="35" aria-valuenow="0"><span class="trk-card-progress" data-track-card-progress></span></span>
+          <span class="trk-card-status" data-track-card-status>0/35 answered</span>
           <span class="trk-card-go" data-track-card-action>Start assessment &rarr;</span>
         </a>
         <a class="trk-card trk-card-t2" href="#track-2" data-choose-track="t2" data-track-card="t2">
           <span class="trk-card-num">Track 2</span>
           <span class="trk-card-name">Purpose-Built Agentic AI Application</span>
           <span class="trk-card-econ">For teams building applications that let a model plan, use tools and take actions. You control each model call (inference), the surrounding application code (agent harness), and how people use it.</span>
-          <span class="trk-card-meta" data-track-card-meta>20 levers &middot; 43 questions &middot; 75 references</span>
-          <span class="trk-card-progressbar" data-track-card-progressbar role="progressbar" aria-label="Track 2 assessment completion" aria-valuemin="0" aria-valuemax="32" aria-valuenow="0"><span class="trk-card-progress" data-track-card-progress></span></span>
-          <span class="trk-card-status" data-track-card-status>0/32 answered</span>
+          <span class="trk-card-meta" data-track-card-meta>17 levers &middot; 39 questions &middot; 105 references</span>
+          <span class="trk-card-progressbar" data-track-card-progressbar role="progressbar" aria-label="Track 2 assessment completion" aria-valuemin="0" aria-valuemax="39" aria-valuenow="0"><span class="trk-card-progress" data-track-card-progress></span></span>
+          <span class="trk-card-status" data-track-card-status>0/39 answered</span>
           <span class="trk-card-go" data-track-card-action>Start assessment &rarr;</span>
         </a>
       </div>
@@ -3489,6 +3489,7 @@ details.assess-gap { margin-top: 12px; }
                 <p><strong>Define the unit of work.</strong> For each agent or use case, name the business outcome it delivers: a conversation handled, an invoice processed, a code review completed, an alert resolved. Then track <em>cost per successful task = total spend across all attempts / successful outcomes</em>. The denominator matters: if only 70% of attempts succeed, the effective cost per success is 1.43x the per-attempt figure. A falling success rate is a cost regression even when the per-call price has not changed (<a href="https://www.finops.org/framework/capabilities/unit-economics/">FinOps Foundation, Unit Economics</a> <a class="ref" href="#ref-91">[91]</a>).</p>
                 <p><strong>Track outcomes alongside cost.</strong> For every managed agent, measure three things together: (1) outcome-denominated cost (cost per completed task, cost per review, cost per alert), (2) quality signal (error rate, accuracy, time-to-resolution), and (3) volume (tasks completed, reviews posted). This tells you whether each agent is getting cheaper per unit of value delivered, and whether quality holds when you swap models or change prompts.</p>
                 <p><strong>Gate releases on cost, not just quality.</strong> Track token-per-task in your test suite alongside accuracy for every change to prompts, tools, or models. Gate merges on the budget the same way you gate on accuracy. A prompt tweak or a model swap can quietly double per-task tokens, and nothing in the release process catches it until the invoice unless cost is in the gate (<a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost01.html">WA Agentic AI Lens, AGENTCOST01</a> <a class="ref" href="#ref-39">[39]</a>).</p>
+                <p><strong>Pair each cost metric with a measure of value.</strong> The FinOps Foundation&rsquo;s token economics guidance links cost per token to cost per inference and then to cost per outcome, and says these metrics only inform a decision alongside a business measure such as cost-to-serve reduction, cycle-time compression or revenue uplift. A model that spends more tokens can still be the cheaper choice if its outcome is worth far more, and a model that spends fewer tokens saves nothing if its output is unusable. The same guidance names a token yield rate: the share of generated tokens that led to a business action once retries, abandoned sessions and outputs that failed review are counted (<a href="https://www.finops.org/insights/token-economics-the-atomic-unit-of-ai-value/">FinOps Foundation, Token economics</a> <a class="ref" href="#ref-190">[190]</a>).</p>
                 <p><strong>The maturity path.</strong> Start with cost per token (you can compute it from your invoice today). Mature toward cost per outcome by wiring your release pipeline to record both accuracy and token-per-task. The FinOps Foundation frames this as the standard progression for AI workloads (<a href="https://www.finops.org/wg/finops-for-ai/">FinOps for AI Working Group</a> <a class="ref" href="#ref-41">[41]</a>).</p>
               </div></details>
             </div>
@@ -3828,6 +3829,7 @@ details.assess-gap { margin-top: 12px; }
               <ul>
                 <li><strong>A dynamic value creeps into the stable prefix.</strong> The most frequent cause: a developer adds <code>The current time is {timestamp}</code> or a request ID into the system prompt for logging or debugging. Every request now has a unique prefix, so nothing matches the cache. Hit rate collapses to near-zero the day the change ships, but the invoice does not spike until month-end.</li>
                 <li><strong>Tool schemas or reference documents change too often.</strong> Auto-refreshed tool catalogues, retrieved documents inserted before the stable block, or reordered system prompts all invalidate the cached prefix.</li>
+                <li><strong>A gateway upgrade changes how requests are rewritten.</strong> In July 2026, LiteLLM releases v1.91.0 and v1.91.1 moved mid-conversation system messages into the top-level system field for Claude Code sessions on the Bedrock Invoke API, which invalidated the cached prefix. The vendor reports that affected customers saw warm-session cache hit rates fall from about 90% to 25&ndash;45% and daily spend rise 2&ndash;3x, while every request still returned a correct answer. The fix shipped in v1.91.2 (<a href="https://docs.litellm.ai/blog/bedrock-invoke-prompt-caching-incident">LiteLLM, Prompt cache invalidation incident report</a> <a class="ref" href="#ref-189">[189]</a>). Re-check the hit rate at the Bedrock end after every gateway upgrade.</li>
               </ul>
               <details class="read-more"><summary>Read more for the self-serve reader</summary><div class="rm-body">
                 <p><strong>Why verification matters.</strong> Caching fails silently. If the prefix is too short, the payload is reordered, or a proxy between your agent and Bedrock strips the checkpoint markers, every request quietly reverts to full-price input with no error. Budget projections that assume the cache discount without checking are guesses.</p>
@@ -4234,6 +4236,7 @@ details.assess-gap { margin-top: 12px; }
         <summary>Challenge and why it costs</summary>
         <div class="why-body">
           <p><strong>Challenge.</strong> The harness assembles instructions, retrieved material, conversation history, memory and tool results into every model request. Without an explicit lifecycle, the working set grows by default.</p>
+          <p><strong>What belongs here.</strong> This lever covers how one request is assembled: which sources go in and how much each tool returns. What the agent keeps from one turn to the next, and when it prunes, summarises or compacts that history, belongs to <a href="#design-memory-and-compaction-as-architecture">Memory</a>. Count a practice under one of the two levers, not both.</p>
           <p><strong>Why it costs.</strong> Every token that remains in the working set is billed again on later rounds. Append-only history, full tool results and oversized checkpoints make cost grow with session length rather than task complexity.</p>
         </div>
       </details>
@@ -4435,7 +4438,7 @@ details.assess-gap { margin-top: 12px; }
       <details class="lever-why">
         <summary>Challenge and why it costs</summary>
         <div class="why-body">
-          <p><strong>Challenge.</strong> Conversation history, tool results and checkpoints accumulate by default. Without a memory policy, the working set grows with every turn.</p><p><strong>Why it costs.</strong> Every retained token is billed again on each later round, so append-only history makes cost track the length of the session rather than the complexity of the task (<a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost03.html">AGENTCOST03</a> <a class="ref" href="#ref-40">[40]</a>). Compaction done carelessly rewrites the cached prefix and pays the write premium again (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Bedrock prompt caching</a> <a class="ref" href="#ref-5">[5]</a>).</p>
+          <p><strong>Challenge.</strong> Conversation history, tool results and checkpoints accumulate by default. Without a memory policy, the working set grows with every turn.</p><p><strong>What belongs here.</strong> This lever covers what the agent keeps across turns: history, summaries, checkpoints, and when to prune or compact them. How a single request is assembled, including how much one tool call returns, belongs to <a href="#context-budget">Context</a>. Count a practice under one of the two levers, not both.</p><p><strong>Why it costs.</strong> Every retained token is billed again on each later round, so append-only history makes cost track the length of the session rather than the complexity of the task (<a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost03.html">AGENTCOST03</a> <a class="ref" href="#ref-40">[40]</a>). Compaction done carelessly rewrites the cached prefix and pays the write premium again (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Bedrock prompt caching</a> <a class="ref" href="#ref-5">[5]</a>).</p>
         </div>
       </details>
       <div class="assess" data-assess-group="agent-harness" data-assess-lever="Memory">
@@ -5279,7 +5282,7 @@ details.assess-gap { margin-top: 12px; }
           <a class="cell" href="#t2-model-inference"><span class="cell-hint">Cross-region, routing, batch, tiers &amp; attribution</span><span class="cell-meta" data-cell-meta></span></a>
           <a class="cell" href="#t2-agent-harness"><span class="cell-hint">Loop bounds, memory &amp; orchestration</span><span class="cell-meta" data-cell-meta></span></a>
           <a class="cell" href="#t2-end-user"><span class="cell-hint">Specifications, guided prompting &amp; gates</span><span class="cell-meta" data-cell-meta></span></a>
-          <a class="sf-bar" href="#lever-progress">Lever progress &middot; all 37 levers<span class="sf-note">the same six cells at lever level, each showing how far you have got; filter to your gaps, or to the levers you have left a note on</span></a>
+          <a class="sf-bar" href="#lever-progress">Lever progress &middot; all 28 levers<span class="sf-note">the same six cells at lever level, each showing how far you have got; filter to your gaps, or to the levers you have left a note on</span></a>
           <a class="sf-bar rs-bar" href="#decision-principles">Decision principles<span class="sf-note">three principles that do not change with the track, so they are covered once</span></a>
         </div>
         <div class="maplegend">Choose your track in the rows, then the layer in the columns. Each cell opens the section that covers it. For a track-specific PDF, open that assessment and use its Print action.</div>
@@ -5288,10 +5291,10 @@ details.assess-gap { margin-top: 12px; }
 <section id="lever-progress" data-tab="overview">
       <h2>Lever progress</h2>
       <figure class="csm-figure">
-        <p class="te-intro">Every one of the 37 levers sits in the cell that owns it, and each row states how far you have got: how many of its questions you have answered, whether any answer came back a gap, and whether you left a note. Clicking a lever jumps straight to it, and <strong>Gaps</strong> is the shortest route back into the work. Hover anything marked <span class="te-sharedkey"><span class="te-badge">&rlarr; shared</span></span> to see its counterpart on the other track. A shared topic does not always sit in the same layer on both tracks, and that is the layer doing its job rather than a filing error. The layer records who holds the control. A team adopting an assistant cannot change the harness it ships with, so keeping the context small is the developer's job at the keyboard, while a team building an agent owns the harness that does the injecting.</p>
+        <p class="te-intro">Every one of the 28 levers sits in the cell that owns it, and each row states how far you have got: how many of its questions you have answered, whether any answer came back a gap, and whether you left a note. Clicking a lever jumps straight to it, and <strong>Gaps</strong> is the shortest route back into the work. Hover anything marked <span class="te-sharedkey"><span class="te-badge">&rlarr; shared</span></span> to see its counterpart on the other track. A shared topic does not always sit in the same layer on both tracks, and that is the layer doing its job rather than a filing error. The layer records who holds the control. A team adopting an assistant cannot change the harness it ships with, so keeping the context small is the developer's job at the keyboard, while a team building an agent owns the harness that does the injecting.</p>
         <div class="track-explorer csm" id="trackExplorer" hidden></div>
         <details class="lever-index is-fallback">
-          <summary><span class="disc-label">Prefer a table? Show the full lever index</span><span class="disc-sub">every lever, its track and actor-layer, and a jump link</span></summary>
+          <summary><span class="disc-label">Prefer a table? Show the full lever index</span><span class="disc-sub">28 levers, plus 6 sub-practices and 3 decision principles, each with its track, actor-layer and a jump link</span></summary>
           <table>
           <thead>
             <tr><th>Track</th><th>Actor-layer</th><th>Lever</th><th>Second treatment</th></tr>
@@ -5725,6 +5728,8 @@ details.assess-gap { margin-top: 12px; }
         <li id="ref-186">Inference profiles with limited model selection. Amazon Bedrock User Guide, AWS; accessed 5 November 2026. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-limited-model-selection.html">https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-limited-model-selection.html</a></li>
         <li id="ref-187">AWS Price List bulk offer, AmazonBedrock (offer version 20261102165015, Guardrails text units, us-east-1). AWS; accessed 5 November 2026. <a href="https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json">https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json</a></li>
         <li id="ref-188">Amazon Bedrock Guardrails now supports Standard tier for contextual grounding checks. AWS What’s New, October 2026; accessed 5 November 2026. <a href="https://aws.amazon.com/about-aws/whats-new/2026/10/bedrock-guardrails-grounding-standard/">https://aws.amazon.com/about-aws/whats-new/2026/10/bedrock-guardrails-grounding-standard/</a></li>
+        <li id="ref-189">Incident Report: Prompt Cache Invalidation for Claude Code on Bedrock Invoke. LiteLLM blog, July 2026; accessed 8 November 2026. <a href="https://docs.litellm.ai/blog/bedrock-invoke-prompt-caching-incident">https://docs.litellm.ai/blog/bedrock-invoke-prompt-caching-incident</a></li>
+        <li id="ref-190">Token Economics: The Atomic Unit of AI Value. FinOps Foundation (Linux Foundation), May 2026; accessed 8 November 2026. <a href="https://www.finops.org/insights/token-economics-the-atomic-unit-of-ai-value/">https://www.finops.org/insights/token-economics-the-atomic-unit-of-ai-value/</a></li>
         </ol>
       </details>
     </section>

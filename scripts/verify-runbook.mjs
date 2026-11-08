@@ -7,7 +7,7 @@
  *
  * Why this exists
  * ---------------
- * The runbook is thousands of lines of hand-authored content: 30 levers, 75 assessment questions,
+ * The runbook is thousands of lines of hand-authored content: 28 levers, 74 assessment questions,
  * dozens of tables and references, and many `id`s that are link targets from the sidebar,
  * the at-a-glance map, the lever-index table, the JS shared-topics list and the checklists.
  * A front-end refactor can silently drop any of it. Counting by eye does not scale, so this script

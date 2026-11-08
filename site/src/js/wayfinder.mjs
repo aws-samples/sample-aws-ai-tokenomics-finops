@@ -1,7 +1,7 @@
 /**
  * Where am I in this runbook?
  *
- * The runbook is a 34-lever self-assessment across two tracks of three actor-layers each. Reading it
+ * The runbook is a 28-lever self-assessment across two tracks of three actor-layers each. Reading it
  * front to back is not how it gets used: a team picks their track and works the levers in one layer at a
  * time, over more than one sitting. Before this module the page gave them almost nothing to hold on to:
  *

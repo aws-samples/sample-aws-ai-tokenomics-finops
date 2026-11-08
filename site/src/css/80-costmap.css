@@ -1,6 +1,6 @@
 /* 80-costmap.css — Figure 2: the cost structure map.
 
-   A full-bleed status board: two track rows by three actor-layer columns, six cells, 34 lever rows, over a
+   A full-bleed status board: two track rows by three actor-layer columns, six cells, 28 lever rows, over a
    command bar that can narrow them to the ones that need the reader. Built by site/src/js/costmap.mjs — read
    its docblock for why the previous three-column figure became this.
 

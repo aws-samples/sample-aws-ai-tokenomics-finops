@@ -3,7 +3,8 @@
 **Find the decisions that move your AI token bill.**
 
 A browser-only self-assessment runbook for teams that use AI coding assistants or build agents on
-Amazon Bedrock. 28 levers across 2 tracks. Answer the diagnostic questions, export a gap report.
+Amazon Bedrock. 28 levers across 2 tracks, plus 6 sub-practices and 3 decision principles. Answer
+the diagnostic questions, export a gap report.
 
 **[Open the runbook](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/)** ·
 [Contributing](CONTRIBUTING.md) ·
