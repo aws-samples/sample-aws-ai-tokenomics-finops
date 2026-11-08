@@ -38,12 +38,16 @@ const OUT = join(REPO_ROOT, '.verify-out', 'deck');
 
 // ---- pinned facts (exact) ------------------------------------------------------------------------
 const EXPECT = {
-  slides: 27,           // every slide in the document, including drill-down state slides
+  slides: 29,           // every slide in the document, including drill-down state slides
   stateSlides: 1,       // s-t1-worth-sens (reached by a button on the worth slide)
   hiddenSlides: 0,      // public deck: removed, not hidden
-  mainSequence: 26,     // slides a presenter steps through (slides minus state slides)
-  screenshots: { 's-cover': 'title', 's-t2-worth': 'pricing', 's-next': 'cta' }
+  mainSequence: 28,     // slides a presenter steps through (slides minus state slides)
+  screenshots: { 's-cover': 'title', 's-t2-worth': 'pricing', 's-story': 'uber-story', 's-next': 'cta' }
 };
+
+// Scope rule: Amazon products, plus third-party clients and tools that run on Amazon Bedrock inference.
+// Clients without Bedrock inference are out of scope; name each one here when it is ruled out.
+const OUT_OF_SCOPE = /\b(?:Cursor|Copilot)\b/g;
 
 // The designed CSP refusals. Anything else fails.
 const ALLOWED_REFUSALS = [
@@ -98,6 +102,8 @@ const svgAssets = Object.entries(assets).filter(([, v]) => !String(v).startsWith
 const readable = JSON.stringify(rest) + JSON.stringify(Object.fromEntries(svgAssets));
 const hits = [...new Set((readable.match(NEEDLE_RE) || []).map((h) => h.toLowerCase()))];
 check('doc', 'no internal marker, host or account-like number', hits.length === 0, hits.join(', ') || 'none');
+const scope = [...new Set(readable.match(OUT_OF_SCOPE) || [])];
+check('doc', 'no out-of-scope (non-Bedrock) client named', scope.length === 0, scope.join(', ') || 'none');
 const aliases = [...new Set(readable.match(ALIAS_RE) || [])];
 check('doc', 'no alias@ handles', aliases.length === 0, aliases.join(', ') || 'none');
 
@@ -147,6 +153,10 @@ check('shell', 'no external stylesheet, frame, object, embed, <base> or meta ref
 const shellHits = [...new Set((outsideBlocks.match(NEEDLE_RE) || []).map((h) => h.toLowerCase()))];
 check('shell', 'no internal marker outside the document and runtime blocks', shellHits.length === 0, shellHits.join(', ') || 'none');
 check('shell', 'Bento licence NOTICE is present', /NOTICE\s+—\s+bento\/slides/.test(src) && /MIT License/.test(src));
+const tpn = join(dirname(DECK_SOURCE), 'THIRD-PARTY-NOTICES.md');
+check('shell', 'deck/THIRD-PARTY-NOTICES.md carries Bento\'s MIT licence',
+  existsSync(tpn) && /Copyright \(c\) 2026 The Bento authors/.test(readFileSync(tpn, 'utf8'))
+    && /Permission is hereby granted, free of charge/.test(readFileSync(tpn, 'utf8')));
 
 if (!existsSync(DECK_OUT)) bail('dist/deck/index.html is missing. Run `npm run build` first.');
 const pub = readFileSync(DECK_OUT, 'utf8');
@@ -256,7 +266,8 @@ try {
   check('browser', 'no request to any other origin', offOrigin.length === 0, offOrigin.join(', ') || 'none');
   check('browser', 'no page errors', pageErrors.length === 0, pageErrors.join(' | ') || 'none');
   const shots = Object.values(EXPECT.screenshots).filter((n) => existsSync(join(OUT, `${n}.png`)));
-  check('browser', 'screenshots: title, pricing, call to action', shots.length === 3, `.verify-out/deck/{${shots.join(',')}}.png`);
+  const want = Object.values(EXPECT.screenshots);
+  check('browser', `screenshots: ${want.join(', ')}`, shots.length === want.length, `.verify-out/deck/{${shots.join(',')}}.png`);
 } finally {
   await browser.close();
 }

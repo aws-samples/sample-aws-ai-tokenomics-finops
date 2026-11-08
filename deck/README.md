@@ -1,12 +1,13 @@
 # Presenter deck: Tokenomics for AI Workloads
 
-A 26-slide talk track for the runbook (plus one drill-down slide), by Traci Lim. Use it to present AI
+A 28-slide talk track for the runbook (plus one drill-down slide), by Traci Lim. Use it to present AI
 tokenomics to engineering, platform and finance audiences.
 
 **[Open the deck](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/deck/)**
 
 The deck follows the runbook: why AI spend grows, the AI FinOps flywheel, the two tracks and their levers,
-two illustrative worked examples, and how to run the self-assessment. It ends on the same call to action as
+two illustrative worked examples, how to run the self-assessment, and a customer story (Uber) told only
+from public sources. It ends on the same call to action as
 the runbook: the runbook is a self-service assessment and does not rank your gaps; for a prioritised plan,
 AWS customers can share their gap report with their AWS account team and ask for a specialist-led
 engagement.
@@ -53,7 +54,10 @@ must be safe for any audience:
 - no customer names, logos, account IDs or figures that identify a customer;
 - no non-public, negotiated or forward-looking pricing or roadmap statements;
 - no third-party screenshots, logos or press headlines: paraphrase and cite the public source instead;
-- every price or figure matches the runbook and its public source.
+- every price or figure matches the runbook and its public source;
+- a customer story uses only what the customer or reputable press published, cited in the speaker notes;
+- scope: Amazon products, and third-party clients and tools that run on Amazon Bedrock inference (bought
+  through AWS Marketplace or, ideally, Bedrock per-token). No other third-party client content.
 
 Remove material rather than hide it. `npm run verify:deck` (part of `npm run verify` and CI) decodes the
 document and fails on internal markers and hosts, account-like numbers, alias handles, live-session keys,
@@ -82,5 +86,6 @@ makes no request at all. Inline styles are allowed because the runtime renders s
 
 Deck by Traci Lim, contributed under the repository's [MIT-0 licence](../LICENSE). The file embeds the
 Bento runtime (MIT, © 2026 The Bento authors) and its bundled components (reveal.js, Moveable and Selecto,
-MIT). Their licence notices are in the `NOTICE` comment at the top of the file and must stay there.
+MIT): see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the full licence text. Their notices are
+also in the `NOTICE` comment at the top of the file and must stay there.
 Size: about 3.3 MB, mostly the embedded runtime and the runbook demo animation.
