@@ -66,6 +66,9 @@ Opus 4.8, Claude Sonnet 4.6 and OpenAI GPT-6 Astra. OpenAI GPT-6 Sol, GPT-6 Luna
 Sol and GPT-5.6 Sol have no SKU in either bulk offer in any Region, and GPT-5.6 Luna has
 one only in `us-gov-west-1` (in the `AmazonBedrock` offer, version `20261102165015`). Those
 models are priced only on their Amazon Bedrock model cards, so their map rows stay pending.
+OpenAI GPT-6.1 Terra (generally available 2026-10-26) is the same: checked 2026-11-09, it has
+no SKU in `AmazonBedrockFoundationModels` `20261012084008` or `AmazonBedrock`
+`20261106184538` in any Region, so its input and output rows are pending too.
 
 Sources: [GetProducts API reference](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_pricing_GetProducts.html),
 [GetAttributeValues API reference](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_pricing_GetAttributeValues.html),
@@ -180,8 +183,8 @@ resolves to. As of 2026-11-05:
   | Claude Sonnet 4.6 | 3.30 | 16.50 | not mapped | not mapped |
 
   Claude cache writes are the default 5-minute write. Each row's SKU is in its `note`.
-- OpenAI GPT-6 Sol, GPT-6 Luna, GPT-6.1 Sol, GPT-5.6 Sol and GPT-5.6 Luna in `us-east-1`
-  stay `unverified_pending_join`, input and output: no bulk offer has a `us-east-1` SKU for
+- OpenAI GPT-6 Sol, GPT-6 Luna, GPT-6.1 Sol, GPT-6.1 Terra, GPT-5.6 Sol and GPT-5.6 Luna in
+  `us-east-1` stay `unverified_pending_join`, input and output: no bulk offer has a `us-east-1` SKU for
   them, and they are priced only on their model cards. Do not copy a model-card or GovCloud
   price into these rows.
 
@@ -194,7 +197,8 @@ stamp (`anthropic.claude-haiku-5-5`, `anthropic.claude-sonnet-5-5`,
 `anthropic.claude-opus-5-5`, `anthropic.claude-sonnet-5`, `anthropic.claude-sonnet-4-6`,
 `anthropic.claude-opus-4-8`, `openai.gpt-6-astra`, `openai.gpt-6-sol`, `openai.gpt-6-luna`,
 `openai.gpt-6.1-sol`, `openai.gpt-5.6-sol`, `openai.gpt-5.6-luna`) and were read from each
-model's Amazon Bedrock card on 2026-11-05. Never invent a date-stamp: if a new model's card
+model's Amazon Bedrock card on 2026-11-05. `openai.gpt-6.1-terra` was read from its card on
+2026-11-09. Never invent a date-stamp: if a new model's card
 is not yet published, use a clearly labelled placeholder as before.
 
 ## Maintenance note: new model launches (AC3)

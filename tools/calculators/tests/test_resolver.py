@@ -271,6 +271,7 @@ class ResolverTestCase(unittest.TestCase):
             "openai.gpt-6-sol": "unverified_pending_join",
             "openai.gpt-6-luna": "unverified_pending_join",
             "openai.gpt-6.1-sol": "unverified_pending_join",
+            "openai.gpt-6.1-terra": "unverified_pending_join",
             "openai.gpt-5.6-sol": "unverified_pending_join",
             "openai.gpt-5.6-luna": "unverified_pending_join",
         }
@@ -326,7 +327,7 @@ class ResolverTestCase(unittest.TestCase):
     def test_pending_rows_state_reason(self):
         for entry in self.pending:
             self.assertTrue(entry.get("note"), entry["model_id"])
-        for model_id in ("openai.gpt-6-sol", "openai.gpt-6-luna", "openai.gpt-6.1-sol"):
+        for model_id in ("openai.gpt-6-sol", "openai.gpt-6-luna", "openai.gpt-6.1-sol", "openai.gpt-6.1-terra"):
             notes = [r["note"] for r in self.pending if r["model_id"] == model_id]
             self.assertTrue(notes, model_id)
             for note in notes:
