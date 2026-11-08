@@ -9,7 +9,7 @@
  * mid-assessment got the same view as on their first visit, so there was no reason to come back.
  *
  * It is now the runbook's navigation destination: a status board of six cells (two tracks by three
- * actor-layers) whose lever rows carry live state, over a command bar that can narrow 34 levers to the
+ * actor-layers) whose lever rows carry live state, over a command bar that can narrow 28 levers to the
  * seven with a gap. "Where do I go next" is answerable here in one click, which is the thing the sidebar
  * and the right rail cannot do -- the rail only ever shows the three layers of the track you are in.
  *

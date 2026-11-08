@@ -16,7 +16,7 @@
 @media print {
   @page { size: A4; margin: 14mm 13mm 16mm; }
 
-  /* Only the report prints. Everything else -- sidebar, top bar, 34 levers -- is hidden. */
+  /* Only the report prints. Everything else -- sidebar, top bar, 28 levers -- is hidden. */
   body.assess-printing > *:not(#assess-print-root) { display: none !important; }
   body.assess-printing #assess-print-root { display: block !important; color: #111; }
 

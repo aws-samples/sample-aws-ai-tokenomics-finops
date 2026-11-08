@@ -12,7 +12,7 @@
  * cited, and published; mapping its Effort column onto three bands is a reading of existing content rather
  * than a new claim.
  *
- * The other 24 levers carry no rating, and this renders none for them. That is the point, not a gap to paper
+ * The other 18 levers carry no rating, and this renders none for them. That is the point, not a gap to paper
  * over: a rating here would be the least-evidenced statement in a document that carries 77 references and
  * marks every reported figure as reported, sitting in the most prominent position it has. So the grid renders
  * only the impact rows that HAVE levers -- which today is a ladder across the effort axis, because the source

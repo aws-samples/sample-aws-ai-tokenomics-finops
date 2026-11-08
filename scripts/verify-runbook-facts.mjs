@@ -240,47 +240,108 @@ console.log(`  live      ${dim('content/index.html')}\n`);
 const failures = [];
 const warnings = [];
 
-// --- 0. the prose statements of the lever total must equal the lever-index row count ----------
-// The prose counts rows of the no-JS lever-index table (details.lever-index tbody), the convention
-// that read 34 before issue #39 and 35 after it. Each statement is located by its surrounding
-// wording; a statement that cannot be found exactly once is a failure, so a rewording cannot
-// silently switch this check off. Update LEVER_TOTAL_STATEMENTS in the same change as the wording.
-const LEVER_INDEX_ROW = /<tr><td>(?:Track 1|Track 2|Both tracks)<\/td><td>(?:Model Inference|Agent Harness|End User|Decision principles)<\/td>/g;
+// --- 0. the prose statements of the lever total must equal the classified lever-index counts ---
+// The no-JS lever-index table (details.lever-index tbody) lists three kinds of row, and the prose
+// states each kind separately ("28 levers, plus 6 sub-practices and 3 decision principles"):
+//   - a LEVER row jumps to a track lever heading (<h4 id>), the unit the board and assessment use;
+//   - a SUB-PRACTICE row is in a track but jumps to a practice inside a lever (an h5, p or div id);
+//   - a DECISION PRINCIPLE row sits in the "Decision principles" layer.
+// Counting raw rows (the convention up to 2026-11-05) conflated the three and let the prose call
+// sub-practices levers. Each kind is classified from the document AND pinned in LEVER_INDEX_COUNTS,
+// so adding a lever, or reclassifying a row, is a deliberate edit here rather than a silent pass.
+// Each statement is located by its surrounding wording; a statement that cannot be found exactly
+// once is a failure, so a rewording cannot silently switch this check off. Update
+// LEVER_TOTAL_STATEMENTS in the same change as the wording.
+const LEVER_INDEX_COUNTS = Object.freeze({ levers: 28, subPractices: 6, principles: 3 });
+const LEVER_INDEX_ROW = /<tr><td>(Track 1|Track 2|Both tracks)<\/td><td>(Model Inference|Agent Harness|End User|Decision principles)<\/td><td><a href="#([^"]+)">/g;
 const LEVER_TOTAL_STATEMENTS = [
-  { id: 'key-levers-holds', pattern: /This runbook holds (\d+) of them\./g },
-  { id: 'key-levers-names-all', pattern: /The list under it names all (\d+), with what each one saves/g },
-  { id: 'cost-map-progress-bar', pattern: /Lever progress &middot; all (\d+) levers<span class="sf-note">/g },
-  { id: 'lever-progress-intro', pattern: /Every one of the (\d+) levers sits in the cell that owns it/g }
+  { id: 'key-levers-holds', kinds: ['levers', 'subPractices', 'principles'],
+    pattern: /This runbook holds (\d+) levers, plus (\d+) sub-practices and (\d+) decision principles\./g },
+  { id: 'key-levers-names-all', kinds: ['levers'], pattern: /The list under it names all (\d+) levers, with what each one saves/g },
+  { id: 'cost-map-progress-bar', kinds: ['levers'], pattern: /Lever progress &middot; all (\d+) levers<span class="sf-note">/g },
+  { id: 'lever-progress-intro', kinds: ['levers'], pattern: /Every one of the (\d+) levers sits in the cell that owns it/g },
+  { id: 'lever-index-summary', kinds: ['levers', 'subPractices', 'principles'],
+    pattern: /<span class="disc-sub">(\d+) levers, plus (\d+) sub-practices and (\d+) decision principles, each with its track/g }
 ];
+const KIND_LABEL = { levers: 'levers', subPractices: 'sub-practices', principles: 'decision principles' };
 function checkLeverTotal(raw) {
   const src = authoredOnly(raw);
   const errors = [];
   const block = src.match(/<details class="lever-index[^"]*">[\s\S]*?<\/details>/);
-  const rows = block ? (block[0].match(LEVER_INDEX_ROW) || []).length : 0;
+  const rowMatches = block ? [...block[0].matchAll(LEVER_INDEX_ROW)] : [];
+  const counts = { levers: 0, subPractices: 0, principles: 0 };
+  for (const [, track, layer, target] of rowMatches) {
+    const isPrinciple = layer === 'Decision principles';
+    if (isPrinciple !== (track === 'Both tracks')) {
+      errors.push(`lever index: row #${target} pairs ${track} with ${layer}; only Both tracks rows are decision principles`);
+    }
+    const isLeverHeading = src.includes(`<h4 id="${target}"`);
+    if (isPrinciple) counts.principles++;
+    else if (isLeverHeading) counts.levers++;
+    else counts.subPractices++;
+  }
+  const rows = rowMatches.length;
   if (!block) errors.push('lever total: the lever-index table (details.lever-index) was not found');
   else if (rows === 0) errors.push('lever total: the lever-index table has no lever rows');
-  const statements = LEVER_TOTAL_STATEMENTS.map(({ id, pattern }) => {
+  for (const [kind, pinned] of Object.entries(LEVER_INDEX_COUNTS)) {
+    if (counts[kind] !== pinned) {
+      errors.push(`lever index drift: ${counts[kind]} ${KIND_LABEL[kind]} classified, ${pinned} pinned in LEVER_INDEX_COUNTS`);
+    }
+  }
+  const statements = LEVER_TOTAL_STATEMENTS.map(({ id, kinds, pattern }) => {
     const found = [...src.matchAll(pattern)];
     if (found.length !== 1) {
       errors.push(`lever total statement ${id} not found exactly once (found ${found.length}); a rewording must update LEVER_TOTAL_STATEMENTS`);
-      return { id, found: found.length, stated: null };
+      return { id, found: found.length, stated: null, ok: false };
     }
-    const stated = Number(found[0][1]);
-    if (stated !== rows) errors.push(`lever total drift: ${id} states ${stated}, the lever index has ${rows} rows`);
-    return { id, found: 1, stated };
+    const stated = Object.fromEntries(kinds.map((kind, i) => [kind, Number(found[0][i + 1])]));
+    let ok = true;
+    for (const kind of kinds) {
+      if (stated[kind] !== counts[kind]) {
+        ok = false;
+        errors.push(`lever total drift: ${id} states ${stated[kind]} ${KIND_LABEL[kind]}, the lever index has ${counts[kind]}`);
+      }
+    }
+    return { id, found: 1, stated, ok };
   });
-  return { rows, statements, errors };
+  return { rows, counts, statements, errors };
 }
 
 const leverTotal = checkLeverTotal(liveRaw);
 failures.push(...leverTotal.errors);
 
 const offByOneLeverRaw = liveRaw.replace(
-  /This runbook holds \d+ of them\./, `This runbook holds ${leverTotal.rows + 1} of them.`
+  /This runbook holds (\d+) levers, plus/, (_, n) => `This runbook holds ${Number(n) + 1} levers, plus`
 );
 const offByOneLeverProofPassed = checkLeverTotal(offByOneLeverRaw).errors
-  .some((error) => error.includes('lever total drift: key-levers-holds'));
+  .some((error) => error.includes('lever total drift: key-levers-holds states 29 levers'));
 if (!offByOneLeverProofPassed) failures.push('lever-total mutation accepted an off-by-one statement');
+
+// A sub-practice miscounted in the prose is caught on its own, not only through the total.
+const offByOneSubPracticeRaw = liveRaw.replace(
+  /plus (\d+) sub-practices and (\d+) decision principles, each with its track/,
+  (_, n, p) => `plus ${Number(n) + 1} sub-practices and ${p} decision principles, each with its track`
+);
+const offByOneSubPracticeProofPassed = checkLeverTotal(offByOneSubPracticeRaw).errors
+  .some((error) => error.includes('lever total drift: lever-index-summary states 7 sub-practices'));
+if (!offByOneSubPracticeProofPassed) failures.push('lever-total mutation accepted an off-by-one sub-practice count');
+
+// The old raw-row reading: calling every index row a lever must fail, not pass.
+const rawRowLeverRaw = liveRaw.replace(
+  /Every one of the (\d+) levers sits/, `Every one of the ${leverTotal.rows} levers sits`
+);
+const rawRowLeverProofPassed = checkLeverTotal(rawRowLeverRaw).errors
+  .some((error) => error.includes(`lever total drift: lever-progress-intro states ${leverTotal.rows} levers`));
+if (!rawRowLeverProofPassed) failures.push('lever-total mutation accepted the raw row count as the lever count');
+
+// Promoting a sub-practice row to point at a lever heading changes the classification and must
+// trip the pin, so a lever cannot be added or removed in the index without updating the pin.
+const reclassifiedRaw = liveRaw.replace(
+  '<td><a href="#agent-loop-token-amplification">', '<td><a href="#system-prompt">'
+);
+const reclassifiedProofPassed = reclassifiedRaw !== liveRaw && checkLeverTotal(reclassifiedRaw).errors
+  .some((error) => error.includes('lever index drift: 29 levers classified, 28 pinned'));
+if (!reclassifiedProofPassed) failures.push('lever-total mutation accepted a reclassified index row');
 
 const rewordedLeverRaw = liveRaw.replace(/Every one of the (\d+) levers sits/, 'Each of the $1 levers sits');
 const rewordedLeverProofPassed = checkLeverTotal(rewordedLeverRaw).errors
@@ -288,13 +349,17 @@ const rewordedLeverProofPassed = checkLeverTotal(rewordedLeverRaw).errors
 if (!rewordedLeverProofPassed) failures.push('lever-total mutation accepted a reworded statement');
 
 console.log(bold('  Stated lever total'));
+const countsLabel = `${leverTotal.counts.levers} levers, ${leverTotal.counts.subPractices} sub-practices, ${leverTotal.counts.principles} decision principles`;
 if (leverTotal.errors.length === 0) {
-  const n = leverTotal.statements.filter((s) => s.stated === leverTotal.rows).length;
-  console.log(`  ${green('✓')} stated lever total matches the lever index: ${n}/${LEVER_TOTAL_STATEMENTS.length} statements say ${leverTotal.rows}, ${leverTotal.rows} rows`);
+  const n = leverTotal.statements.filter((s) => s.ok).length;
+  console.log(`  ${green('✓')} stated lever counts match the lever index: ${n}/${LEVER_TOTAL_STATEMENTS.length} statements agree with ${countsLabel} (${leverTotal.rows} rows)`);
 } else {
-  console.log(`  ${red('✖')} stated lever total does not match the lever index (${leverTotal.rows} rows)`);
+  console.log(`  ${red('✖')} stated lever counts do not match the lever index (${countsLabel}; ${leverTotal.rows} rows)`);
 }
 console.log(`  ${offByOneLeverProofPassed ? green('✓') : red('✖')} lever-total mutation rejects an off-by-one statement`);
+console.log(`  ${offByOneSubPracticeProofPassed ? green('✓') : red('✖')} lever-total mutation rejects an off-by-one sub-practice count`);
+console.log(`  ${rawRowLeverProofPassed ? green('✓') : red('✖')} lever-total mutation rejects the raw row count as the lever count`);
+console.log(`  ${reclassifiedProofPassed ? green('✓') : red('✖')} lever-total mutation rejects a reclassified index row`);
 console.log(`  ${rewordedLeverProofPassed ? green('✓') : red('✖')} lever-total mutation rejects a reworded statement`);
 
 // --- 1. sections must not vanish ------------------------------------------
@@ -389,21 +454,31 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   schemaVersion: 1,
   reviewBoundary: 'Every retired section/fact owner is manually bound to exact new section-local evidence.',
   // Retirements since the 2026-10-29 baseline (archive/index-2026-10-29-github-pages-b5a9736.html).
-  // 2026-11-05, content PR 2: the Track 2 levers "Set reasoning effort per call" and "Retrieval"
-  // add two rows to the lever-index table (35 -> 37). The four lever-total statements that
-  // checkLeverTotal() ties to that row count now say 37, so the stated total 35 leaves the two
-  // sections that carried it. Each owner is bound to the replacement total in the same section.
-  // These contracts go stale at the next re-baseline, like the 2026-10-02 set did.
+  // 2026-11-08, content PR 3: the lever total is stated as separate counts ("28 levers, plus 6
+  // sub-practices and 3 decision principles") instead of the raw lever-index row count (35 in the
+  // baseline, 37 after content PR 2). checkLeverTotal() classifies and pins each count. The stated
+  // total 35 leaves map-h; in the front matter the token survives as Track 1's "35 questions", so no
+  // front-matter contract is needed for it. The same PR corrects the no-JS track-card fallbacks,
+  // which still carried a 2026-08 snapshot (10 and 20 levers, 32 and 43 questions, 36 and 75
+  // references), to the counts the DOM check pins. Each owner is bound to its replacement phrase in
+  // the same section. These contracts go stale at the next re-baseline, like the 2026-10-02 set did.
   contracts: [
     {
-      id: 'lever-total-35-to-37-map',
+      id: 'lever-total-35-to-28-map',
       section: 'map-h',
-      owners: [reviewedOwner('integers:35', reviewedFact('integers:37'))]
+      owners: [reviewedOwner('integers:35', reviewedPhrase('28 levers, plus 6 sub-practices and 3 decision principles'))]
     },
     {
-      id: 'lever-total-35-to-37-front-matter',
+      id: 'track-card-fallback-counts',
       section: '(front matter)',
-      owners: [reviewedOwner('integers:35', reviewedFact('integers:37'))]
+      owners: [
+        reviewedOwner('integers:10', reviewedPhrase('11 levers 35 questions')),
+        reviewedOwner('integers:32', reviewedPhrase('0/35 answered'), reviewedPhrase('0/39 answered')),
+        reviewedOwner('integers:36', reviewedPhrase('35 questions 62 references')),
+        reviewedOwner('integers:20', reviewedPhrase('17 levers 39 questions')),
+        reviewedOwner('integers:43', reviewedPhrase('39 questions 105 references')),
+        reviewedOwner('integers:75', reviewedPhrase('105 references'))
+      ]
     }
   ]
 };
@@ -420,7 +495,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '5e6aff2fee6e343e57c47892ba29f21406c79026ce5da7fbd78b4efe51013202';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '9cdf313ce6dfadbe2e6d9bb2fe71f165223815b2b9b9cec594bdc9c4a7401c86';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**
@@ -777,7 +852,7 @@ const excusedByReplacement = (key) => inspectRetirementCoverage(key).ok;
 // the fixture is re-pointed at a current contract instead of silently skipping the proofs.
 const f1Section = 'map-h';
 const f1Fact = 'integers:35';
-const f1ContractId = 'lever-total-35-to-37-map';
+const f1ContractId = 'lever-total-35-to-28-map';
 const RETIREMENT_PROOFS_APPLICABLE = FACT_REPLACEMENT_CONTRACTS.length > 0;
 const retirementFixturePresent = FACT_REPLACEMENT_CONTRACTS.some((contract) => contract.id === f1ContractId
   && contract.owners.some((owner) => owner.factKey === f1Fact));
@@ -831,21 +906,21 @@ const manifestOwnerships = FACT_REPLACEMENT_CONTRACTS.flatMap((contract) =>
 );
 const manifestSealProofPassed = productionOwnerIntegrity.manifestSeal.ok;
 const manifestInventoryProofPassed = FACT_REPLACEMENT_CONTRACTS.length === 2
-  && manifestOwnerCount === 2 && new Set(manifestOwnerships).size === 2;
+  && manifestOwnerCount === 7 && new Set(manifestOwnerships).size === 7;
 
-// An uncontracted front-matter owner to delete. integers:35 is contracted since 2026-11-05, so the
-// proof deletes the Track 2 card's question count instead, which no contract covers.
-const f1MutationOwner = { section: '(front matter)', key: 'integers:43' };
-const removeFrontMatter35 = (source) => source
-  .replace('20 levers &middot; 43 questions', '20 levers &middot; forty-three questions');
-const ownerDeletedRaw = removeFrontMatter35(liveRaw);
+// An uncontracted front-matter owner to delete. The track-card counts are contracted since
+// 2026-11-08, so the proof deletes the sheet fallback's "JavaScript", which no contract covers.
+const f1MutationOwner = { section: '(front matter)', key: 'identifiers:JavaScript' };
+const removeFrontMatterOwner = (source) => source
+  .replace('so without JavaScript they do not appear', 'so without scripting they do not appear');
+const ownerDeletedRaw = removeFrontMatterOwner(liveRaw);
 const ownerDeletedSections = extract(ownerDeletedRaw);
 const ownerMutationPrepared = !sectionHasFact(
   ownerDeletedSections, f1MutationOwner.section, f1MutationOwner.key
 );
 
 const unrelatedPhrase = 'mutation-only unrelated same-section replacement evidence';
-const unrelatedOwnerDeletedRaw = removeFrontMatter35(
+const unrelatedOwnerDeletedRaw = removeFrontMatterOwner(
   liveRaw.replace(/\n<body([^>]*)>/i, `\n<body$1><p>${unrelatedPhrase}</p>`)
 );
 const unrelatedOwnerDeletedSections = extract(unrelatedOwnerDeletedRaw);
@@ -858,7 +933,7 @@ const unrelatedEvidenceDeletionProofPassed = ownerMutationPrepared
 
 const appendedManifest = cloneManifest();
 appendedManifest.contracts.push({
-  id: 'mutation-unreviewed-frontmatter-35',
+  id: 'mutation-unreviewed-frontmatter-owner',
   section: f1MutationOwner.section,
   owners: [reviewedOwner(f1MutationOwner.key, reviewedPhrase(unrelatedPhrase))]
 });
@@ -916,7 +991,7 @@ if (!RETIREMENT_PROOFS_APPLICABLE) {
     && alteredEvidenceResult.errors.some((error) => error.includes('manifest seal mismatch'));
 
   const staleRaw = mutateSectionHtml(liveRaw, f1Section, (section) => section.replace(
-    /Lever progress &middot; all 37 levers/,
+    /Lever progress &middot; all 28 levers/,
     (match) => `${match}, up from 35`
   ));
   const staleSections = extract(staleRaw);
@@ -1041,7 +1116,7 @@ const currentContractsProofPassed = productionOwnerIntegrity.errors.length === 0
   && productionOwnerIntegrity.complete;
 for (const [passed, label] of [
   [manifestSealProofPassed, 'reviewed manifest seal does not match its canonical JSON'],
-  [manifestInventoryProofPassed, 'reviewed manifest inventory is not exactly 2 contracts / 2 unique owners'],
+  [manifestInventoryProofPassed, 'reviewed manifest inventory is not exactly 2 contracts / 7 unique owners'],
   [f1OwnerProofPassed, 'owner-pair positive proof failed for the exact map-h lever-total retirement'],
   [unrelatedEvidenceDeletionProofPassed, 'full-path mutation accepted unrelated same-section evidence plus owner deletion'],
   [appendedManifestProofPassed, 'full-path mutation accepted an appended unreviewed contract without a seal update'],

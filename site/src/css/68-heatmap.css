@@ -109,8 +109,8 @@
 .hm-chip-saves { display: block; font-size: .7rem; color: var(--text-muted); }
 
 /* ---- coverage footer ----
-   States how many of the 34 levers are placed. A view that showed ten without saying so would read as the
-   whole picture, which is the "no silent caps" rule the cost map's "showing N of 34" bar already follows. */
+   States how many of the 28 levers are placed. A view that showed ten without saying so would read as the
+   whole picture, which is the "no silent caps" rule the cost map's "showing N of 28" bar already follows. */
 .hm-foot { margin: .6rem 0 0; font-size: .74rem; color: var(--text-muted); }
 .hm-foot-n { font-weight: 700; color: var(--heading); }
 

@@ -1,5 +1,5 @@
 /**
- * The TLDR pane's lever sheet: all 34 levers, what each one saves, grouped by track and actor-layer.
+ * The TLDR pane's lever sheet: all 28 levers, what each one saves, grouped by track and actor-layer.
  *
  * WHY. Leadership wanted "the key levers I can pull to cost optimise, by track" on about two pages, and went
  * looking for it on the front page without finding it. What was there instead was 1,691 words restating the
@@ -8,7 +8,7 @@
  * NOTHING HERE IS AUTHORED TWICE
  * ------------------------------
  * Every value on this sheet is read out of the document, which is the rule the whole runbook front end
- * follows (`model.mjs`: "nothing is discovered from a hard-coded list"). A hand-written summary of 34 levers
+ * follows (`model.mjs`: "nothing is discovered from a hard-coded list"). A hand-written summary of 28 levers
  * would have been a sixth restatement of the taxonomy and the first thing to go stale:
  *
  *   track -> layer -> lever, shared, kind   buildModel()
