@@ -462,6 +462,8 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   // which still carried a 2026-08 snapshot (10 and 20 levers, 32 and 43 questions, 36 and 75
   // references), to the counts the DOM check pins. Each owner is bound to its replacement phrase in
   // the same section. These contracts go stale at the next re-baseline, like the 2026-10-02 set did.
+  // 2026-11-09, sweep-2 content PR: six newly cited references (93, 95, 191-194) take the Track 2
+  // card's fallback count from 105 to 111, so the two Track 2 evidence phrases name 111.
   contracts: [
     {
       id: 'lever-total-35-to-28-map',
@@ -476,8 +478,8 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
         reviewedOwner('integers:32', reviewedPhrase('0/35 answered'), reviewedPhrase('0/39 answered')),
         reviewedOwner('integers:36', reviewedPhrase('35 questions 62 references')),
         reviewedOwner('integers:20', reviewedPhrase('17 levers 39 questions')),
-        reviewedOwner('integers:43', reviewedPhrase('39 questions 105 references')),
-        reviewedOwner('integers:75', reviewedPhrase('105 references'))
+        reviewedOwner('integers:43', reviewedPhrase('39 questions 111 references')),
+        reviewedOwner('integers:75', reviewedPhrase('111 references'))
       ]
     }
   ]
@@ -495,7 +497,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '9cdf313ce6dfadbe2e6d9bb2fe71f165223815b2b9b9cec594bdc9c4a7401c86';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '543ae47514ca0d1593997c4b8da2c09f69d299550eb195baf863c14091afa749';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**
