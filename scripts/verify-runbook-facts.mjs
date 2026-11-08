@@ -464,6 +464,12 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   // the same section. These contracts go stale at the next re-baseline, like the 2026-10-02 set did.
   // 2026-11-09, sweep-2 content PR: six newly cited references (93, 95, 191-194) take the Track 2
   // card's fallback count from 105 to 111, so the two Track 2 evidence phrases name 111.
+  // 2026-11-09, scope change (owner): only clients that run on Amazon Bedrock inference, plus Kiro.
+  // Track 1 references go 62 -> 61 (Kiro and Bedrock sources in; Copilot, Codex-subscription and
+  // Claude Team / Enterprise sources out), so the Track 1 evidence phrase names 61. GitHub Copilot
+  // leaves the CloudWatch telemetry bullet (Copilot cannot use Bedrock inference). The Claude Team /
+  // Enterprise citations [89] and [97] leave Right-size the subscription plan, which now covers Kiro
+  // plans and credit pooling; each owner is bound to the Kiro claim that replaces it.
   contracts: [
     {
       id: 'lever-total-35-to-28-map',
@@ -476,10 +482,40 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
       owners: [
         reviewedOwner('integers:10', reviewedPhrase('11 levers 35 questions')),
         reviewedOwner('integers:32', reviewedPhrase('0/35 answered'), reviewedPhrase('0/39 answered')),
-        reviewedOwner('integers:36', reviewedPhrase('35 questions 62 references')),
+        reviewedOwner('integers:36', reviewedPhrase('35 questions 61 references')),
         reviewedOwner('integers:20', reviewedPhrase('17 levers 39 questions')),
         reviewedOwner('integers:43', reviewedPhrase('39 questions 111 references')),
         reviewedOwner('integers:75', reviewedPhrase('111 references'))
+      ]
+    },
+    {
+      id: 'scope-copilot-telemetry',
+      section: 'cost-attribution-and-spending-caps',
+      owners: [reviewedOwner('identifiers:GitHub', reviewedPhrase('OpenAI Codex and Claude Code can emit OpenTelemetry data to CloudWatch'))]
+    },
+    {
+      id: 'scope-subscription-plan-kiro',
+      section: 'right-size-the-subscription-plan',
+      owners: [
+        reviewedOwner('integers:89', reviewedPhrase('pool dashboards track seat utilisation')),
+        reviewedOwner('integers:97', reviewedPhrase('Credit pooling replaces per-user tier matching')),
+        reviewedOwner('citations:ref-89', reviewedPhrase('Credit pooling replaces per-user tier matching')),
+        reviewedOwner('citations:ref-96', reviewedPhrase('Credit pooling replaces per-user tier matching')),
+        reviewedOwner('citations:ref-97', reviewedPhrase('Credit pooling replaces per-user tier matching')),
+        reviewedOwner('integers:96', reviewedPhrase('Credit pooling replaces per-user tier matching'))
+      ]
+    },
+    {
+      id: 'scope-references-claude-seat-sources',
+      section: 'measure-cost-per-successful-task-not-cost-per-call',
+      owners: [
+        reviewedOwner('integers:12004354', reviewedPhrase('Share Kiro credits across your team with credit pooling')),
+        reviewedOwner('integers:12883420', reviewedPhrase('Share Kiro credits across your team with credit pooling')),
+        reviewedOwner('integers:14782391', reviewedPhrase('Share Kiro credits across your team with credit pooling')),
+        reviewedOwner('identifiers:support.claude.com', reviewedPhrase('Share Kiro credits across your team with credit pooling')),
+        reviewedOwner('identifiers:12004354-purchase-and-manage-seats-on-team-plans', reviewedPhrase('Share Kiro credits across your team with credit pooling')),
+        reviewedOwner('identifiers:12883420-view-usage-analytics-for-team-and-enterprise-plans', reviewedPhrase('Share Kiro credits across your team with credit pooling')),
+        reviewedOwner('identifiers:14782391-claude-enterprise-consumption-guide', reviewedPhrase('Share Kiro credits across your team with credit pooling'))
       ]
     }
   ]
@@ -497,7 +533,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '543ae47514ca0d1593997c4b8da2c09f69d299550eb195baf863c14091afa749';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = 'bf13be85c5ddd7f9a392e0bfd865e826322ba66b58eb4f40b5db4a472140cde0';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**
@@ -907,8 +943,8 @@ const manifestOwnerships = FACT_REPLACEMENT_CONTRACTS.flatMap((contract) =>
   contract.owners.map((owner) => retirementOwnershipKey(contract.section, owner.factKey))
 );
 const manifestSealProofPassed = productionOwnerIntegrity.manifestSeal.ok;
-const manifestInventoryProofPassed = FACT_REPLACEMENT_CONTRACTS.length === 2
-  && manifestOwnerCount === 7 && new Set(manifestOwnerships).size === 7;
+const manifestInventoryProofPassed = FACT_REPLACEMENT_CONTRACTS.length === 5
+  && manifestOwnerCount === 21 && new Set(manifestOwnerships).size === 21;
 
 // An uncontracted front-matter owner to delete. The track-card counts are contracted since
 // 2026-11-08, so the proof deletes the sheet fallback's "JavaScript", which no contract covers.
