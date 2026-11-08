@@ -11,6 +11,8 @@
  *        -> dist/.nojekyll              (Pages: serve the files as-is, no Jekyll pass)
  *   site/static/og-image.png -> dist/og-image.png (link-preview image, committed source)
  *        -> dist/sitemap.xml, dist/robots.txt (crawler files, absolute URLs under SITE_URL)
+ *   deck/tokenomics-for-ai-workloads.bento.html (presenter deck, editable with Bento)
+ *        -> dist/deck/index.html        (same file + its own CSP <meta>; see deckCsp)
  *
  * Why the split
  * -------------
@@ -36,6 +38,7 @@
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const UPSTREAM = join(REPO_ROOT, 'content', 'index.html');
@@ -68,6 +71,85 @@ export const SITE_CSP = [
   "base-uri 'self'",
   "form-action 'none'"
 ].join('; ');
+
+/**
+ * The presenter deck: a self-contained Bento (bento.page, MIT) file, published at <SITE_URL>deck/.
+ * The repo keeps the editable source byte-for-byte as Bento saves it; the published copy is the same file
+ * with ONE <meta> CSP inserted after its charset. A CSP <meta> is not put in the source because Bento
+ * treats one as markup a genuine document never carries.
+ */
+export const DECK_SOURCE = join(REPO_ROOT, 'deck', 'tokenomics-for-ai-workloads.bento.html');
+export const DECK_OUT = join(OUT_DIR, 'deck', 'index.html');
+
+/**
+ * The deck's executable inline scripts: every <script> without a type, or with a JavaScript type.
+ * Bento's data blocks (application/bento+json, bento/deflate-b86) are not executable and are excluded.
+ * Returns their exact text, the string a CSP hash is computed over.
+ */
+export function deckExecutableScripts(html) {
+  const JS_TYPES = new Set(['', 'text/javascript', 'application/javascript', 'module']);
+  const out = [];
+  for (const m of html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/gi)) {
+    const attrs = m[1] || '';
+    const type = ((attrs.match(/\stype\s*=\s*"([^"]*)"/i) || [])[1] || '').trim().toLowerCase();
+    if (/\ssrc\s*=/i.test(attrs)) out.push({ src: true, text: '' });
+    else if (JS_TYPES.has(type)) out.push({ src: false, text: m[2] });
+  }
+  return out;
+}
+
+/**
+ * The deck page's policy, as tight as the Bento runtime allows. It is Bento's own host policy
+ * (kernel/src/gate1.ts hostPolicy) with every network directive closed:
+ *   - script-src: the loader's hash plus blob:, the runtime the loader decompresses and imports.
+ *     The loader first tries an inline <script> and then `new Function`; both are refused here by
+ *     design and it falls back to blob:. No 'unsafe-inline', no 'unsafe-eval'.
+ *   - style-src 'unsafe-inline': the runtime renders slides with inline styles (Bento's host policy
+ *     does the same; its sanitizer is the style control). Scripts stay hash-pinned.
+ *   - connect-src 'none': the runtime's launch-time update check to bento.page is refused in the
+ *     browser, so the page makes no network request at all. Images, media and fonts are data:/blob:.
+ * GitHub Pages cannot send headers, so this ships as a <meta>; frame-ancestors cannot be set that way.
+ */
+export function deckCsp(loaderHash) {
+  return [
+    "default-src 'none'",
+    `script-src '${loaderHash}' blob:`,
+    "style-src 'unsafe-inline'",
+    'img-src data: blob:',
+    'media-src data: blob:',
+    'font-src data: blob:',
+    "connect-src 'none'",
+    "worker-src 'none'",
+    "frame-src 'none'",
+    "object-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'"
+  ].join('; ');
+}
+
+/** sha256-<base64> of the deck's one executable inline script (the Bento loader); aborts otherwise. */
+export function deckLoaderHash(html) {
+  const scripts = deckExecutableScripts(html);
+  if (scripts.length !== 1 || scripts[0].src) {
+    abort(`the deck must carry exactly one executable inline <script> (the Bento loader) and no <script src>; found ${scripts.length}.`,
+      'A re-saved deck from a newer Bento may add a preview remover: extend deckCsp() to hash it too.');
+  }
+  return `sha256-${createHash('sha256').update(scripts[0].text, 'utf8').digest('base64')}`;
+}
+
+/** Publish the deck: same bytes as the source, plus the CSP <meta>. */
+function buildDeck() {
+  const src = readFileSync(DECK_SOURCE, 'utf8');
+  if (/http-equiv\s*=\s*"Content-Security-Policy"/i.test(src)) {
+    abort('deck/ source already carries a CSP <meta>; build-site.mjs owns it.');
+  }
+  const csp = deckCsp(deckLoaderHash(src));
+  const out = replaceOnce(src, '<meta charset="UTF-8" />',
+    `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />`, 'deck charset <meta>');
+  mkdirSync(dirname(DECK_OUT), { recursive: true });
+  writeFileSync(DECK_OUT, out);
+  return { csp, bytes: Buffer.byteLength(out, 'utf8') };
+}
 
 function abort(message, hint) {
   console.error(`\n✖ build-site: ${message}`);
@@ -266,7 +348,11 @@ function main() {
     '<?xml version="1.0" encoding="UTF-8"?>\n'
     + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     + `  <url>\n    <loc>${SITE_URL}</loc>\n  </url>\n`
+    + `  <url>\n    <loc>${SITE_URL}deck/</loc>\n  </url>\n`
     + '</urlset>\n');
+
+  // The presenter deck, under its own CSP (see deckCsp). The runbook's SITE_CSP is not touched.
+  const deck = buildDeck();
   // A project site's robots.txt is not at the host root, so crawlers do not read it there; it still
   // documents the sitemap location, and search consoles accept the sitemap URL directly.
   writeFileSync(join(OUT_DIR, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}sitemap.xml\n`);
@@ -280,6 +366,7 @@ function main() {
     + `${declToClass.size === 0 ? ' (expected: they are authored in site/src/css)' : ' — move these into site/src/css'}`);
   console.log(`  CSP <meta>: ${SITE_CSP}`);
   console.log(`  canonical + Open Graph + JSON-LD -> ${SITE_URL}; sitemap.xml, robots.txt, ${OG_IMAGE}`);
+  console.log(`  dist/deck/index.html  ${(deck.bytes / 1024 / 1024).toFixed(2)} MB  (deck CSP: ${deck.csp})`);
 }
 
 // Run only when executed, so verify-runbook-dom.mjs can import SITE_CSP without rebuilding.
