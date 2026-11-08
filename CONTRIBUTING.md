@@ -47,6 +47,7 @@ This section is the one place for the build and verify commands. Other docs link
 | `site/static/` | Committed static assets copied into the site as-is: `og-image.png`, the 1200x630 link-preview image (regenerate with `scripts/make-og-image.mjs`). |
 | `docs/assets/` | Images used by the README. Kept out of `site/static/` so they are not published to the site. |
 | `tools/calculators/` | A stdlib-only Python resolver from Bedrock model IDs to AWS Price List rows, with tests. |
+| `deck/` | The presenter deck, a self-contained [Bento](https://bento.page) file published at `/deck/`. See [deck/README.md](deck/README.md) to present or edit it, and for its public-safety rule. |
 | `dist/` | Build output (git-ignored). This is what is published to GitHub Pages, including the canonical, Open Graph and JSON-LD head tags, `sitemap.xml` and `robots.txt` that `build-site.mjs` emits. |
 
 Never edit inside the `@generated:*` markers in `content/index.html`: the next build overwrites them.
@@ -62,7 +63,7 @@ npm run build        # site/src -> content/index.html, then content/index.html -
 npm run verify       # static + facts + headless-browser checks
 ```
 
-`npm run verify` has three parts:
+`npm run verify` has four parts:
 
 - `verify:static` checks that every lever, question, table, citation, `id` and external URL in the
   baseline is still present, plus the build invariants (one `<style>`, one `<script>`, no inline styles,
@@ -72,6 +73,10 @@ npm run verify       # static + facts + headless-browser checks
 - `verify:dom` drives headless Chrome over both the self-contained file and the built site. The site is
   served under the Pages sub-path `/sample-aws-ai-tokenomics-finops/` with the production
   Content-Security-Policy, and the run fails on any console error, CSP violation or off-origin request.
+- `verify:deck` checks the presenter deck: it decodes the deck's document and fails on internal markers,
+  hosts or aliases, account-like numbers, live-session keys, hidden slides, remote resources and slide-count
+  drift, then steps through every slide of the published copy in headless Chrome under the deck's CSP. See
+  [deck/README.md](deck/README.md).
 
 `verify:dom` looks for Chrome in the usual places; point it at a specific binary with
 `PUPPETEER_EXECUTABLE_PATH=/path/to/chrome npm run verify:dom`. Screenshots and print PDFs land in
