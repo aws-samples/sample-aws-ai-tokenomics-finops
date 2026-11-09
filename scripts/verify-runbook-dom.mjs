@@ -1106,7 +1106,13 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
       total: document.querySelectorAll('#track-2 details.read-more').length,
       nested: [...document.querySelectorAll('#track-2 details.read-more')].every((d) => !!d.closest('details.assess-gap')),
       leadFirst: [...document.querySelectorAll('#track-2 .gap-body')].every((g) => g.firstElementChild && g.firstElementChild.classList.contains('gap-lead')),
-      t1Untouched: document.querySelectorAll('#track-1 details.read-more').length
+      // Track 1 follows the same lead-then-Read-more pattern since the concision pass, so its gap panels
+      // are held to the same shape: every panel opens with a lead, every Read more sits inside a gap panel.
+      t1Total: document.querySelectorAll('#track-1 details.read-more').length,
+      t1Nested: [...document.querySelectorAll('#track-1 details.read-more')].every((d) => !!d.closest('details.assess-gap')),
+      t1LeadFirst: [...document.querySelectorAll('#track-1 .gap-body')].every((g) => g.firstElementChild && g.firstElementChild.classList.contains('gap-lead')),
+      // Collapsed by default: no Read more ships with the open attribute in either track.
+      allClosed: [...document.querySelectorAll('details.read-more')].every((d) => !d.hasAttribute('open'))
     };
     return out;
   });
@@ -1126,8 +1132,10 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
   check(label, 'the export says what was left out', /^Out of scope \(excluded from every count above\): .*Orchestration/.test(scope.mdOutLine), scope.mdOutLine || 'missing');
   check(label, 'Reset Track 2 re-includes every lever', scope.reset.qs === EXPECT.tracks.t2.questions && scope.reset.off === 0 && scope.reset.out === 0,
     `${scope.reset.qs} visible, ${scope.reset.off} boxes off, ${scope.reset.out} blocks out`);
-  check(label, 'every Track 2 gap panel opens with a lead and nests its Read more; Track 1 has none',
-    scope.readMore.leadFirst && scope.readMore.nested && scope.readMore.total >= 30 && scope.readMore.t1Untouched === 0, JSON.stringify(scope.readMore));
+  check(label, 'every gap panel in both tracks opens with a lead and nests its Read more, collapsed by default',
+    scope.readMore.leadFirst && scope.readMore.nested && scope.readMore.total >= 30
+      && scope.readMore.t1LeadFirst && scope.readMore.t1Nested && scope.readMore.t1Total >= 35
+      && scope.readMore.allClosed, JSON.stringify(scope.readMore));
 
   // --- print path ---------------------------------------------------------
   const printed = await page.evaluate(() => {
