@@ -11,7 +11,7 @@ the diagnostic questions, export a gap report.
 [Suggest a lever](https://github.com/aws-samples/sample-aws-ai-tokenomics-finops/issues/new?template=new-lever.yml)
 
 Presenting this? Use the [Tokenomics for AI Workloads deck](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/deck/)
-by Traci Lim, with speaker notes on every slide ([how to present and edit it](deck/README.md)).
+by the AWS AI/ML specialist team, cost pillar, with speaker notes on every slide ([how to present and edit it](deck/README.md)).
 
 > This is sample guidance published as-is under the MIT-0 licence. It is not official AWS documentation
 > and is not supported by AWS. Prices and service features change; confirm figures against the linked AWS
