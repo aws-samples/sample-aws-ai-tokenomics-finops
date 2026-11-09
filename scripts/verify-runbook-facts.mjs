@@ -470,6 +470,8 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   // leaves the CloudWatch telemetry bullet (Copilot cannot use Bedrock inference). The Claude Team /
   // Enterprise citations [89] and [97] leave Right-size the subscription plan, which now covers Kiro
   // plans and credit pooling; each owner is bound to the Kiro claim that replaces it.
+  // 2026-11-09, sweep-2 agent-harness PR: eight newly cited references (198-205) take the Track 2
+  // card's fallback count from 111 to 119, so the two Track 2 evidence phrases name 119.
   contracts: [
     {
       id: 'lever-total-35-to-28-map',
@@ -484,8 +486,8 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
         reviewedOwner('integers:32', reviewedPhrase('0/35 answered'), reviewedPhrase('0/39 answered')),
         reviewedOwner('integers:36', reviewedPhrase('35 questions 61 references')),
         reviewedOwner('integers:20', reviewedPhrase('17 levers 39 questions')),
-        reviewedOwner('integers:43', reviewedPhrase('39 questions 111 references')),
-        reviewedOwner('integers:75', reviewedPhrase('111 references'))
+        reviewedOwner('integers:43', reviewedPhrase('39 questions 119 references')),
+        reviewedOwner('integers:75', reviewedPhrase('119 references'))
       ]
     },
     {
@@ -533,7 +535,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = 'bf13be85c5ddd7f9a392e0bfd865e826322ba66b58eb4f40b5db4a472140cde0';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '93dc9e658db38d0b210d105d2448a4901a95dcce435c6be049109b23dbaa849d';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**
