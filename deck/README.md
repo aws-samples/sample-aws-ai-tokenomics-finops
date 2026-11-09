@@ -18,10 +18,10 @@ engagement.
 
 ## Present it
 
-1. Open the [hosted deck](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/deck/), or
-   download [`tokenomics-for-ai-workloads.bento.html`](tokenomics-for-ai-workloads.bento.html)
-   (**Download raw file**) and open it from disk. It works offline: one file, nothing to install.
-2. Press **F5** (or *Present*) to start the show. Arrow keys step through slides and their builds.
+1. Open the [hosted deck](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/deck/). It opens
+   straight into the presentation, with no editor.
+2. Step with the arrow keys or the on-screen arrows; builds advance one click at a time. Press **F** for
+   fullscreen. **Esc** ends the show and shows a **Present** button to start it again.
 3. Speaker notes are on every slide; open the speaker view from the show's menu.
 
 Slide 16 ("Illustrative: 500 developers") has a button to a sensitivity table; click anywhere on that table
@@ -33,8 +33,13 @@ The file is a [Bento](https://bento.page) deck (`.bento.html`): the document is 
 `<script type="application/bento+json" id="bento-doc">` block, and the rest of the file is Bento's
 compressed viewer and editor.
 
-- **In the editor.** Open the file in a browser, edit on the canvas, then save. Save writes a new copy of
-  the file; replace `deck/tokenomics-for-ai-workloads.bento.html` with it.
+The hosted copy is a presentation-only player, so edit the **source** in this folder, not the hosted
+page. Download [`tokenomics-for-ai-workloads.bento.html`](tokenomics-for-ai-workloads.bento.html)
+(**Download raw file**), or open it from your clone, and open it in a browser from disk: it boots into the
+Bento editor. It works offline: one file, nothing to install.
+
+- **In the editor.** Edit on the canvas, then save. Save writes a new copy of the file; replace
+  `deck/tokenomics-for-ai-workloads.bento.html` with it. Press **F5** (or *Present*) to rehearse.
 - **As JSON.** Edit only the `#bento-doc` block, in place, and escape every `<` as `\u003c`. Leave the
   rest of the file untouched. The Bento agent guide and schema are at
   [bento.page/agents.md](https://bento.page/agents.md).
@@ -42,8 +47,11 @@ compressed viewer and editor.
   *Share*), save a share copy instead: `npm run verify:deck` fails on them.
 
 The published page is built by `npm run build`: `scripts/build-site.mjs` copies this file to
-`dist/deck/index.html` and adds one Content-Security-Policy `<meta>`. The source file never carries a CSP of
-its own.
+`dist/deck/index.html`, turns on Bento's own player mode in the copy's document (`readonly: true`, which
+boots into the show and never builds the editor, plus `present.controls: true` for the on-screen arrows
+and `present.slideNumber: false`, since content slides print their own page number),
+and adds one Content-Security-Policy `<meta>`. The source file stays an editable deck and never carries a
+CSP of its own.
 
 ## Public-safety rule
 
@@ -63,10 +71,12 @@ must be safe for any audience:
 
 Remove material rather than hide it. `npm run verify:deck` (part of `npm run verify` and CI) decodes the
 document and fails on internal markers and hosts, account-like numbers, alias handles, live-session keys,
-hidden slides, any remote image or media source, broken slide links, and slide-count drift. It then opens
+hidden slides, any remote image or media source, broken slide links, slide-count drift, and text below WCAG
+contrast (4.5:1, or 3:1 for text of 24 px or larger, or bold 14 pt; measured against the element's own fill
+or the slide background, and against the darkest part of a gradient under it). It then opens
 the published copy in headless Chrome under its CSP, steps through every slide, and fails on any request to
-another origin, any page error, any unexpected CSP refusal, or any error or structural warning from Bento's
-own `validate()`. Text overflow is reported but not failed: the deck uses the system-ui font stack, so line
+another origin, any page error, any unexpected CSP refusal, a landing page that shows the editor, or any
+error or structural warning from Bento's own `validate()`. Text overflow is reported but not failed: the deck uses the system-ui font stack, so line
 breaks depend on the machine's fonts. Check long titles on the platform you present from. If you add or remove slides on purpose, update the pinned counts in `scripts/verify-deck.mjs`
 in the same pull request.
 

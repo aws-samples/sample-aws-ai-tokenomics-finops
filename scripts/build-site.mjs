@@ -12,7 +12,7 @@
  *   site/static/og-image.png -> dist/og-image.png (link-preview image, committed source)
  *        -> dist/sitemap.xml, dist/robots.txt (crawler files, absolute URLs under SITE_URL)
  *   deck/tokenomics-for-ai-workloads.bento.html (presenter deck, editable with Bento)
- *        -> dist/deck/index.html        (same file + its own CSP <meta>; see deckCsp)
+ *        -> dist/deck/index.html        (player mode + its own CSP <meta>; see publishedDeckDoc, deckCsp)
  *
  * Why the split
  * -------------
@@ -75,8 +75,9 @@ export const SITE_CSP = [
 /**
  * The presenter deck: a self-contained Bento (bento.page, MIT) file, published at <SITE_URL>deck/.
  * The repo keeps the editable source byte-for-byte as Bento saves it; the published copy is the same file
- * with ONE <meta> CSP inserted after its charset. A CSP <meta> is not put in the source because Bento
- * treats one as markup a genuine document never carries.
+ * with its document switched to player mode (see publishedDeckDoc) and ONE <meta> CSP inserted after its
+ * charset. A CSP <meta> is not put in the source because Bento treats one as markup a genuine document
+ * never carries.
  */
 export const DECK_SOURCE = join(REPO_ROOT, 'deck', 'tokenomics-for-ai-workloads.bento.html');
 export const DECK_OUT = join(OUT_DIR, 'deck', 'index.html');
@@ -137,15 +138,49 @@ export function deckLoaderHash(html) {
   return `sha256-${createHash('sha256').update(scripts[0].text, 'utf8').digest('base64')}`;
 }
 
-/** Publish the deck: same bytes as the source, plus the CSP <meta>. */
+/** The deck's document block: one plaintext JSON script, as Bento's splice contract guarantees. */
+export const DECK_DOC_RE = /(<script type="application\/bento\+json" id="bento-doc">)([\s\S]*?)(<\/script>)/;
+
+/**
+ * The published copy is a PLAYER: Bento's own `readonly` document field boots straight into the
+ * presentation and never builds the editor (bento/slides docs/format.md, "File modes"); ending the show
+ * lands on a card with a Present button. `present.controls` shows the on-screen next/prev arrows;
+ * `present.slideNumber: false` drops the overlay counter those arrows would sit on (content slides print
+ * their own page number). These are document fields only: the runtime and the loader are untouched, so
+ * the CSP hash is too. The source in deck/ stays an editable deck for maintainers.
+ */
+export function publishedDeckDoc(doc) {
+  return { ...doc, readonly: true, present: { ...(doc.present || {}), controls: true, slideNumber: false } };
+}
+
+/**
+ * One presentation-only style rule for the player copy, inserted after the CSP <meta>. Bento's runtime CSS
+ * sets `--r-controls-color` (white, 60%) for its show, but reveal.js's own `.reveal .controls{color:#000}`
+ * wins, so the arrows render black on this dark deck. This applies the runtime's own variable, and lifts
+ * the arrows into the slide's empty right margin (content stops at x 1184 of 1280) so they clear the
+ * page number in the footer. A style block, not a script: `style-src 'unsafe-inline'` already allows it.
+ * shortcut: a host-side override of reveal's control colour; drop it once Bento's runtime applies
+ * --r-controls-color itself.
+ */
+export const DECK_PLAYER_STYLE = '<style>.bento-present-overlay .reveal .controls{color:var(--r-controls-color);bottom:72px}</style>';
+
+/** Publish the deck: the source with its document set to player mode, plus the CSP <meta>. */
 function buildDeck() {
   const src = readFileSync(DECK_SOURCE, 'utf8');
   if (/http-equiv\s*=\s*"Content-Security-Policy"/i.test(src)) {
     abort('deck/ source already carries a CSP <meta>; build-site.mjs owns it.');
   }
   const csp = deckCsp(deckLoaderHash(src));
-  const out = replaceOnce(src, '<meta charset="UTF-8" />',
-    `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />`, 'deck charset <meta>');
+  const blocks = src.match(new RegExp(DECK_DOC_RE.source, 'g')) || [];
+  if (blocks.length !== 1) abort(`the deck must carry exactly one #bento-doc block; found ${blocks.length}.`);
+  const doc = JSON.parse(src.match(DECK_DOC_RE)[2]);
+  if (doc.readonly) abort('deck/ source is already a player file; keep the source editable, the build sets readonly.');
+  // Escape every < as \u003c so the JSON can never close its own <script> (Bento hard rule 1).
+  const json = JSON.stringify(publishedDeckDoc(doc)).replace(/</g, '\\u003c');
+  const player = src.replace(DECK_DOC_RE, (_, open, _body, close) => open + json + close);
+  const out = replaceOnce(player, '<meta charset="UTF-8" />',
+    `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />\n    ${DECK_PLAYER_STYLE}`,
+    'deck charset <meta>');
   mkdirSync(dirname(DECK_OUT), { recursive: true });
   writeFileSync(DECK_OUT, out);
   return { csp, bytes: Buffer.byteLength(out, 'utf8') };
