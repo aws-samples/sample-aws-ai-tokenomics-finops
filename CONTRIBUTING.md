@@ -75,7 +75,8 @@ npm run verify       # static + facts + headless-browser checks
   Content-Security-Policy, and the run fails on any console error, CSP violation or off-origin request.
 - `verify:deck` checks the presenter deck: it decodes the deck's document and fails on internal markers,
   hosts or aliases, account-like numbers, live-session keys, hidden slides, remote resources and slide-count
-  drift, then steps through every slide of the published copy in headless Chrome under the deck's CSP. See
+  drift, and text below WCAG contrast, then checks that the published copy opens as a presentation (no
+  editor) and steps through every slide of it in headless Chrome under the deck's CSP. See
   [deck/README.md](deck/README.md).
 
 `verify:dom` looks for Chrome in the usual places; point it at a specific binary with

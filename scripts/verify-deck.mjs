@@ -31,7 +31,10 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import puppeteer from 'puppeteer-core';
 import { findChrome } from './lib/find-chrome.mjs';
-import { DECK_SOURCE, DECK_OUT, deckCsp, deckLoaderHash, deckExecutableScripts } from './build-site.mjs';
+import {
+  DECK_SOURCE, DECK_OUT, DECK_DOC_RE, DECK_PLAYER_STYLE, deckCsp, deckLoaderHash, deckExecutableScripts, publishedDeckDoc
+} from './build-site.mjs';
+import { contrastFindings, parseColor, ratio } from './lib/contrast.mjs';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(REPO_ROOT, '.verify-out', 'deck');
@@ -43,7 +46,8 @@ const EXPECT = {
   hiddenSlides: 0,      // public deck: removed, not hidden
   mainSequence: 25,     // slides a presenter steps through (slides minus state slides)
   uberSlides: 1,        // Uber is one public reference example, never a customer story
-  screenshots: { 's-cover': 'title', 's-uber': 'uber-reference', 's-t2-worth': 'pricing', 's-next': 'cta' }
+  screenshots: { 's-cover': 'title', 's-hook': 'headlines', 's-uber': 'uber-reference', 's-model': 'two-tracks',
+    's-t2-worth': 'pricing', 's-next': 'cta' }
 };
 
 // Public credit is the team. doc.meta.author is exactly this, and every "Deck by" credit names it.
@@ -165,6 +169,9 @@ check('doc', 'every image, svg and media source is embedded (no remote load)', r
 check('doc', 'every element link resolves to a slide', badLinks.length === 0, badLinks.join('; ') || 'none');
 check('doc', 'every slide has speaker notes', slides.every((s) => (s.notes || '').trim().length > 0),
   slides.filter((s) => !(s.notes || '').trim()).map((s) => s.id).join(', ') || 'all');
+const { findings: lowContrast, checked } = contrastFindings(doc);
+check('doc', 'WCAG contrast: 4.5:1 body text, 3:1 large text, against its own fill or the slide',
+  lowContrast.length === 0, lowContrast.join('; ') || `${checked} text elements`);
 
 // ---- 2. shell ------------------------------------------------------------------------------------
 console.log('\n\x1b[1m  Shell\x1b[0m');
@@ -184,10 +191,22 @@ check('shell', 'deck/THIRD-PARTY-NOTICES.md carries Bento\'s MIT licence',
 if (!existsSync(DECK_OUT)) bail('dist/deck/index.html is missing. Run `npm run build` first.');
 const pub = readFileSync(DECK_OUT, 'utf8');
 const csp = deckCsp(deckLoaderHash(src));
-const metaTag = `\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />`;
+const metaTag = `\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />\n    ${DECK_PLAYER_STYLE}`;
+check('shell', 'the player style is one CSS rule and no script', /^<style>[^<]*<\/style>$/.test(DECK_PLAYER_STYLE)
+  && !/@import|url\(|expression|javascript:/i.test(DECK_PLAYER_STYLE), DECK_PLAYER_STYLE);
 const anchor = '<meta charset="UTF-8" />';
-check('shell', 'published copy = source + the deck CSP <meta>, nothing else',
-  pub === src.replace(anchor, anchor + metaTag), `${pub.length - src.length} bytes added`);
+check('shell', 'source is an editable deck (no readonly flag)', !doc.readonly, String(doc.readonly));
+const pubDocText = (pub.match(DECK_DOC_RE) || [])[2] || '';
+let pubDoc = null;
+try { pubDoc = JSON.parse(pubDocText); } catch { /* reported below */ }
+check('shell', 'published document = source document in player mode (readonly + controls), nothing else',
+  pubDoc !== null && JSON.stringify(pubDoc) === JSON.stringify(publishedDeckDoc(doc)) && pubDoc.readonly === true
+    && pubDoc.present?.controls === true && !pubDocText.includes('<'),
+  pubDoc ? `readonly=${pubDoc.readonly}, controls=${pubDoc.present?.controls}` : 'unparseable');
+const pubShell = pub.replace(DECK_DOC_RE, (_, open, _body, close) => open + '\u0000' + close);
+const srcShell = src.replace(DECK_DOC_RE, (_, open, _body, close) => open + '\u0000' + close);
+check('shell', 'published copy outside the document = source + the deck CSP <meta> + the player style, nothing else',
+  pubShell === srcShell.replace(anchor, anchor + metaTag), 'runtime, loader and NOTICE byte-identical');
 check('shell', 'deck CSP closes the network and pins scripts',
   /connect-src 'none'/.test(csp) && /default-src 'none'/.test(csp) && !/unsafe-eval/.test(csp) && !/script-src[^;]*unsafe-inline/.test(csp), csp);
 
@@ -207,11 +226,17 @@ try {
   const offOrigin = [];
   const pageErrors = [];
   await page.setRequestInterception(true);
+  // The editable source is served too, under the SAME policy as a header: the player has no
+  // window.bento.validate(), so Bento's own validation runs on the source it was built from.
+  const SRC_PAGE = `${ORIGIN}/source/deck.bento.html`;
   page.on('request', (r) => {
-    const u = r.url();
-    if (u.split('#')[0] === PAGE) return r.respond({ status: 200, contentType: 'text/html; charset=utf-8', body: pub });
+    const u = r.url().split('#')[0];
+    if (u === PAGE) return r.respond({ status: 200, contentType: 'text/html; charset=utf-8', body: pub });
+    if (u === SRC_PAGE) {
+      return r.respond({ status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': csp }, body: src });
+    }
     if (u.startsWith('data:') || u.startsWith('blob:')) return r.continue();
-    offOrigin.push(u.slice(0, 160));
+    offOrigin.push(r.url().slice(0, 160));
     return r.abort();
   });
   page.on('pageerror', (e) => pageErrors.push(e.message));
@@ -221,8 +246,8 @@ try {
       window.__cspRefusals.push({ directive: e.effectiveDirective, blockedURI: e.blockedURI || '' });
     }, true);
   });
-  await page.goto(`${PAGE}#present`, { waitUntil: 'load' });
-  await page.waitForFunction(() => window.bento?.doc && document.querySelector('.reveal .slides > section.present'), { timeout: 30000 });
+  await page.goto(SRC_PAGE, { waitUntil: 'load' });
+  await page.waitForFunction(() => typeof window.bento?.validate === 'function', { timeout: 30000 });
   await new Promise((r) => setTimeout(r, 1500));
 
   // The deck's theme uses the system-ui font stack, so Bento's overflow findings are measurements of
@@ -240,6 +265,30 @@ try {
     console.log(`  \x1b[2m· ${metric.length} font-dependent overflow finding(s) on this machine's fonts (not failed): `
       + `${metric.map((f) => f.where).join(', ')}\x1b[0m`);
   }
+
+  // What a public visitor gets at /deck/: the show, not the editor. Player mode never builds the editor
+  // (its #app stays empty) and exposes no editing API on window.bento.
+  await page.goto('about:blank');
+  await page.goto(PAGE, { waitUntil: 'load' });
+  await page.waitForFunction(() => window.bento?.doc && document.querySelector('.reveal .slides > section.present'), { timeout: 30000 });
+  await new Promise((r) => setTimeout(r, 2500));
+  const landing = await page.evaluate(() => ({
+    readonly: window.bento.readonly === true,
+    editorApi: typeof window.bento.validate === 'function' || typeof window.bento.loadDoc === 'function',
+    appChildren: document.getElementById('app')?.children.length ?? 0,
+    arrows: !!document.querySelector('.reveal .controls .navigate-right'),
+    arrowColor: getComputedStyle(document.querySelector('.reveal .controls') || document.body).color
+  }));
+  const arrow = parseColor(landing.arrowColor);
+  const slideBg = parseColor(doc.theme.background);
+  const arrowRatio = arrow && slideBg ? ratio([0, 1, 2].map((i) => arrow[i] * arrow[3] + slideBg[i] * (1 - arrow[3])), slideBg) : 0;
+  check('browser', 'next/prev arrows meet WCAG 3:1 for UI controls on the slide background', arrowRatio >= 3,
+    `${landing.arrowColor} = ${arrowRatio.toFixed(2)}:1`);
+  delete landing.arrowColor;
+  check('browser', '/deck/ opens the presentation, not the editor',
+    landing.readonly && !landing.editorApi && landing.appChildren === 0, JSON.stringify(landing));
+  check('browser', 'on-screen next/prev arrows are shown', landing.arrows);
+  await page.screenshot({ path: join(OUT, 'landing.png') });
 
   // Step through the show. Builds (fragments) take key presses too, so track the section index.
   const state = () => page.evaluate(() => {
@@ -266,7 +315,7 @@ try {
   // Screenshots: walk again; on a target slide keep the last fully built frame before it is left.
   for (const [id, name] of Object.entries(EXPECT.screenshots)) {
     await page.goto('about:blank'); // a hash-only goto would not reload the show
-    await page.goto(`${PAGE}#present`, { waitUntil: 'load' });
+    await page.goto(PAGE, { waitUntil: 'load' });
     await page.waitForFunction(() => window.bento?.doc && document.querySelector('.reveal .slides > section.present'), { timeout: 30000 });
     await pause(800);
     for (let presses = 0; presses < 400; presses++) {
@@ -288,8 +337,8 @@ try {
     unexpected.map((r) => `${r.directive} ${r.blockedURI}`).join('; ') || `${refusals.length} designed`);
   check('browser', 'no request to any other origin', offOrigin.length === 0, offOrigin.join(', ') || 'none');
   check('browser', 'no page errors', pageErrors.length === 0, pageErrors.join(' | ') || 'none');
-  const shots = Object.values(EXPECT.screenshots).filter((n) => existsSync(join(OUT, `${n}.png`)));
-  const want = Object.values(EXPECT.screenshots);
+  const want = [...Object.values(EXPECT.screenshots), 'landing'];
+  const shots = want.filter((n) => existsSync(join(OUT, `${n}.png`)));
   check('browser', `screenshots: ${want.join(', ')}`, shots.length === want.length, `.verify-out/deck/{${shots.join(',')}}.png`);
 } finally {
   await browser.close();
