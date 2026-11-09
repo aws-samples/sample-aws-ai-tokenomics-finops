@@ -1,13 +1,13 @@
 # Presenter deck: Tokenomics for AI Workloads
 
-A 28-slide talk track for the runbook (plus one drill-down slide), by Traci Lim. Use it to present AI
-tokenomics to engineering, platform and finance audiences.
+A 25-slide talk track for the runbook (plus one drill-down slide), by the AWS AI/ML specialist team, cost
+pillar. Use it to present AI tokenomics to engineering, platform and finance audiences.
 
 **[Open the deck](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/deck/)**
 
-The deck follows the runbook: why AI spend grows, the AI FinOps flywheel, the two tracks and their levers,
-two illustrative worked examples, how to run the self-assessment, and a customer story (Uber) told only
-from public sources. It ends on the same call to action as
+The deck follows the runbook: why AI spend grows (with Uber's own published results as a public reference
+example, independent of this runbook), the AI FinOps flywheel, the two tracks and their levers, two
+illustrative worked examples, and how to run the self-assessment. It ends on the same call to action as
 the runbook: the runbook is a self-service assessment and does not rank your gaps; for a prioritised plan,
 AWS customers can share their gap report with their AWS account team and ask for a specialist-led
 engagement.
@@ -24,7 +24,7 @@ engagement.
 2. Press **F5** (or *Present*) to start the show. Arrow keys step through slides and their builds.
 3. Speaker notes are on every slide; open the speaker view from the show's menu.
 
-Slide 17 ("Illustrative: 500 developers") has a button to a sensitivity table; click anywhere on that table
+Slide 16 ("Illustrative: 500 developers") has a button to a sensitivity table; click anywhere on that table
 to return.
 
 ## Edit it
@@ -55,7 +55,9 @@ must be safe for any audience:
 - no non-public, negotiated or forward-looking pricing or roadmap statements;
 - no third-party screenshots, logos or press headlines: paraphrase and cite the public source instead;
 - every price or figure matches the runbook and its public source;
-- a customer story uses only what the customer or reputable press published, cited in the speaker notes;
+- no customer stories or case studies. A public industry example (Uber) uses only what the organisation or
+  reputable press published, cited in the speaker notes, and its slide carries the line "Uber's own
+  published results; independent of this runbook." Never imply an organisation used this runbook;
 - scope: Amazon products, and third-party clients and tools that run on Amazon Bedrock inference (bought
   through AWS Marketplace or, ideally, Bedrock per-token). No other third-party client content.
 
@@ -84,7 +86,8 @@ makes no request at all. Inline styles are allowed because the runtime renders s
 
 ## Licence and credits
 
-Deck by Traci Lim, contributed under the repository's [MIT-0 licence](../LICENSE). The file embeds the
+Deck by the AWS AI/ML specialist team, cost pillar, published under the repository's
+[MIT-0 licence](../LICENSE). The file embeds the
 Bento runtime (MIT, © 2026 The Bento authors) and its bundled components (reveal.js, Moveable and Selecto,
 MIT): see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the full licence text. Their notices are
 also in the `NOTICE` comment at the top of the file and must stay there.

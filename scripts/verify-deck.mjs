@@ -38,12 +38,21 @@ const OUT = join(REPO_ROOT, '.verify-out', 'deck');
 
 // ---- pinned facts (exact) ------------------------------------------------------------------------
 const EXPECT = {
-  slides: 29,           // every slide in the document, including drill-down state slides
+  slides: 26,           // every slide in the document, including drill-down state slides
   stateSlides: 1,       // s-t1-worth-sens (reached by a button on the worth slide)
   hiddenSlides: 0,      // public deck: removed, not hidden
-  mainSequence: 28,     // slides a presenter steps through (slides minus state slides)
-  screenshots: { 's-cover': 'title', 's-t2-worth': 'pricing', 's-story': 'uber-story', 's-next': 'cta' }
+  mainSequence: 25,     // slides a presenter steps through (slides minus state slides)
+  uberSlides: 1,        // Uber is one public reference example, never a customer story
+  screenshots: { 's-cover': 'title', 's-uber': 'uber-reference', 's-t2-worth': 'pricing', 's-next': 'cta' }
 };
+
+// Public credit is the team. doc.meta.author is exactly this, and every "Deck by" credit names it.
+const AUTHOR = 'AWS AI/ML specialist team, cost pillar';
+
+// A public example must never read as an outcome of, or input to, this runbook. Every slide that names
+// Uber carries this exact line as one of its text elements, and nothing on it calls Uber a customer.
+const UBER_INDEPENDENCE = "Uber's own published results; independent of this runbook.";
+const UBER_FORBIDDEN = /customer|case study|engagement|we helped/gi;
 
 // Scope rule: Amazon products, plus third-party clients and tools that run on Amazon Bedrock inference.
 // Clients without Bedrock inference are out of scope; name each one here when it is ruled out.
@@ -102,6 +111,20 @@ const svgAssets = Object.entries(assets).filter(([, v]) => !String(v).startsWith
 const readable = JSON.stringify(rest) + JSON.stringify(Object.fromEntries(svgAssets));
 const hits = [...new Set((readable.match(NEEDLE_RE) || []).map((h) => h.toLowerCase()))];
 check('doc', 'no internal marker, host or account-like number', hits.length === 0, hits.join(', ') || 'none');
+check('doc', `doc.meta.author is "${AUTHOR}"`, doc.meta?.author === AUTHOR, String(doc.meta?.author));
+const credits = readable.match(/Deck by [^."<\\]*/g) || [];
+const badCredits = credits.filter((c) => c !== `Deck by the ${AUTHOR}`);
+check('doc', 'every "Deck by" credit names the team', credits.length > 0 && badCredits.length === 0,
+  badCredits.join('; ') || `${credits.length} credits`);
+const uber = slides.filter((s) => /uber/i.test(JSON.stringify(s)));
+check('doc', `Uber appears on exactly ${EXPECT.uberSlides} slide`, uber.length === EXPECT.uberSlides,
+  uber.map((s) => s.id).join(', ') || 'none');
+const noLine = uber.filter((s) => !(s.elements || []).some((e) => e.html === UBER_INDEPENDENCE)).map((s) => s.id);
+check('doc', 'every Uber slide carries the independence line', noLine.length === 0, noLine.join(', ') || 'all');
+const storyWords = uber.flatMap((s) => (JSON.stringify(s).match(UBER_FORBIDDEN) || []).map((w) => `${s.id}: ${w}`));
+check('doc', 'no customer/case-study/engagement wording on an Uber slide', storyWords.length === 0, storyWords.join('; ') || 'none');
+const story = readable.match(/customer stor(?:y|ies)|case stud(?:y|ies)/gi) || [];
+check('doc', 'no customer story or case study anywhere in the deck', story.length === 0, story.join(', ') || 'none');
 const scope = [...new Set(readable.match(OUT_OF_SCOPE) || [])];
 check('doc', 'no out-of-scope (non-Bedrock) client named', scope.length === 0, scope.join(', ') || 'none');
 const aliases = [...new Set(readable.match(ALIAS_RE) || [])];
