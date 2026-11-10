@@ -1,0 +1,11 @@
+{ "lever": "guided-prompting-to-reduce-input-ambiguity", "outOfScope": false,
+  "answers": [
+    { "id": "guid-q1", "answer": "unknown", "source": "none",
+      "refs": [],
+      "confidence": "low",
+      "note": "No UI code is in the workspace and the user did not say whether the web chat offers quick replies or suggested follow-ups." },
+    { "id": "guid-q2", "answer": "unknown", "source": "none",
+      "refs": [],
+      "confidence": "low",
+      "note": "No UI code or user answer shows whether chat inputs are constrained to low-variance choices." }
+  ] }

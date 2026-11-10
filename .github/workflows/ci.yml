@@ -1,7 +1,7 @@
 # CI: build the site and run every verify gate on each pull request and on main.
 #
-#   npm ci -> npm run build (build:runbook + build:site) -> npm run verify
-#   where verify = verify:static + verify:facts + verify:dom (headless Chrome).
+#   npm ci -> npm run build (build:runbook + build:skill + build:site) -> npm run verify
+#   where verify = verify:static + verify:facts + verify:dom (headless Chrome) + verify:deck + verify:skill.
 #
 # On pull requests the built site (dist/) is uploaded as an artifact, so a reviewer can download
 # and open it as a preview. verify:dom also leaves screenshots and print PDFs in .verify-out/,
@@ -41,9 +41,12 @@ jobs:
         run: npm run build
 
       - name: Check the build is committed
-        # build:runbook regenerates the <style>/<script> regions of content/index.html from site/src.
-        # If that changed the file, the committed content is stale: rebuild locally and commit it.
-        run: git diff --exit-code -- content/index.html
+        # build:runbook regenerates the <style>/<script> regions of content/index.html from site/src, and
+        # build:skill regenerates the agent skill's references/ and assets/ from content/. If either changed
+        # a file or left a new one, the committed output is stale: rebuild locally and commit it.
+        run: |
+          git diff --exit-code -- content/index.html skills/
+          test -z "$(git status --porcelain -- content/index.html skills/)"
 
       - name: Install Chrome for verify:dom
         # Uses the @puppeteer/browsers CLI pinned in package-lock.json (a puppeteer-core dependency).

@@ -1,0 +1,11 @@
+{ "lever": "enforce-per-user-ceilings-at-the-gateway", "outOfScope": false,
+  "answers": [
+    { "id": "ceb-q1", "answer": "no", "source": "iac",
+      "refs": ["infra/template.yaml:5-14", "app/nightly_summaries.py:13-18"],
+      "confidence": "medium",
+      "note": "The Lambda sets no reserved concurrency and the code has no concurrency or queue limits; the nightly job is a serial loop over an unbounded ticket list." },
+    { "id": "ceb-q2", "answer": "no", "source": "iac",
+      "refs": ["infra/template.yaml:28", "app/agent.py:21"],
+      "confidence": "high",
+      "note": "No gateway, usage plan or per-user limit; user_id is passed in but never used, and the only control is an account-level budget alert." }
+  ] }

@@ -1,0 +1,11 @@
+{ "lever": "show-the-user-what-their-session-costs", "outOfScope": false,
+  "answers": [
+    { "id": "cost-q1", "answer": "no", "source": "user",
+      "refs": [],
+      "confidence": "high",
+      "note": "User said the web chat does not show users anything about cost or usage." },
+    { "id": "cost-q2", "answer": "no", "source": "user",
+      "refs": [],
+      "confidence": "high",
+      "note": "User said the web chat shows no cost or usage, so nothing is shown during the session." }
+  ] }

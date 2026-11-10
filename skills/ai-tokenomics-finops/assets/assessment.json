@@ -1,0 +1,1659 @@
+{
+ "$comment": "GENERATED from content/ by scripts/build-skill.mjs. Do not edit; run npm run build:skill.",
+ "runbook": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/",
+ "options": [
+  {
+   "v": "yes",
+   "label": "Fully covered"
+  },
+  {
+   "v": "wip",
+   "label": "Partially"
+  },
+  {
+   "v": "no",
+   "label": "Not covered"
+  },
+  {
+   "v": "na",
+   "label": "N/A"
+  }
+ ],
+ "evidenceSources": {
+  "emit": [
+   "code",
+   "config",
+   "iac",
+   "docs",
+   "user"
+  ],
+  "reserved": [
+   "session-logs",
+   "aws-metrics"
+  ],
+  "unknown": "none"
+ },
+ "disclaimer": "Published as-is under MIT-0; this is not official AWS documentation. Prices and features change, so check the linked AWS pages before relying on a figure.",
+ "reportNote": "This report was drafted by an AI agent from a read-only review of the workspace and the user's answers; check each answer before acting on it.",
+ "cta": "This self-service assessment shows where your gaps are, but it does not rank or prioritise them. If you are an AWS customer and want a prioritised plan, share your gap report with your AWS account team and ask for a specialist-led engagement.",
+ "globSets": {
+  "code": [
+   "**/*.{py,js,mjs,cjs,ts,tsx,jsx,java,kt,go,rs,cs,rb,php,scala,swift,vue,svelte,html}"
+  ],
+  "config": [
+   "**/*.{json,jsonc,yaml,yml,toml,ini,cfg,conf,properties}"
+  ],
+  "iac": [
+   "**/*.tf",
+   "**/*.tf.json",
+   "**/cdk.json",
+   "**/{template,cloudformation,serverless,samconfig}*.{yaml,yml,json,toml}",
+   "**/{infra,infrastructure,iac,cdk,terraform,stacks}/**"
+  ],
+  "docs": [
+   "**/*.{md,mdx,rst,adoc,txt}"
+  ],
+  "agent-config": [
+   "**/.kiro/**",
+   "**/.claude/**",
+   "**/.codex/**",
+   "**/.opencode/**",
+   "**/.agents/**",
+   "**/AGENTS.md",
+   "**/CLAUDE.md",
+   "**/.mcp.json",
+   "**/mcp.json",
+   "**/opencode.json"
+  ]
+ },
+ "tracks": [
+  {
+   "id": "track-1",
+   "title": "Track 1 - AI Coding Assistant",
+   "levers": [
+    {
+     "anchor": "know-how-your-fleet-is-metered",
+     "name": "Know how your coding agent is metered",
+     "layer": "Model Inference",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#know-how-your-fleet-is-metered",
+     "saves": "Enabler — turns a quota limit into a decision you see coming. It saves nothing directly on the bill, but it keeps that limit from becoming a paid-capacity call made under pressure.",
+     "questions": [
+      {
+       "key": "qsh-q1",
+       "qid": "Q1",
+       "text": "Do you know how your AI coding agent meters usage?",
+       "spec": {
+        "evidence": "Which meter the coding agent runs on: Bedrock tokens (agent configured for Amazon Bedrock), Kiro credits, or a plan allowance.",
+        "in": [
+         "agent-config",
+         "config",
+         "docs"
+        ],
+        "patterns": [
+         "CLAUDE_CODE_USE_BEDROCK",
+         "bedrock",
+         "\\bkiro\\b.*(credit|plan|pool)",
+         "credit (pool|sharing)"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "qsh-q2",
+       "qid": "Q2",
+       "text": "Do you know what happens when the quota runs out: a hard stop, a queue, or paid overage?",
+       "spec": {
+        "evidence": "Documented behaviour at the limit: Bedrock throttling, a Kiro credit block, or overage.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "quota",
+         "throttl",
+         "overage",
+         "(credit|usage|rate) limit"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "qsh-q3",
+       "qid": "Q3",
+       "text": "Do you monitor that meter and alert before it empties?",
+       "spec": {
+        "evidence": "Alarms or alerts on Bedrock quota or token use, or on credit use, before the limit.",
+        "in": [
+         "iac",
+         "config",
+         "docs"
+        ],
+        "patterns": [
+         "AWS::CloudWatch::Alarm",
+         "aws_cloudwatch_metric_alarm",
+         "AWS/Bedrock",
+         "(Input|Output)TokenCount",
+         "AWS::Budgets::Budget",
+         "aws_budgets_budget",
+         "service.?quota"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "right-size-the-model-to-the-task",
+     "name": "Right-size the model to the task",
+     "layer": "Model Inference",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#right-size-the-model-to-the-task",
+     "saves": "The largest per-call multiplier a fleet holds is the frontier-to-mid-tier price spread. Central defaults apply it to every session, instead of only the sessions where somebody remembered to switch.",
+     "questions": [
+      {
+       "key": "rsm-q1",
+       "qid": "Q1",
+       "text": "Do you set version-controlled model defaults centrally for the fleet?",
+       "spec": {
+        "evidence": "Committed, shared agent settings that set the default model.",
+        "in": [
+         "agent-config"
+        ],
+        "patterns": [
+         "\"model\"\\s*:",
+         "^\\s*model\\s*[=:]",
+         "ANTHROPIC_(DEFAULT_\\w+_)?MODEL",
+         "defaultModel"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "rsm-q2",
+       "qid": "Q2",
+       "text": "For each subagent, do you select its model and reasoning effort for the delegated task?",
+       "spec": {
+        "evidence": "Subagent definitions that set their own model and reasoning effort.",
+        "in": [
+         "agent-config"
+        ],
+        "patterns": [
+         "^\\s*model\\s*:",
+         "CLAUDE_CODE_SUBAGENT_MODEL",
+         "sub-?agent",
+         "effort"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "rsm-q3",
+       "qid": "Q3",
+       "text": "Does your fleet default to low-to-moderate reasoning effort for routine, well-specified work, with deep reasoning switched on only by exception rather than left on by default?",
+       "spec": {
+        "evidence": "A default reasoning-effort or thinking setting at low or moderate, with deep reasoning by exception.",
+        "in": [
+         "agent-config",
+         "docs"
+        ],
+        "patterns": [
+         "reasoning_?effort",
+         "effort(Level)?\"?\\s*[:=]",
+         "MAX_THINKING_TOKENS",
+         "thinking",
+         "ultrathink"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "rsm-q4",
+       "qid": "Q4",
+       "text": "Do you manage your fleet's model default as a lifecycle, not a one-time choice: trialling new models with a small group before they become the default, and auditing your pinned configuration against the provider's retirement schedule?",
+       "spec": {
+        "evidence": "Pinned model IDs in shared config, and a documented trial and retirement-audit process.",
+        "in": [
+         "agent-config",
+         "docs"
+        ],
+        "patterns": [
+         "\\b(us|eu|apac|global)?\\.?anthropic\\.claude-[\\w.:-]+",
+         "deprecat|retire|legacy|end of life",
+         "pilot|trial group|canary"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "right-size-the-subscription-plan",
+     "name": "Right-size the subscription plan",
+     "layer": "Model Inference",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#right-size-the-subscription-plan",
+     "saves": "The organisation stops paying for idle seats and for plan capacity its users do not draw on. The saving depends on the organisation's contract and seat mix, so do not quote a multiplier without a current price source.",
+     "questions": [
+      {
+       "key": "seat-q1",
+       "qid": "Q1",
+       "text": "Do you audit who actually uses what, and remove or downgrade inactive seats?",
+       "spec": {
+        "evidence": "A seat-usage audit and removal of inactive seats; usually only the user knows.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "\\bseats?\\b",
+         "inactive (users?|seats?)",
+         "licen[cs]e (audit|review)"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "seat-q2",
+       "qid": "Q2",
+       "text": "Have you matched each user’s Kiro plan tier to observed usage, or moved the team to a shared credit pool?",
+       "spec": {
+        "evidence": "Kiro plan tiers matched to usage, or a shared credit pool; usually only the user knows.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "kiro (pro|power|enterprise)",
+         "credit (pool|sharing)",
+         "plan tier"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "cost-attribution-and-spending-caps",
+     "name": "Cost attribution and spending caps",
+     "layer": "Model Inference",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#cost-attribution-and-spending-caps",
+     "saves": "Enabler — turns one shared invoice into spend you can see per user and per team. It saves nothing directly, but it's what lets a spending cap stop an overspend at the moment of the request instead of on next month's bill — and every other lever in this track needs that same visibility to work.",
+     "questions": [
+      {
+       "key": "scap-q1",
+       "qid": "Q1",
+       "text": "Do you understand your team's usage pattern and break down spend at user, team, and department level?",
+       "spec": {
+        "evidence": "Spend broken down by user, team and department: agent telemetry, per-team inference profiles, cost allocation tags.",
+        "in": [
+         "agent-config",
+         "iac",
+         "config"
+        ],
+        "patterns": [
+         "CLAUDE_CODE_ENABLE_TELEMETRY",
+         "OTEL_",
+         "application-inference-profile|ApplicationInferenceProfile|create_inference_profile",
+         "cost.?allocation"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "scap-q2",
+       "qid": "Q2",
+       "text": "Do you have organisation-level spend caps and per-user limits enforced?",
+       "spec": {
+        "evidence": "Organisation spend caps and per-user limits that are enforced: gateway budgets, Kiro limits, AWS Budgets actions.",
+        "in": [
+         "iac",
+         "config",
+         "docs"
+        ],
+        "patterns": [
+         "max_budget|budget_duration",
+         "(rpm|tpm)_limit|rate.?limit",
+         "AWS::Budgets::Budget|aws_budgets_budget",
+         "per.?user (limit|cap|budget)"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "scap-q3",
+       "qid": "Q3",
+       "text": "Do you have a defined process for developers to request more quota when a task calls for it, a named approver, and a short turnaround?",
+       "spec": {
+        "evidence": "A documented way to request more quota, with a named approver and turnaround.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "request (more|a higher|additional) (quota|limit|credits?)",
+         "approv(er|al)"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "manage-coding-agent-configurations",
+     "name": "Manage coding agent configurations",
+     "layer": "Agent Harness",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#manage-coding-agent-configurations",
+     "saves": "Expensive optional features off by default, fleet-wide — agent teams, the 1M-token context window, scheduled tasks — instead of trusting each developer to notice they're moving the bill. The saving stays invisible until you inventory what's switched on.",
+     "questions": [
+      {
+       "key": "mcc-q1",
+       "qid": "Q1",
+       "text": "Do you maintain an evidence-backed inventory of optional features that materially increase token use?",
+       "spec": {
+        "evidence": "An inventory of optional agent features that raise token use (agent teams, 1M context, scheduled tasks).",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "agent teams?",
+         "1M|1m-context|context window",
+         "scheduled tasks?|background agents?",
+         "token.?(hungry|heavy|cost)"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "mcc-q2",
+       "qid": "Q2",
+       "text": "Have you disabled these token-hungry features centrally?",
+       "spec": {
+        "evidence": "Managed or shared settings that switch those features off centrally.",
+        "in": [
+         "agent-config",
+         "config"
+        ],
+        "patterns": [
+         "managed-settings",
+         "DISABLE_\\w+",
+         "\"disable\\w*\"\\s*:\\s*true",
+         "enabled\\s*[:=]\\s*false"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "manage-organisational-plugins",
+     "name": "Manage organisational plugins",
+     "layer": "Agent Harness",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#manage-organisational-plugins",
+     "saves": "A good tool set one team finds becomes the default for everyone. Keeping the same tools loaded fleet-wide keeps the prompt prefix identical across sessions, so caching keeps working, and it stops unreviewed tools from quietly working their way into what's loaded on every call.",
+     "questions": [
+      {
+       "key": "mop-q1",
+       "qid": "Q1",
+       "text": "Do you ship a reviewed, approved baseline of MCP servers and skills at organisation, team, and project level, rather than leaving each developer to assemble their own?",
+       "spec": {
+        "evidence": "A committed baseline of approved MCP servers and skills at org, team or project level.",
+        "in": [
+         "agent-config"
+        ],
+        "patterns": [
+         "mcpServers",
+         "\\[mcp_servers",
+         "\"mcp\"\\s*:",
+         "skills?/"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "mop-q2",
+       "qid": "Q2",
+       "text": "Does third-party token-efficiency tooling go through your own security, supply-chain, and data-handling review?",
+       "spec": {
+        "evidence": "A security, supply-chain and data-handling review for third-party agent tooling.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "security review",
+         "supply.?chain",
+         "approved (tools|plugins|servers|extensions)",
+         "allow.?list"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "run-an-open-weight-model-behind-your-coding-agent-harness",
+     "name": "Run an open-weight model behind your coding-agent harness",
+     "layer": "Agent Harness",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#run-an-open-weight-model-behind-your-coding-agent-harness",
+     "saves": "Frontier per-token rates on the work a cheaper open-weight model proves it can solve. Developers keep the harness they already use, and a governed gateway in your account carries the switch. The saving is real only after your own benchmark shows a lower cost per solved task, because a cheaper model that fails or loops can cost more.",
+     "questions": [
+      {
+       "key": "owm-q1",
+       "qid": "Q1",
+       "text": "Have you measured cost per solved task, not price per token, for each candidate open-weight model and harness pair on your own repositories and tasks?",
+       "spec": {
+        "evidence": "Benchmarks of cost per solved task for open-weight model and harness pairs on the team's own tasks.",
+        "in": [
+         "docs",
+         "config",
+         "code"
+        ],
+        "patterns": [
+         "cost per (solved|successful) task",
+         "benchmark|swe-?bench|eval(uation)?s?\\b",
+         "qwen|deepseek|llama|mistral|gpt-oss|kimi|minimax"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "owm-q2",
+       "qid": "Q2",
+       "text": "Have you reviewed the gateway, data-handling, and model-provenance path for the open-weight model, including whether it runs in your account on Amazon Bedrock or through a third-party API?",
+       "spec": {
+        "evidence": "The gateway and data path to the open-weight model: in-account Bedrock or a third-party API.",
+        "in": [
+         "config",
+         "iac",
+         "agent-config",
+         "docs"
+        ],
+        "patterns": [
+         "litellm|gateway|proxy",
+         "(ANTHROPIC|OPENAI)_BASE_URL|base_url",
+         "openai\\.gpt-oss|qwen\\.|deepseek\\.|mistral\\.|meta\\.llama"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "owm-q3",
+       "qid": "Q3",
+       "text": "Have you confirmed that the chosen model's tool calling works cleanly through your gateway into the specific harness you run?",
+       "spec": {
+        "evidence": "A check that tool calling works through the gateway into the harness in use.",
+        "in": [
+         "docs",
+         "code"
+        ],
+        "patterns": [
+         "tool.?call(ing)?|function.?call(ing)?",
+         "litellm|gateway"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "developer-education",
+     "name": "Developer education",
+     "layer": "End User",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#developer-education",
+     "saves": "Enabler — this is what makes every other Track 1 lever actually work. It saves nothing directly on the bill, but it's the difference between a cap developers understand as a signal and one they just experience as an obstacle to route around. (Qualitative: you'll see the gap it closes in your per-developer attribution data.)",
+     "questions": [
+      {
+       "key": "dedu-q1",
+       "qid": "Q1",
+       "text": "Have you published an organisational AI coding agent guide, kept as a living document, that covers setup, the constraints in place and why they exist, session best practices, and how to request a higher limit?",
+       "spec": {
+        "evidence": "A living org guide for the coding agent: setup, constraints and why, session practice, how to raise a limit.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "(coding (agent|assistant)|ai) (guide|playbook|handbook)",
+         "best practices?",
+         "how to request"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "dedu-q2",
+       "qid": "Q2",
+       "text": "Does onboarding get the assistant installed and correctly configured on day one, with the organisation-level settings and skills, the team's own, and whatever the repository ships?",
+       "spec": {
+        "evidence": "Onboarding that installs and configures the agent with org, team and repo settings on day one.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "onboard",
+         "getting started|set ?up|install"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "dedu-q3",
+       "qid": "Q3",
+       "text": "Do developers learn the habits through pair and mob programming on real work, using existing external courses for the fundamentals instead of building your own training from scratch?",
+       "spec": {
+        "evidence": "Pair or mob programming with the agent, and use of existing external courses.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "pair programming|mob programming|ensemble",
+         "course|training"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "dedu-q4",
+       "qid": "Q4",
+       "text": "Do you sponsor internal AI champions and run a community of practice, so new practices and cost wins found by individuals spread across the organisation?",
+       "spec": {
+        "evidence": "Sponsored AI champions and a community of practice.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "champions?",
+         "community of practice|guild"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "manage-the-session-and-its-context-actively",
+     "name": "Manage the session and its context actively",
+     "layer": "End User",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#manage-the-session-and-its-context-actively",
+     "saves": "20 to 40 per cent on long sessions from the documented context habits. Delegating noisy work protects the main thread but can increase total tokens, so count it only when measured cost per successful task improves (Measure cost per successful task).",
+     "questions": [
+      {
+       "key": "msc-q1",
+       "qid": "Q1",
+       "text": "Do developers reset context between unrelated tasks, rather than waiting for automatic compaction?",
+       "spec": {
+        "evidence": "Guidance to reset context between unrelated tasks rather than wait for compaction.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "/clear|/new|/compact",
+         "(reset|clear) (the )?context|new session"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "msc-q2",
+       "qid": "Q2",
+       "text": "Do you use rewind features to unwind a change the coding agent made?",
+       "spec": {
+        "evidence": "Use of rewind or checkpoints to undo an agent change.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "/rewind|checkpoint|/undo"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "msc-q3",
+       "qid": "Q3",
+       "text": "When a session repeatedly reaches its context limit, do you identify the source before resetting it?",
+       "spec": {
+        "evidence": "A habit of finding what fills the context before resetting a session.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "/context|context (limit|usage)"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "rpt-q1",
+       "qid": "Q4",
+       "text": "Do developers point the agent at specific files by path rather than asking it to discover them through open-ended exploration?",
+       "spec": {
+        "evidence": "Guidance to name files by path instead of open-ended exploration.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "by path|file paths?|@file|#file"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "ivs-q1",
+       "qid": "Q5",
+       "text": "Do developers keep large command output out of the main session by filtering it or delegating bounded analysis?",
+       "spec": {
+        "evidence": "Large command output kept out of the main session: filtering, output limits, delegated analysis.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "\\|\\s*(head|tail|grep)",
+         "BASH_MAX_OUTPUT_LENGTH|output limit",
+         "delegat|sub-?agent"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "ail-q1",
+       "qid": "Q6",
+       "text": "Do you keep your always-loaded instruction files small, pushing occasional workflows on-demand and pruning them periodically?",
+       "spec": {
+        "evidence": "Small always-loaded instruction files, with occasional workflows loaded on demand.",
+        "in": [
+         "agent-config"
+        ],
+        "patterns": [
+         "inclusion:\\s*\\w+",
+         "^#{1,2} "
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "msc-q4",
+       "qid": "Q7",
+       "text": "Do developers review their configured MCP servers periodically and remove the ones no longer in use?",
+       "spec": {
+        "evidence": "A periodic review that removes unused MCP servers.",
+        "in": [
+         "agent-config",
+         "docs"
+        ],
+        "patterns": [
+         "mcpServers|\\[mcp_servers",
+         "review|prune|remove unused"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "msc-q5",
+       "qid": "Q8",
+       "text": "Do developers pick the model and the reasoning effort before the first prompt, rather than switching part-way through a session?",
+       "spec": {
+        "evidence": "A habit of picking model and effort before the first prompt.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "/model|switch(ing)? models?"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "match-reasoning-effort-to-task-complexity",
+     "name": "Match reasoning effort to task complexity",
+     "layer": "End User",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#match-reasoning-effort-to-task-complexity",
+     "saves": "50 to 70 per cent on straightforward tasks, because deep reasoning spends extra output tokens, the most expensive kind, and routine work gains no quality from them.",
+     "questions": [
+      {
+       "key": "mre-q1",
+       "qid": "Q1",
+       "text": "Do developers choose reasoning effort from task difficulty and validate it on representative workflows?",
+       "spec": {
+        "evidence": "Reasoning effort chosen by task difficulty and validated on representative work.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "reasoning.?effort|\\beffort\\b",
+         "thinking"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "mre-q2",
+       "qid": "Q2",
+       "text": "Is deep reasoning escalated by exception, reserved for complex work?",
+       "spec": {
+        "evidence": "Deep reasoning escalated by exception only.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "ultrathink|think hard|xhigh|\\bmax\\b effort",
+         "deep reasoning"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "plan-before-executing-complex-work",
+     "name": "Plan before executing complex work",
+     "layer": "End User",
+     "scopable": false,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#plan-before-executing-complex-work",
+     "saves": "Avoided rework from assumptions caught before implementation. Measure the planning cost against generation, test, and integration work avoided on comparable tasks.",
+     "questions": [
+      {
+       "key": "pbe-q1",
+       "qid": "Q1",
+       "text": "Is plan-then-execute the default way developers approach a non-trivial task?",
+       "spec": {
+        "evidence": "Plan-then-execute as the default for non-trivial work: plan mode, specs.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "plan mode|/plan|plan.?then",
+         "requirements\\.md|design\\.md|tasks\\.md|specs?/"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "pbe-q2",
+       "qid": "Q2",
+       "text": "Does the plan define the tests, lint or type checks, review criteria, and stopping condition that prove the task is done?",
+       "spec": {
+        "evidence": "Plans that name tests, checks, review criteria and a stopping condition.",
+        "in": [
+         "docs",
+         "agent-config"
+        ],
+        "patterns": [
+         "done when|definition of done|acceptance criteria",
+         "stopping condition|exit criteria"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "track-2",
+   "title": "Track 2 - Purpose-Built Agentic AI Application",
+   "levers": [
+    {
+     "anchor": "know-what-you-spend",
+     "name": "Know what you spend and what it buys",
+     "layer": "Model Inference",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#know-what-you-spend",
+     "saves": "Visibility first. It saves nothing directly on the bill, but every other lever in this layer needs this decomposition to tell you whether it worked.",
+     "questions": [
+      {
+       "key": "kwys-q1",
+       "qid": "Q1",
+       "text": "Do you know your total agent spend and how it is constructed?",
+       "spec": {
+        "evidence": "Spend decomposed into its terms: token usage read from responses, Bedrock metrics, budgets, bill reviews.",
+        "in": [
+         "code",
+         "iac",
+         "docs"
+        ],
+        "patterns": [
+         "\\busage\\b",
+         "(input|output)_?tokens|(Input|Output)TokenCount",
+         "cost explorer|budget"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "kwys-q2",
+       "qid": "Q2",
+       "text": "Do you track cost per successful task, and gate releases on it?",
+       "spec": {
+        "evidence": "Cost per successful task measured, and a release gate on it.",
+        "in": [
+         "code",
+         "docs",
+         "config"
+        ],
+        "patterns": [
+         "cost.?per.?(successful )?(task|resolution|outcome|ticket)",
+         "\\beval(uation)?s?\\b|golden set|regression"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "kwys-q3",
+       "qid": "Q3",
+       "text": "Is every dollar attributed to the team or workload that caused it?",
+       "spec": {
+        "evidence": "Attribution: per-team accounts, application inference profiles, cost allocation tags, request metadata.",
+        "in": [
+         "iac",
+         "code"
+        ],
+        "patterns": [
+         "application-inference-profile|ApplicationInferenceProfile|create_inference_profile",
+         "cost.?allocation|\\bTags?\\b",
+         "requestMetadata"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "route-to-the-right-model",
+     "name": "Route to the right model",
+     "layer": "Model Inference",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#route-to-the-right-model",
+     "saves": "Blended bill under half the frontier-only baseline through tiered routing (worked example above). Lifecycle audit prevents Legacy pricing surprises, and rushed migrations when a Legacy period is as short as 45 days.",
+     "questions": [
+      {
+       "key": "rtm-q1",
+       "qid": "Q1",
+       "text": "Does each request go to the cheapest model that meets your quality bar?",
+       "spec": {
+        "evidence": "Which models are called for which requests, and any routing to a cheaper model.",
+        "in": [
+         "code",
+         "config"
+        ],
+        "patterns": [
+         "model_?id|modelId",
+         "route|router|prompt.?router",
+         "haiku|sonnet|opus|nova|llama|mistral"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "rtm-q2",
+       "qid": "Q2",
+       "text": "Do you audit pinned model IDs against the lifecycle pages?",
+       "spec": {
+        "evidence": "Pinned model IDs and an audit of them against the Bedrock lifecycle pages.",
+        "in": [
+         "code",
+         "config",
+         "docs"
+        ],
+        "patterns": [
+         "\\b((us|eu|apac|global|jp|au|ca)\\.)?(anthropic|amazon|meta|mistral|cohere|deepseek|openai|qwen)\\.[\\w.-]+(:\\d+)?",
+         "lifecycle|legacy|deprecat"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "route-to-the-right-price",
+     "name": "Route to the right price",
+     "layer": "Model Inference",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#route-to-the-right-price",
+     "saves": "50% on batch-eligible work, plus up to approximately 10% on a Global cross-region profile; Flex adds the same 50% on queue-tolerant traffic only where the model card lists it.",
+     "questions": [
+      {
+       "key": "rtp-q1",
+       "qid": "Q1",
+       "text": "Do you choose Standard or batch deliberately for each workload?",
+       "spec": {
+        "evidence": "Batch inference jobs or service tiers chosen per workload, versus synchronous on-demand calls.",
+        "in": [
+         "code",
+         "iac"
+        ],
+        "patterns": [
+         "create_model_invocation_job|CreateModelInvocationJob|ModelInvocationJob",
+         "service_?tier|serviceTier|\\bflex\\b|\\bpriority\\b",
+         "\\bbatch\\b"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "rtp-q2",
+       "qid": "Q2",
+       "text": "Do you call cross-region inference profiles rather than single-Region model IDs?",
+       "spec": {
+        "evidence": "Cross-region inference profile IDs (us., eu., apac., global.) rather than single-Region model IDs.",
+        "in": [
+         "code",
+         "config"
+        ],
+        "patterns": [
+         "\\b(us|eu|apac|global|jp|au|ca)\\.(anthropic|amazon|meta|mistral|cohere|deepseek|openai)\\.",
+         "model_?id|modelId"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "cache-what-repeats",
+     "name": "Cache what repeats",
+     "layer": "Model Inference",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#cache-what-repeats",
+     "saves": "About 90% to 95% off repeated-prefix input (cache reads at 0.1x or 0.05x base, by model), the single largest per-call saving for agentic workloads that re-send system prompts and tool definitions on every turn.",
+     "questions": [
+      {
+       "key": "cwr-q1",
+       "qid": "Q1",
+       "text": "Is prompt caching on, with the stable content placed first?",
+       "spec": {
+        "evidence": "Prompt caching enabled (cache points) with the stable system prompt and tools first.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "cachePoint|cache_control|cacheConfig|prompt_?caching",
+         "system\\s*[=:]"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "cwr-q2",
+       "qid": "Q2",
+       "text": "Have you verified caching works, and do you track the hit rate?",
+       "spec": {
+        "evidence": "Cache hits verified and tracked: cache read and write token counts, invocation logging.",
+        "in": [
+         "code",
+         "iac",
+         "docs"
+        ],
+        "patterns": [
+         "cache_?read_?input_?tokens|cacheReadInputTokens|cacheWriteInputTokens|CacheRead",
+         "hit rate",
+         "invocation logging|loggingConfig|ModelInvocationLogging"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "cwr-q3",
+       "qid": "Q3",
+       "text": "Does your cache TTL match how often your sessions call?",
+       "spec": {
+        "evidence": "A cache TTL chosen to match how often sessions call.",
+        "in": [
+         "code",
+         "config"
+        ],
+        "patterns": [
+         "\\bttl\\b",
+         "\\b(5m|1h)\\b"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "set-reasoning-effort-per-call",
+     "name": "Set reasoning effort per call",
+     "layer": "Model Inference",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#set-reasoning-effort-per-call",
+     "saves": "Fewer billed thinking tokens on the steps that do not need deep reasoning. Thinking is billed as output, so the saving lands on the most expensive token type.",
+     "questions": [
+      {
+       "key": "eff-q1",
+       "qid": "Q1",
+       "text": "Do you set reasoning effort for each type of step, rather than taking the model default?",
+       "spec": {
+        "evidence": "Reasoning effort or thinking budget set per type of step, not left at the model default.",
+        "in": [
+         "code",
+         "config"
+        ],
+        "patterns": [
+         "reasoning_?effort|reasoningEffort|reasoning_config",
+         "thinking|budget_tokens",
+         "additionalModelRequestFields"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "eff-q2",
+       "qid": "Q2",
+       "text": "Do you compare output tokens per successful task before you change an effort level?",
+       "spec": {
+        "evidence": "Output tokens per successful task compared before an effort change.",
+        "in": [
+         "code",
+         "docs"
+        ],
+        "patterns": [
+         "output_?tokens|outputTokens|OutputTokenCount",
+         "\\beval(uation)?s?\\b"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "distill-when-volume-justifies-it",
+     "name": "Self-host or distill when volume justifies it",
+     "layer": "Model Inference",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#distill-when-volume-justifies-it",
+     "saves": "Break-even in 6 to 12 months above the thresholds. It converts a recurring per-invocation premium into a one-time training cost (distillation) or a fixed fleet cost you control (self-hosting); the cited thresholds are >$500/month and >10,000 invocations/month.",
+     "questions": [
+      {
+       "key": "dis-q1",
+       "qid": "Q1",
+       "text": "Does your volume clear the break-even for distillation or self-hosting?",
+       "spec": {
+        "evidence": "Invocation volume against the distillation or self-hosting break-even.",
+        "in": [
+         "docs"
+        ],
+        "patterns": [
+         "invocations? per (month|day)|requests? per (month|day)",
+         "break.?even|distill|fine.?tun"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "dis-q2",
+       "qid": "Q2",
+       "text": "Have you chosen the managed, managed-compute or self-managed path deliberately?",
+       "spec": {
+        "evidence": "The managed, managed-compute or self-managed path chosen deliberately.",
+        "in": [
+         "code",
+         "iac",
+         "docs"
+        ],
+        "patterns": [
+         "create_model_customization_job|CreateModelCustomizationJob|custom.?model|model.?import",
+         "sagemaker|endpoint|provisioned.?(model)?.?throughput"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "dis-q3",
+       "qid": "Q3",
+       "text": "Do you curate the training data, A/B test the student and plan a refresh?",
+       "spec": {
+        "evidence": "Curated training data, an A/B test of the student, and a refresh plan.",
+        "in": [
+         "docs",
+         "code"
+        ],
+        "patterns": [
+         "training data|a/?b test|shadow",
+         "refresh|retrain"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "system-prompt",
+     "name": "System prompt",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#system-prompt",
+     "saves": "Up to about 90% of the prompt’s share of input when a trimmed prompt is also cache-stable (worked example above). The trim alone saves in proportion to the tokens removed, on every call of every task.",
+     "questions": [
+      {
+       "key": "sp-q1",
+       "qid": "Q1",
+       "text": "Is your system prompt as lean as it can be?",
+       "spec": {
+        "evidence": "The system prompt: where it is built and how large it is.",
+        "in": [
+         "code",
+         "docs"
+        ],
+        "patterns": [
+         "system_?prompt|systemPrompt|SYSTEM_PROMPT",
+         "system\\s*[=:]|instructions\\s*="
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "sp-q2",
+       "qid": "Q2",
+       "text": "Is your system prompt versioned and cache-stable?",
+       "spec": {
+        "evidence": "A versioned system prompt with no per-call values (dates, IDs) that break the cache.",
+        "in": [
+         "code",
+         "config"
+        ],
+        "patterns": [
+         "prompt[_ -]?version|promptArn|PromptVersion",
+         "datetime\\.now|Date\\.now|time\\.time\\(|uuid"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "context-budget",
+     "name": "Context",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#context-budget",
+     "saves": "Keeps per-round input bounded, so context cost tracks the task rather than the age of the session.",
+     "questions": [
+      {
+       "key": "csl-q1",
+       "qid": "Q1",
+       "text": "Do you measure and budget what each request’s context contains?",
+       "spec": {
+        "evidence": "Context per request measured and budgeted: token counts, limits, truncation.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "count_?tokens|countTokens|input_?tokens|inputTokens",
+         "token.?budget|max_?context|context.?window|truncat"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "crs-q3",
+       "qid": "Q2",
+       "text": "Are tool and runtime outputs bounded before they enter the context?",
+       "spec": {
+        "evidence": "Tool and runtime outputs bounded before they enter the context.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "toolResult|tool_result",
+         "truncat|max_?(output|result)_?(chars|bytes|tokens)|\\[:\\d+\\]"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "retrieval-cost",
+     "name": "Retrieval",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#retrieval-cost",
+     "saves": "Lowers the fixed cost of a searchable corpus and the retrieved input that every grounded call carries.",
+     "questions": [
+      {
+       "key": "rag-q1",
+       "qid": "Q1",
+       "text": "Does your vector store’s pricing model fit your query volume?",
+       "spec": {
+        "evidence": "The vector store and its pricing model against query volume.",
+        "in": [
+         "iac",
+         "code",
+         "config"
+        ],
+        "patterns": [
+         "opensearch|aoss|s3.?vectors|pgvector|pinecone",
+         "knowledge.?base|vector"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "rag-q2",
+       "qid": "Q2",
+       "text": "Do you retrieve the fewest, smallest chunks that answer the question?",
+       "spec": {
+        "evidence": "Retrieval sized to the question: result count, chunk size, reranking.",
+        "in": [
+         "code",
+         "config",
+         "iac"
+        ],
+        "patterns": [
+         "numberOfResults|top_?k|topK",
+         "chunk(ing)?_?(size|tokens)|maxTokens.*chunk|overlap",
+         "rerank"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "rag-q3",
+       "qid": "Q3",
+       "text": "Do your re-syncs embed only what changed?",
+       "spec": {
+        "evidence": "Re-syncs that embed only changed documents.",
+        "in": [
+         "code",
+         "iac"
+        ],
+        "patterns": [
+         "start_ingestion_job|StartIngestionJob|ingestion",
+         "re-?sync|incremental|changed|content.?hash"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "design-memory-and-compaction-as-architecture",
+     "name": "Memory",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#design-memory-and-compaction-as-architecture",
+     "saves": "Sub-linear history cost: the context sent per call stops growing with the age of the session, and compaction at boundaries keeps the cache discount intact.",
+     "questions": [
+      {
+       "key": "csl-q2",
+       "qid": "Q1",
+       "text": "Have you chosen how history is kept, instead of append-only?",
+       "spec": {
+        "evidence": "How conversation history is kept: append-only, windowed, summarised, or a memory store.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "history",
+         "messages\\s*(\\+|=|\\.append)",
+         "memory|summar|compact"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "csl-q3",
+       "qid": "Q2",
+       "text": "Do you prune at natural boundaries, without breaking the cache every turn?",
+       "spec": {
+        "evidence": "History pruned at natural boundaries without breaking the cache every turn.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "trim|prune|truncat|summar|compact",
+         "messages\\[-?\\d"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "budget-the-tool-definition-weight",
+     "name": "Tool design",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#budget-the-tool-definition-weight",
+     "saves": "Lowers the fixed capability tax and prevents runtime output from becoming recurring context.",
+     "questions": [
+      {
+       "key": "crs-q1",
+       "qid": "Q1",
+       "text": "Do you keep a costed inventory of tools, skills and MCP servers?",
+       "spec": {
+        "evidence": "A costed inventory of tools, skills and MCP servers.",
+        "in": [
+         "code",
+         "config",
+         "docs"
+        ],
+        "patterns": [
+         "toolSpec|TOOL_SPECS|tools\\s*=|@tool\\b",
+         "mcpServers|inventory"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "crs-q2",
+       "qid": "Q2",
+       "text": "Does each call see only the tools it needs?",
+       "spec": {
+        "evidence": "Each call sent only the tools it needs.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "toolConfig|tool_?choice|toolChoice",
+         "tools\\s*[=:]",
+         "(select|filter)\\w*.*tools"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "bound-the-reasoning-loop",
+     "name": "Orchestration",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#bound-the-reasoning-loop",
+     "saves": "Bounds the orchestration multiplier, removing avoidable calls and keeping coordination proportional to useful work.",
+     "questions": [
+      {
+       "key": "bso-q1",
+       "qid": "Q1",
+       "text": "Do loops have termination and retry limits, with rules where rules suffice?",
+       "spec": {
+        "evidence": "Agent loops with termination and retry limits.",
+        "in": [
+         "code",
+         "config"
+        ],
+        "patterns": [
+         "while\\s*(True|\\(\\s*true\\s*\\))",
+         "max_?(iterations|turns|steps|rounds|retries)|recursion_limit",
+         "retr(y|ies)|backoff|stopReason"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "bso-q2",
+       "qid": "Q2",
+       "text": "Is multi-agent used only where it beats a single agent?",
+       "spec": {
+        "evidence": "Multi-agent designs, and whether they beat a single agent.",
+        "in": [
+         "code",
+         "docs"
+        ],
+        "patterns": [
+         "multi.?agent|supervisor|swarm|handoff",
+         "orchestrat|sub.?agent"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "bso-q3",
+       "qid": "Q3",
+       "text": "Do you measure the full cost of a workflow, including retries and coordination?",
+       "spec": {
+        "evidence": "Workflow cost measured end to end, including retries and coordination.",
+        "in": [
+         "code",
+         "docs"
+        ],
+        "patterns": [
+         "cost per (workflow|task|run)",
+         "attempts?|retr(y|ies)",
+         "\\busage\\b"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "enforce-per-user-ceilings-at-the-gateway",
+     "name": "Guardrails and limits",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#enforce-per-user-ceilings-at-the-gateway",
+     "saves": "Caps aggregate and per-caller consumption, preventing concurrent workflows or one shared caller from multiplying otherwise controlled cost.",
+     "questions": [
+      {
+       "key": "ceb-q1",
+       "qid": "Q1",
+       "text": "Are concurrency, queue depth and fan-out bounded in dispatcher code?",
+       "spec": {
+        "evidence": "Bounded concurrency, queue depth and fan-out in dispatcher code.",
+        "in": [
+         "code",
+         "iac",
+         "config"
+        ],
+        "patterns": [
+         "Semaphore|max_workers|concurrency|ReservedConcurrentExecutions|MaximumConcurrency",
+         "asyncio\\.gather|Promise\\.all|ThreadPool",
+         "queue"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "ceb-q2",
+       "qid": "Q2",
+       "text": "Are request, token and connection limits enforced per caller at the gateway?",
+       "spec": {
+        "evidence": "Request, token and connection limits per caller at the gateway.",
+        "in": [
+         "iac",
+         "config",
+         "code"
+        ],
+        "patterns": [
+         "UsagePlan|Throttl|RateLimit|rate_?limit",
+         "\\b(tpm|rpm)\\b|max_budget",
+         "per.?(user|caller|tenant)"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "audit-your-orchestration-for-hidden-invocations",
+     "name": "Observability",
+     "layer": "Agent Harness",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#audit-your-orchestration-for-hidden-invocations",
+     "saves": "Eliminates work no valid task required, exposing orphaned loops, retry storms and forgotten background callers before they become persistent traffic.",
+     "questions": [
+      {
+       "key": "teui-q1",
+       "qid": "Q1",
+       "text": "Can you trace every model and tool call to its caller and task?",
+       "spec": {
+        "evidence": "Every model and tool call traceable to its caller and task: request metadata, tracing, invocation logging.",
+        "in": [
+         "code",
+         "iac"
+        ],
+        "patterns": [
+         "requestMetadata|correlation|request_?id|task_?id",
+         "x-?ray|opentelemetry|\\botel\\b|trace",
+         "invocation logging|loggingConfig|ModelInvocationLogging"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "teui-q2",
+       "qid": "Q2",
+       "text": "Do you reconcile invocations against requested work to find orphans?",
+       "spec": {
+        "evidence": "Invocations reconciled against requested work to find orphans.",
+        "in": [
+         "docs",
+         "code"
+        ],
+        "patterns": [
+         "reconcil|orphan",
+         "invocation log"
+        ],
+        "ask": true
+       }
+      },
+      {
+       "key": "teui-q3",
+       "qid": "Q3",
+       "text": "Do you alert on calls with no task, after completion, or over budget?",
+       "spec": {
+        "evidence": "Alerts on calls with no task, after completion, or over budget.",
+        "in": [
+         "iac",
+         "code"
+        ],
+        "patterns": [
+         "alarm|anomaly",
+         "AWS::CE::Anomaly|aws_ce_anomaly",
+         "budget"
+        ],
+        "ask": false
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "precise-specifications-to-avoid-rework",
+     "name": "Precise specifications to avoid rework",
+     "layer": "End User",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#precise-specifications-to-avoid-rework",
+     "saves": "Prevents avoidable correction rounds, reducing repeated exploration and generation caused by missing requirements.",
+     "questions": [
+      {
+       "key": "psr-q1",
+       "qid": "Q1",
+       "text": "Do users specify output, constraints and scope before the agent starts?",
+       "spec": {
+        "evidence": "An interface or template that asks for output, constraints and scope before the agent starts.",
+        "in": [
+         "code",
+         "docs"
+        ],
+        "patterns": [
+         "output format|constraints|scope",
+         "template|required field|schema"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "guided-prompting-to-reduce-input-ambiguity",
+     "name": "Guided prompting to reduce input ambiguity",
+     "layer": "End User",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#guided-prompting-to-reduce-input-ambiguity",
+     "saves": "Cuts clarifying round-trips at the source, converting ambiguous, high-variance free-text turns into precise inputs and removing rework cycles before they start. It is the builder-owned complement to the user-owned Precise specifications lever, applied by the application rather than left to the user (qualitative; the magnitude tracks how much of your traffic is ambiguous free text today).",
+     "questions": [
+      {
+       "key": "guid-q1",
+       "qid": "Q1",
+       "text": "Does your interface offer clickable options instead of a blank text box?",
+       "spec": {
+        "evidence": "Clickable options in the interface instead of only a blank text box.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "<button|<select|radio|chip",
+         "suggest(ed|ion)s?|quick.?repl(y|ies)"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "guid-q2",
+       "qid": "Q2",
+       "text": "Are those inputs low-variance, so clarifying round-trips are rare?",
+       "spec": {
+        "evidence": "Low-variance inputs (choices, validation) so clarifying round-trips are rare.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "\\benum\\b|<select|dropdown|validat",
+         "clarif"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    },
+    {
+     "anchor": "show-the-user-what-their-session-costs",
+     "name": "Show the user what their session costs",
+     "layer": "End User",
+     "scopable": true,
+     "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#show-the-user-what-their-session-costs",
+     "saves": "Qualitative — recruits every user into the cost loop instead of leaving optimisation entirely to the platform team.",
+     "questions": [
+      {
+       "key": "cost-q1",
+       "qid": "Q1",
+       "text": "Does your interface show users what their session costs?",
+       "spec": {
+        "evidence": "The interface shows users what their session costs.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "session.?cost|cost.?(meter|so far)|tokens? used|credits? (used|left|remaining)",
+         "\\busage\\b"
+        ],
+        "ask": false
+       }
+      },
+      {
+       "key": "cost-q2",
+       "qid": "Q2",
+       "text": "Is that cost shown during the session, while users can still act?",
+       "spec": {
+        "evidence": "That cost shown during the session, while the user can still act.",
+        "in": [
+         "code"
+        ],
+        "patterns": [
+         "session.?cost|cost.?(meter|so far)|live|stream"
+        ],
+        "ask": true
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

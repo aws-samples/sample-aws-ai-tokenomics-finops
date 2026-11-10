@@ -35,6 +35,7 @@ import {
   DECK_SOURCE, DECK_OUT, DECK_DOC_RE, DECK_PLAYER_STYLE, deckCsp, deckLoaderHash, deckExecutableScripts, publishedDeckDoc
 } from './build-site.mjs';
 import { contrastFindings, parseColor, ratio } from './lib/contrast.mjs';
+import { OUT_OF_SCOPE, NEEDLE_RE, ALIAS_RE } from './lib/public-safety.mjs';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(REPO_ROOT, '.verify-out', 'deck');
@@ -58,9 +59,7 @@ const AUTHOR = 'AWS AI/ML specialist team, cost pillar';
 const UBER_INDEPENDENCE = "Uber's own published results; independent of this runbook.";
 const UBER_FORBIDDEN = /customer|case study|engagement|we helped/gi;
 
-// Scope rule: Amazon products, plus third-party clients and tools that run on Amazon Bedrock inference.
-// Clients without Bedrock inference are out of scope; name each one here when it is ruled out.
-const OUT_OF_SCOPE = /\b(?:Cursor|Copilot)\b/g;
+// OUT_OF_SCOPE, NEEDLE_RE and ALIAS_RE live in lib/public-safety.mjs, shared with verify-skill.mjs.
 
 // The designed CSP refusals. Anything else fails.
 const ALLOWED_REFUSALS = [
@@ -68,19 +67,6 @@ const ALLOWED_REFUSALS = [
   { why: "loader's eval fallback", match: (v) => v.directive === 'script-src' && v.blockedURI === 'eval' },
   { why: 'Bento update check (refused in the browser)', match: (v) => v.directive === 'connect-src' && v.blockedURI.startsWith('https://bento.page/') }
 ];
-
-// Assembled from fragments on purpose, like verify-runbook.mjs: the repository's pre-publish leak scan
-// greps every tracked file for these words, and this list must not be the thing it finds.
-const NEEDLES = [
-  ['har', 'mony'], ['mid', 'way'], ['execute', '-api'], ['a2', 'z.com'], ['ama', 'zon.dev'], ['aw', 's.dev'],
-  ['sl', 'ack.com'], ['aws', 'apps'], ['work', 'docs'], ['phone', 'tool'], ['code', '.amazon'], ['git', 'lab'],
-  ['qu', 'ip-amazon'], ['isen', 'gard'], ['w.ama', 'zon.com'], ['@ama', 'zon.com'], ['corp.ama', 'zon'],
-  ['sim.ama', 'zon'], ['t.co', 'rp'], ['inter', 'nal only'], ['inter', 'nal use'], ['analyst ', 'relations'],
-  ['do not ', 'share'], ['confi', 'dential'], ['under ', 'nda'], ['es', 'docs'], ['#aiops-', 'genai']
-].map((p) => p.join('').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-const NEEDLE_RE = new RegExp(`${NEEDLES.join('|')}|\\bnda\\b|(?<![0-9])[0-9]{12}(?![0-9])`, 'gi');
-// A Slack-style handle or an email-ish alias written as "name@" (the old team slide's badge style).
-const ALIAS_RE = /(?<![\w.])[a-z][a-z0-9]{2,15}@(?![\w.-]*\.)/gi;
 
 // ---- reporting -----------------------------------------------------------------------------------
 const results = [];

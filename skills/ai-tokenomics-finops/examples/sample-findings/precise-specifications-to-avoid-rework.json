@@ -1,0 +1,7 @@
+{ "lever": "precise-specifications-to-avoid-rework", "outOfScope": false,
+  "answers": [
+    { "id": "psr-q1", "answer": "unknown", "source": "none",
+      "refs": ["app/agent.py:21", "docs/design.md:3"],
+      "confidence": "low",
+      "note": "The backend takes a single free-text question; the web chat front end is not in the workspace and the user did not describe its intake." }
+  ] }

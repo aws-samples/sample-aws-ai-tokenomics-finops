@@ -1,0 +1,15 @@
+{ "lever": "cache-what-repeats", "outOfScope": false,
+  "answers": [
+    { "id": "cwr-q1", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:16-18", "app/agent.py:25-31"],
+      "confidence": "high",
+      "note": "The ~6,000-token system prompt and 16 tool specs are resent identically every call, but no cachePoint is set." },
+    { "id": "cwr-q2", "answer": "no", "source": "docs",
+      "refs": ["docs/design.md:9", "app/agent.py:32-34"],
+      "confidence": "high",
+      "note": "Caching is not enabled, cache token counts are never read, and Bedrock invocation logging is off." },
+    { "id": "cwr-q3", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:25-31"],
+      "confidence": "high",
+      "note": "No cache and no TTL choice; web-chat users pausing between turns would suit a 1-hour TTL." }
+  ] }

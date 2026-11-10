@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Support assistant (example fixture for the ai-tokenomics-finops skill; not for deployment)
+
+Resources:
+  AssistantFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.12
+      Handler: app.agent.answer
+      Role: !GetAtt AssistantRole.Arn
+      Code: { ZipFile: "# placeholder" }
+      Tags:
+        - { Key: team, Value: support }
+        - { Key: app, Value: support-assistant }
+
+  AssistantRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - { Effect: Allow, Principal: { Service: lambda.amazonaws.com }, Action: sts:AssumeRole }
+      Policies:
+        - PolicyName: bedrock-invoke
+          PolicyDocument:
+            Statement:
+              - { Effect: Allow, Action: [bedrock:InvokeModel, bedrock:Converse], Resource: "*" }
+
+  # Account-level monthly budget with an email alert. There is no per-user or per-request limit.
+  MonthlyBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: support-assistant-monthly
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit: { Amount: 5000, Unit: USD }
+      NotificationsWithSubscribers:
+        - Notification: { NotificationType: ACTUAL, ComparisonOperator: GREATER_THAN, Threshold: 80 }
+          Subscribers: [{ SubscriptionType: EMAIL, Address: finops@example.com }]

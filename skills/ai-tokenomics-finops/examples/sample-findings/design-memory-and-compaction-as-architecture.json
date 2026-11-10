@@ -1,0 +1,11 @@
+{ "lever": "design-memory-and-compaction-as-architecture", "outOfScope": false,
+  "answers": [
+    { "id": "csl-q2", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:21-23", "app/agent.py:33", "app/agent.py:37"],
+      "confidence": "high",
+      "note": "History is append-only and the full conversation, including tool rounds, is resent every turn." },
+    { "id": "csl-q3", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:22"],
+      "confidence": "high",
+      "note": "Nothing trims, summarises or compacts history at any boundary." }
+  ] }

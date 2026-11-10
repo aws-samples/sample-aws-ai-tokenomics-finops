@@ -1,0 +1,11 @@
+{ "lever": "set-reasoning-effort-per-call", "outOfScope": false,
+  "answers": [
+    { "id": "eff-q1", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:25-31", "app/nightly_summaries.py:14-18"],
+      "confidence": "medium",
+      "note": "Neither call sets reasoning effort or a thinking budget (no additionalModelRequestFields); both take the model default for every step type." },
+    { "id": "eff-q2", "answer": "no", "source": "user",
+      "refs": ["docs/design.md:4"],
+      "confidence": "high",
+      "note": "User said there is no evaluation set, so output tokens per successful task are not compared." }
+  ] }

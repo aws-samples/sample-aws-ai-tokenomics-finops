@@ -10,7 +10,8 @@
   "scripts": {
     "build:runbook": "node scripts/build-runbook.mjs",
     "build:site": "node scripts/build-site.mjs",
-    "build": "npm run build:runbook && npm run build:site",
+    "build:skill": "node scripts/build-skill.mjs",
+    "build": "npm run build:runbook && npm run build:skill && npm run build:site",
     "test": "npm run verify",
     "test:calculators": "python3 -m unittest discover -s tools/calculators -t tools/calculators",
     "verify:static": "node scripts/verify-runbook.mjs",
@@ -18,7 +19,8 @@
     "verify:facts": "node scripts/verify-runbook-facts.mjs",
     "verify:facts:snapshot": "node scripts/verify-runbook-facts.mjs --snapshot",
     "verify:deck": "node --test scripts/lib/contrast.test.mjs && node scripts/verify-deck.mjs",
-    "verify": "npm run verify:static && npm run verify:facts && npm run verify:dom && npm run verify:deck"
+    "verify:skill": "node --test scripts/skill.test.mjs && node scripts/verify-skill.mjs",
+    "verify": "npm run verify:static && npm run verify:facts && npm run verify:dom && npm run verify:deck && npm run verify:skill"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",

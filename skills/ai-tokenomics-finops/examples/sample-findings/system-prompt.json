@@ -1,0 +1,11 @@
+{ "lever": "system-prompt", "outOfScope": false,
+  "answers": [
+    { "id": "sp-q1", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:16-18", "docs/design.md:6", "docs/support-policy.md:3-4"],
+      "confidence": "high",
+      "note": "The whole ~6,000-token support policy is sent as the system prompt on every model call, including every tool round." },
+    { "id": "sp-q2", "answer": "wip", "source": "code",
+      "refs": ["app/agent.py:17-18", "app/agent.py:27"],
+      "confidence": "medium",
+      "note": "The prompt is byte-stable with no per-call values, but it has no version, token count or per-version cost tracking beyond the file in source control." }
+  ] }

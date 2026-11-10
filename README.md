@@ -13,6 +13,10 @@ the diagnostic questions, export a gap report.
 Presenting this? Use the [Tokenomics for AI Workloads deck](https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/deck/)
 by the AWS AI/ML specialist team, cost pillar, with speaker notes on every slide ([how to present and edit it](deck/README.md)).
 
+Prefer to start from your code? The [AI Tokenomics FinOps agent skill](skills/ai-tokenomics-finops/) runs the same
+assessment in your coding agent (Kiro, Claude Code, Codex or OpenCode on Amazon Bedrock): it reviews your repository
+read-only and drafts the gap report for you to check.
+
 > This is sample guidance published as-is under the MIT-0 licence. It is not official AWS documentation
 > and is not supported by AWS. Prices and service features change; confirm figures against the linked AWS
 > pages before relying on them. All dollar figures in the runbook are illustrative unless dated and cited.
@@ -39,6 +43,20 @@ Each track groups its levers into three actor layers: Model Inference, Agent Har
 5. Export the gap report from your track's "progress and gaps" page as Markdown or PDF.
 
 Run it alone, or as a quarterly session with engineering and finance.
+
+## Install the agent skill
+
+Copy [`skills/ai-tokenomics-finops/`](skills/ai-tokenomics-finops/) into your agent's skills directory, then ask it to
+"run the AI Tokenomics FinOps assessment on this repo".
+
+| Client | Project | Personal |
+|---|---|---|
+| Kiro | `.kiro/skills/` | `~/.kiro/skills/` |
+| Claude Code | `.claude/skills/` | `~/.claude/skills/` |
+| OpenAI Codex | `.agents/skills/` | `~/.agents/skills/` |
+| OpenCode | `.opencode/skills/` | `~/.config/opencode/skills/` |
+
+Other agents, privacy and an example report: see the [skill's README](skills/ai-tokenomics-finops/README.md).
 
 ## What you get
 
