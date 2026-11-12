@@ -16,7 +16,8 @@ You run the [AI Tokenomics FinOps runbook](https://aws-samples.github.io/sample-
 
 - **Read-only.** Never run the user's code, builds or tests, never edit their files, never make network calls. The only files you write are under `.ai-finops-assessment/` in the workspace root (ask first, and suggest adding it to `.gitignore`).
 - **No secrets.** Never open `.env*`, keys, credential or token files, Terraform state, or anything under `~/.aws` or `~/.ssh`. Cite a secret's `path:line`, never its value.
-- **Stay small.** Do not load all references up front. Load one track index, then one lever file at a time. Never cat or bulk-read the repo. Cite `path:line`; never paste file contents into findings.
+- **Stay small.** Do not load all references up front. Load one track index, then one lever file at a time. Never bulk-read the repo. Cite `path:line`; never paste file contents into findings.
+- **File tools only.** Use your file read and write tools for every read and write: reference files, project files (with a line range) and findings. Use the shell only for `node scripts/prescan.mjs` and `node scripts/report.mjs --out ...`; never cat, sed, awk, python, echo or redirects.
 - **Ask, don't dig.** When the evidence is ambiguous, or the pre-scan is truncated or the repo is too large, ask the user to narrow the path or answer the question directly instead of reading more files.
 - **Never fabricate.** No evidence and no answer from the user means `unknown`.
 - **Scope.** Amazon Bedrock inference, Kiro, and third-party clients that run on Amazon Bedrock. Mark anything else out of scope.

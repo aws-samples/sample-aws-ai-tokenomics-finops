@@ -83,6 +83,7 @@ check('SKILL.md has YAML frontmatter', !!fm);
 check('name is valid and matches the folder', !!name && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(name) && name.length <= 64 && name === 'ai-tokenomics-finops', name);
 check('description is 1-1024 characters', !!desc && desc.length <= 1024, `${desc?.length ?? 0}`);
 check('SKILL.md body is under 500 lines', skill.split('\n').length < 500, `${skill.split('\n').length}`);
+check('SKILL.md limits the shell to the two node scripts', /\*\*File tools only\.\*\*[^\n]*shell only for `node scripts\/prescan\.mjs` and `node scripts\/report\.mjs --out/.test(skill));
 const links = [...skill.matchAll(/`((?:references|scripts|assets)\/[^`<>\s]+)`/g)].map((m) => m[1]);
 check('every file SKILL.md names exists', links.every((l) => existsSync(join(SKILL_DIR, l))), links.join(', '));
 
