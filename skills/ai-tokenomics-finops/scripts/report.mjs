@@ -9,11 +9,14 @@
  *                   "refs": ["path:line"], "confidence": "high|medium|low", "note": "..." }] }
  *
  * Usage: node report.mjs <findings-dir> --date YYYY-MM-DD --workspace <name> [--track track-1|track-2]...
- * Exit 2 on invalid findings, listing every problem.
+ *        [--out .ai-finops-assessment/report.md]
+ * Without --out the report goes to stdout. With --out it is written to that file, which must be inside
+ * .ai-finops-assessment/ under the current directory, and only a one-line confirmation is printed.
+ * Exit 2 on invalid findings, listing every problem, or on a refused --out path.
  */
 
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, readdirSync, readFileSync, mkdirSync, writeFileSync, realpathSync } from 'node:fs';
+import { dirname, join, resolve, relative, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -113,6 +116,35 @@ export function renderReport(assessment, byLever, { date, workspace, tracks }) {
   return docs.join('\n---\n\n');
 }
 
+export const OUT_DIR = '.ai-finops-assessment';
+
+const inside = (base, p) => { const r = relative(base, p); return r !== '' && !r.startsWith('..') && !isAbsolute(r); };
+
+/**
+ * Write the report to `out`, which must resolve to a file inside <cwd>/.ai-finops-assessment/. Creates the
+ * folder if missing, and re-checks after resolving symlinks so a linked folder cannot point the write elsewhere.
+ * Returns the path relative to cwd. Throws on a refused path.
+ */
+export function writeReport(md, out, cwd = process.cwd()) {
+  const base = resolve(cwd, OUT_DIR);
+  const target = resolve(cwd, out);
+  if (!inside(base, target)) throw new Error(`--out must be a file inside ${OUT_DIR}/, refused: ${out}`);
+  // Anchor on the real cwd, not the folder's own realpath, so a symlinked .ai-finops-assessment is refused too.
+  // Check the nearest existing ancestor before creating anything, then the final folder after.
+  const realCwd = realpathSync(cwd), realBase = join(realCwd, OUT_DIR);
+  const ok = (d) => d === realBase || inside(realBase, d);
+  let d = dirname(target);
+  while (!existsSync(d)) d = dirname(d);
+  const realD = realpathSync(d);
+  if (!(ok(realD) || (d === resolve(cwd) && realD === realCwd))) {
+    throw new Error(`--out resolves outside ${OUT_DIR}/ through a symlink, refused: ${out}`);
+  }
+  mkdirSync(dirname(target), { recursive: true });
+  if (!ok(realpathSync(dirname(target)))) throw new Error(`--out resolves outside ${OUT_DIR}/ through a symlink, refused: ${out}`);
+  writeFileSync(target, md);
+  return relative(cwd, target).split(sep).join('/');
+}
+
 function parseArgs(argv) {
   const o = { tracks: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -120,6 +152,7 @@ function parseArgs(argv) {
     if (a === '--date') o.date = v();
     else if (a === '--workspace') o.workspace = v();
     else if (a === '--track') o.tracks.push(v());
+    else if (a === '--out') o.out = v();
     else if (a.startsWith('--')) throw new Error(`unknown option ${a}`);
     else o.dir = a;
   }
@@ -135,7 +168,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const assessment = JSON.parse(readFileSync(ASSESSMENT, 'utf8'));
     const { byLever, errors } = loadFindings(o.dir, assessment);
     if (errors.length) { console.error(`report: ${errors.length} problem(s) in the findings:\n- ${errors.join('\n- ')}`); process.exit(2); }
-    process.stdout.write(renderReport(assessment, byLever, o));
+    const md = renderReport(assessment, byLever, o);
+    if (o.out) console.log(`report: wrote ${writeReport(md, o.out)} (${Buffer.byteLength(md)} bytes)`);
+    else process.stdout.write(md);
   } catch (e) {
     console.error(`report: ${e.message}`);
     process.exit(2);

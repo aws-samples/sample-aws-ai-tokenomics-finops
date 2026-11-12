@@ -119,7 +119,7 @@ function renderReportDoc(model) {
     '- confidence: `high`, `medium` or `low`. A `user` answer needs a note saying what the user said.', '',
     'Then assemble the report (it validates every file and exits 2 with the problems):', '',
     '```sh',
-    'node <skill>/scripts/report.mjs .ai-finops-assessment/findings --date YYYY-MM-DD --workspace <name> > .ai-finops-assessment/report.md',
+    'node <skill>/scripts/report.mjs .ai-finops-assessment/findings --date YYYY-MM-DD --workspace <name> --out .ai-finops-assessment/report.md',
     '```', '',
     'Without a shell, write the report by hand in the same shape: title, date line, the disclaimer quote, a coverage line, "Gaps to address" (levers with a Not covered or Partially answer, in runbook order, each with its runbook link and "What it saves" line), "Full answer log" (every lever and question), and "Next step" with the paragraph below, copied exactly. Do not rank or prioritise gaps.', '',
     'Disclaimer:', '', `> ${model.disclaimer} ${REPORT_NOTE}`, '',

@@ -6,6 +6,8 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, symlinkSync, readdirSync, statSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { renderSkillFiles, joinEvidence, RUNBOOK, EVIDENCE } from './build-skill.mjs';
 import { loadModel } from './lib/skill-model.mjs';
 import { scan, renderMarkdown, globToRegExp } from '../skills/ai-tokenomics-finops/scripts/prescan.mjs';
@@ -157,4 +159,37 @@ test('report: runbook order, not-assessed levers are unknown, ends with the acco
   const order = assessment.tracks[1].levers.map((l) => md.indexOf(`· ${l.name} — `));
   assert.ok(order.every((p, i) => p > 0 && (i === 0 || p > order[i - 1])));
   assert.match(md, /Coverage: 0 fully covered · 0 partially · 1 not covered · 0 N\/A · 38 unknown \(1\/39 answered\)/);
+});
+
+// ---- report --out ---------------------------------------------------------------------------------
+
+const REPORT_CLI = fileURLToPath(new URL('../skills/ai-tokenomics-finops/scripts/report.mjs', import.meta.url));
+const SAMPLE_FINDINGS = fileURLToPath(new URL('../skills/ai-tokenomics-finops/examples/sample-findings', import.meta.url));
+const runReport = (cwd, extra) => spawnSync(process.execPath,
+  [REPORT_CLI, SAMPLE_FINDINGS, '--date', '2026-11-10', '--workspace', 'sample-bedrock-app', ...extra], { cwd, encoding: 'utf8' });
+
+test('report --out: writes inside .ai-finops-assessment/, creates it, prints one line, same bytes as stdout', (t) => {
+  const cwd = tmp(t);
+  const stdout = runReport(cwd, []);
+  assert.equal(stdout.status, 0);
+  const r = runReport(cwd, ['--out', '.ai-finops-assessment/report.md']);
+  assert.equal(r.status, 0, r.stderr);
+  assert.equal(r.stdout.trim().split('\n').length, 1);
+  assert.match(r.stdout, /^report: wrote \.ai-finops-assessment\/report\.md/);
+  assert.equal(readFileSync(join(cwd, '.ai-finops-assessment', 'report.md'), 'utf8'), stdout.stdout);
+});
+
+test('report --out: refuses paths outside .ai-finops-assessment/, writing nothing', (t) => {
+  const cwd = tmp(t);
+  const outside = tmp(t);
+  mkdirSync(join(cwd, 'elsewhere'));
+  symlinkSync(join(cwd, 'elsewhere'), join(cwd, '.ai-finops-assessment'));
+  for (const bad of ['report.md', '../report.md', '.ai-finops-assessment/../report.md', '.ai-finops-assessment',
+    join(outside, 'report.md'), '.ai-finops-assessment-x/report.md', '.ai-finops-assessment/report.md']) {
+    const r = runReport(cwd, ['--out', bad]);
+    assert.equal(r.status, 2, `${bad} -> ${r.stdout}`);
+    assert.match(r.stderr, /refused/);
+  }
+  assert.deepEqual(readdirSync(join(cwd, 'elsewhere')), []);
+  assert.deepEqual(readdirSync(outside), []);
 });
