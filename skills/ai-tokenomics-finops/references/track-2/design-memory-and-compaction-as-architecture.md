@@ -21,13 +21,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Evidence: History pruned at natural boundaries without breaking the cache every turn.
 - Search: code files for `trim|prune|truncat|summar|compact`, `messages\[-?\d`
 
-## Citations
-
-- [40] AGENTCOST03: Session and memory costs. AWS Well-Architected Agentic AI Lens. https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost03.html
-- [5] Prompt caching. Amazon Bedrock User Guide, AWS. https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html
-- [38] Effective context engineering for AI agents. Anthropic Engineering, Sep 2025. https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-- [64] Context editing. Claude Platform documentation. https://platform.claude.com/docs/en/build-with-claude/context-editing
-- [170] Compaction. Amazon Bedrock User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-compaction.html
-- [146] Claude Haiku 5.5 model card (features, pricing and long-context note). Amazon Bedrock User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html
-
 Glob sets: code = **/*.{py,js,mjs,cjs,ts,tsx,jsx,java,kt,go,rs,cs,rb,php,scala,swift,vue,svelte,html}
+
+Citations for the reader (not needed to answer): `references/track-2/citations/design-memory-and-compaction-as-architecture.md`

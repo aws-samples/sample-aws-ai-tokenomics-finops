@@ -47,7 +47,8 @@ Run it alone, or as a quarterly session with engineering and finance.
 ## Install the agent skill
 
 Copy [`skills/ai-tokenomics-finops/`](skills/ai-tokenomics-finops/) into your agent's skills directory, then ask it to
-"run the AI Tokenomics FinOps assessment on this repo".
+"run the AI Tokenomics FinOps assessment on this repo". Copy `SKILL.md`, `references/`, `assets/` and `scripts/`
+only, not `examples/`: that folder holds the sample project's answer key.
 
 | Client | Project | Personal |
 |---|---|---|

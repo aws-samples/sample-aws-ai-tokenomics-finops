@@ -28,8 +28,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Evidence: Alerts on calls with no task, after completion, or over budget.
 - Search: iac, code files for `alarm|anomaly`, `AWS::CE::Anomaly|aws_ce_anomaly`, `budget`
 
-## Citations
-
-- [47] Monitor model invocation using CloudWatch Logs and Amazon S3 (model invocation logging). Amazon Bedrock User Guide, AWS. https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html
-
 Glob sets: code = **/*.{py,js,mjs,cjs,ts,tsx,jsx,java,kt,go,rs,cs,rb,php,scala,swift,vue,svelte,html}; iac = **/*.tf **/*.tf.json **/cdk.json **/{template,cloudformation,serverless,samconfig}*.{yaml,yml,json,toml} **/{infra,infrastructure,iac,cdk,terraform,stacks}/**; docs = **/*.{md,mdx,rst,adoc,txt}
+
+Citations for the reader (not needed to answer): `references/track-2/citations/audit-your-orchestration-for-hidden-invocations.md`

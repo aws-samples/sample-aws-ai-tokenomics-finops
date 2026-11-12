@@ -20,12 +20,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Evidence: Managed or shared settings that switch those features off centrally.
 - Search: agent-config, config files for `managed-settings`, `DISABLE_\w+`, `"disable\w*"\s*:\s*true`, `enabled\s*[:=]\s*false`
 
-## Citations
-
-- [100] Subagents. OpenAI Codex documentation. https://learn.chatgpt.com/docs/agent-configuration/subagents
-- [80] Settings: available settings. Claude Code documentation. https://code.claude.com/docs/en/settings#available-settings
-- [81] Permissions. Claude Code documentation. https://code.claude.com/docs/en/permissions
-- [122] Deploy managed settings. Claude Code Docs, Anthropic. https://code.claude.com/docs/en/managed-settings
-- [101] Model Context Protocol configuration. OpenAI Codex documentation. https://developers.openai.com/codex/extend/mcp
-
 Glob sets: docs = **/*.{md,mdx,rst,adoc,txt}; agent-config = **/.kiro/** **/.claude/** **/.codex/** **/.opencode/** **/.agents/** **/AGENTS.md **/CLAUDE.md **/.mcp.json **/mcp.json **/opencode.json; config = **/*.{json,jsonc,yaml,yml,toml,ini,cfg,conf,properties}
+
+Citations for the reader (not needed to answer): `references/track-1/citations/manage-coding-agent-configurations.md`

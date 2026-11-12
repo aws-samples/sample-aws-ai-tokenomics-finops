@@ -22,8 +22,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Search: code files for `\benum\b|<select|dropdown|validat`, `clarif`
 - Usually only the user knows: search, then ask.
 
-## Citations
-
-- [7] Cost optimization. AWS Prescriptive Guidance, Agentic AI on serverless. https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-serverless/cost-optimization.html
-
 Glob sets: code = **/*.{py,js,mjs,cjs,ts,tsx,jsx,java,kt,go,rs,cs,rb,php,scala,swift,vue,svelte,html}
+
+Citations for the reader (not needed to answer): `references/track-2/citations/guided-prompting-to-reduce-input-ambiguity.md`

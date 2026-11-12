@@ -59,6 +59,11 @@ check('every lever file names exactly its own question IDs', model.tracks.every(
   const ids = [...body.matchAll(/^## `([^`]+)`/gm)].map((m) => m[1]);
   return JSON.stringify(ids) === JSON.stringify(l.questions.map((q) => q.key));
 })));
+check('every lever has its citations file, and the lever file carries none', model.tracks.every((t) => t.levers.every((l) => {
+  const cites = files[`references/${t.id}/citations/${l.anchor}.md`] || '';
+  const lever = files[`references/${t.id}/${l.anchor}.md`] || '';
+  return l.citations.every((c) => cites.includes(c.url)) && !/^- \[\d+\] /m.test(lever);
+})), `${levers.length} citation files`);
 
 const drift = [];
 for (const [p, body] of Object.entries(files)) {

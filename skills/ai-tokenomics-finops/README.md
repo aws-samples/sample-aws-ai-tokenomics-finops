@@ -7,11 +7,14 @@ files cannot show, and drafts the same unranked gap report the runbook exports. 
 
 ## Install
 
-Copy this folder into your client's skills directory:
+Copy the skill into your client's skills directory, without `examples/`: it holds the sample project's answer key,
+which an agent could mistake for evidence.
 
 ```sh
 git clone --depth 1 https://github.com/aws-samples/sample-aws-ai-tokenomics-finops.git
-cp -r sample-aws-ai-tokenomics-finops/skills/ai-tokenomics-finops <skills directory>/
+mkdir -p <skills directory>/ai-tokenomics-finops
+cd sample-aws-ai-tokenomics-finops/skills/ai-tokenomics-finops
+cp -r SKILL.md references assets scripts <skills directory>/ai-tokenomics-finops/
 ```
 
 | Client | Project skills directory | Personal skills directory | Source |
@@ -36,8 +39,17 @@ Or invoke it directly: `/ai-tokenomics-finops` in Kiro and Claude Code, `$ai-tok
 A triage step picks the track. A local pre-scan (`scripts/prescan.mjs`) runs each question's search patterns and
 prints a fixed-size summary with `path:line` refs (default 3 hits per question, 160 characters a line, hard caps on
 files and bytes, marked `TRUNCATED` when hit). The agent then loads one lever at a time and writes its findings to
-disk, and `scripts/report.mjs` assembles the report. On the sample project, a Kiro CLI run loaded about 16k tokens
-with triage, against about 33k for the skill plus every reference and the project files (bytes ÷ 4).
+disk, and `scripts/report.mjs` assembles the report.
+
+Measured on the sample project (Track 2, 2026-11-12):
+
+- **Skill content loaded:** about 15k tokens (bytes ÷ 4 of what the agent read: `SKILL.md`, the pre-scan summary, the
+  track index, 17 lever files and ranged project reads), against about 36k for the skill, every reference and the
+  whole project loaded up front.
+- **Example billed usage, Claude Code 2.1.322 on Amazon Bedrock** (`us.anthropic.claude-sonnet-5-5`, 50 turns):
+  58 uncached input, 92,673 cache-write, 2,028,596 cache-read and 21,392 output tokens, about $0.65 at list price.
+  Billed tokens far exceed the content loaded because the harness prompt and the conversation are resent every turn.
+- Kiro does not expose per-session token counts, so no billed figure is given for it.
 
 ## Privacy
 

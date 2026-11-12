@@ -20,8 +20,11 @@ const write = (root, rel, body) => { mkdirSync(join(root, rel, '..'), { recursiv
 // ---- generator ------------------------------------------------------------------------------------
 
 test('generator: one file per lever, one index per track, 74 checks', () => {
-  const levers = Object.keys(files).filter((f) => /^references\/track-\d\/(?!index\.md)/.test(f));
+  const levers = Object.keys(files).filter((f) => /^references\/track-\d\/(?!index\.md)[^/]+$/.test(f));
+  const cites = Object.keys(files).filter((f) => /^references\/track-\d\/citations\/[^/]+\.md$/.test(f));
   assert.equal(levers.length, 28);
+  assert.equal(cites.length, 28);
+  assert.ok(levers.every((f) => !files[f].includes('## Citations')));
   assert.ok(files['references/track-1/index.md'] && files['references/track-2/index.md']);
   assert.equal(assessment.tracks.flatMap((t) => t.levers.flatMap((l) => l.questions)).length, 74);
 });

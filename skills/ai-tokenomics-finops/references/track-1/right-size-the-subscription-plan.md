@@ -22,10 +22,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Search: docs files for `kiro (pro|power|enterprise)`, `credit (pool|sharing)`, `plan tier`
 - Usually only the user knows: search, then ask.
 
-## Citations
-
-- [196] Share Kiro credits across your team with credit pooling. Kiro Blog; accessed 9 November 2026. https://kiro.dev/blog/credit-pooling/
-- [58] Pricing. Kiro. https://kiro.dev/pricing/
-- [195] Share credits across your team with credit pooling. Kiro changelog; accessed 9 November 2026. https://kiro.dev/changelog/general/credit-pooling/
-
 Glob sets: docs = **/*.{md,mdx,rst,adoc,txt}
+
+Citations for the reader (not needed to answer): `references/track-1/citations/right-size-the-subscription-plan.md`

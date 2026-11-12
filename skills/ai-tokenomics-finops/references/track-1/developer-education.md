@@ -35,9 +35,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Search: docs files for `champions?`, `community of practice|guild`
 - Usually only the user knows: search, then ask.
 
-## Citations
-
-- [78] Anthropic Academy: learn to build with Claude. Anthropic. https://academy.claude.com/
-- [79] AWS Skill Builder. Amazon Web Services. https://skillbuilder.aws/
-
 Glob sets: docs = **/*.{md,mdx,rst,adoc,txt}; agent-config = **/.kiro/** **/.claude/** **/.codex/** **/.opencode/** **/.agents/** **/AGENTS.md **/CLAUDE.md **/.mcp.json **/mcp.json **/opencode.json
+
+Citations for the reader (not needed to answer): `references/track-1/citations/developer-education.md`

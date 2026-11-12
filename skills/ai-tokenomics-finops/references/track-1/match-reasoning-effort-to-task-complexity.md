@@ -20,10 +20,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Evidence: Deep reasoning escalated by exception only.
 - Search: docs, agent-config files for `ultrathink|think hard|xhigh|\bmax\b effort`, `deep reasoning`
 
-## Citations
-
-- [88] Model configuration. Claude Code documentation. https://code.claude.com/docs/en/model-config
-- [98] Best practices for Codex. OpenAI. https://learn.chatgpt.com/guides/best-practices
-- [100] Subagents. OpenAI Codex documentation. https://learn.chatgpt.com/docs/agent-configuration/subagents
-
 Glob sets: docs = **/*.{md,mdx,rst,adoc,txt}; agent-config = **/.kiro/** **/.claude/** **/.codex/** **/.opencode/** **/.agents/** **/AGENTS.md **/CLAUDE.md **/.mcp.json **/mcp.json **/opencode.json
+
+Citations for the reader (not needed to answer): `references/track-1/citations/match-reasoning-effort-to-task-complexity.md`

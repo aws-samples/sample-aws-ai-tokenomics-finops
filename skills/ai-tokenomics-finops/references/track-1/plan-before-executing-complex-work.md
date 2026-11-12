@@ -20,9 +20,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Evidence: Plans that name tests, checks, review criteria and a stopping condition.
 - Search: docs, agent-config files for `done when|definition of done|acceptance criteria`, `stopping condition|exit criteria`
 
-## Citations
-
-- [98] Best practices for Codex. OpenAI. https://learn.chatgpt.com/guides/best-practices
-- [106] Developer commands for Codex CLI. OpenAI Codex documentation. https://developers.openai.com/codex/cli/slash-commands
-
 Glob sets: docs = **/*.{md,mdx,rst,adoc,txt}; agent-config = **/.kiro/** **/.claude/** **/.codex/** **/.opencode/** **/.agents/** **/AGENTS.md **/CLAUDE.md **/.mcp.json **/mcp.json **/opencode.json
+
+Citations for the reader (not needed to answer): `references/track-1/citations/plan-before-executing-complex-work.md`

@@ -6,7 +6,8 @@
  *   content/assessment-evidence.json  (per-question evidence spec: what answers it, globs, patterns) ───┴─►
  *
  *   skills/ai-tokenomics-finops/references/track-N/index.md      one line per lever: load this first
- *   skills/ai-tokenomics-finops/references/track-N/<lever>.md    one lever: its questions, specs, citations
+ *   skills/ai-tokenomics-finops/references/track-N/<lever>.md    one lever: its questions and evidence specs
+ *   skills/ai-tokenomics-finops/references/track-N/citations/<lever>.md  that lever's citations, for the reader
  *   skills/ai-tokenomics-finops/references/findings-and-report.md findings schema, report rules, CTA
  *   skills/ai-tokenomics-finops/assets/assessment.json           the same, for scripts/prescan.mjs and report.mjs
  *
@@ -62,6 +63,7 @@ export function joinEvidence(model, evidence) {
 }
 
 const leverFile = (t, l) => `references/${t.id}/${l.anchor}.md`;
+const citationFile = (t, l) => `references/${t.id}/citations/${l.anchor}.md`;
 const answerLine = (options) => `Answer each question with: ${options.map((o) => `\`${o.v}\` (${o.label})`).join(', ')}, or \`unknown\` when neither the files nor the user answer it.`;
 
 function renderIndex(t, options) {
@@ -89,9 +91,16 @@ function renderLever(t, l, options, globSets) {
     if (q.spec.ask) out.push('- Usually only the user knows: search, then ask.');
     out.push('');
   }
-  out.push('## Citations', '');
+  out.push(`Glob sets: ${[...new Set(l.questions.flatMap((q) => q.spec.in))].map((s) => `${s} = ${globSets[s].join(' ')}`).join('; ')}`);
+  out.push('', `Citations for the reader (not needed to answer): \`${citationFile(t, l)}\``);
+  return out.join('\n') + '\n';
+}
+
+// Citations live in their own file so a lever load carries only what the agent needs to answer:
+// some clients' read tools cannot stop at a heading.
+function renderCitations(t, l) {
+  const out = [HEADER, '', `# Citations: ${l.name}`, '', `Runbook: ${SITE_URL}#${l.anchor}`, ''];
   for (const c of l.citations) out.push(`- [${c.n}] ${c.title} ${c.url}`);
-  out.push('', `Glob sets: ${[...new Set(l.questions.flatMap((q) => q.spec.in))].map((s) => `${s} = ${globSets[s].join(' ')}`).join('; ')}`);
   return out.join('\n') + '\n';
 }
 
@@ -125,7 +134,10 @@ export function renderSkillFiles(htmlPath = RUNBOOK, evidencePath = EVIDENCE) {
   for (const t of model.tracks) {
     if (!/^track-\d+$/.test(t.id)) throw new Error(`unexpected track section id #${t.id}`);
     files[`references/${t.id}/index.md`] = renderIndex(t, model.options);
-    for (const l of t.levers) files[leverFile(t, l)] = renderLever(t, l, model.options, evidence.globSets);
+    for (const l of t.levers) {
+      files[leverFile(t, l)] = renderLever(t, l, model.options, evidence.globSets);
+      files[citationFile(t, l)] = renderCitations(t, l);
+    }
   }
   files['references/findings-and-report.md'] = renderReportDoc(model);
   const data = {

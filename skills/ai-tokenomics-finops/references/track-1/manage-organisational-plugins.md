@@ -21,11 +21,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Search: docs files for `security review`, `supply.?chain`, `approved (tools|plugins|servers|extensions)`, `allow.?list`
 - Usually only the user knows: search, then ask.
 
-## Citations
-
-- [123] What is the Model Context Protocol (MCP)? Model Context Protocol project. https://modelcontextprotocol.io/introduction
-- [124] Claude Code hooks: best examples with configs. AY Automate (third-party practitioner). https://www.ayautomate.com/blog/best-claude-code-hooks
-- [98] Best practices for Codex. OpenAI. https://learn.chatgpt.com/guides/best-practices
-- [101] Model Context Protocol configuration. OpenAI Codex documentation. https://developers.openai.com/codex/extend/mcp
-
 Glob sets: agent-config = **/.kiro/** **/.claude/** **/.codex/** **/.opencode/** **/.agents/** **/AGENTS.md **/CLAUDE.md **/.mcp.json **/mcp.json **/opencode.json; docs = **/*.{md,mdx,rst,adoc,txt}
+
+Citations for the reader (not needed to answer): `references/track-1/citations/manage-organisational-plugins.md`

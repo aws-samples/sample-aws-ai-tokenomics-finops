@@ -22,8 +22,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Search: code files for `session.?cost|cost.?(meter|so far)|live|stream`
 - Usually only the user knows: search, then ask.
 
-## Citations
-
-- [19] Manage costs effectively. Anthropic Claude Code documentation. https://code.claude.com/docs/en/costs
-
 Glob sets: code = **/*.{py,js,mjs,cjs,ts,tsx,jsx,java,kt,go,rs,cs,rb,php,scala,swift,vue,svelte,html}
+
+Citations for the reader (not needed to answer): `references/track-2/citations/show-the-user-what-their-session-costs.md`

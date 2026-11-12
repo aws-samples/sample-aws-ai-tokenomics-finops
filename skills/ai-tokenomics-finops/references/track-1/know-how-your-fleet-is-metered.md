@@ -27,15 +27,6 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 - Evidence: Alarms or alerts on Bedrock quota or token use, or on credit use, before the limit.
 - Search: iac, config, docs files for `AWS::CloudWatch::Alarm`, `aws_cloudwatch_metric_alarm`, `AWS/Bedrock`, `(Input|Output)TokenCount`, `AWS::Budgets::Budget`, `aws_budgets_budget`, `service.?quota`
 
-## Citations
-
-- [52] Claude Code on Amazon Bedrock. Claude Code documentation. https://code.claude.com/docs/en/amazon-bedrock
-- [103] Use ChatGPT Work and Codex with Amazon Bedrock. OpenAI Codex documentation. https://developers.openai.com/codex/amazon-bedrock
-- [195] Share credits across your team with credit pooling. Kiro changelog; accessed 9 November 2026. https://kiro.dev/changelog/general/credit-pooling/
-- [58] Pricing. Kiro. https://kiro.dev/pricing/
-- [196] Share Kiro credits across your team with credit pooling. Kiro Blog; accessed 9 November 2026. https://kiro.dev/blog/credit-pooling/
-- [156] Set a cap on overage spend, or pre-pay for it. Kiro Blog; accessed 5 November 2026. https://kiro.dev/blog/cap-prepay-overage/
-- [175] Amazon Bedrock now supports observability of First Token Latency and Quota Consumption. AWS What’s New, March 2026; accessed 5 November 2026. https://aws.amazon.com/about-aws/whats-new/2026/03/amazon-bedrock-observability-ttft-quota/
-- [192] Quotas for the bedrock-runtime endpoint (requesting a quota increase). Amazon Bedrock User Guide, AWS; accessed 9 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/quotas-runtime.html
-
 Glob sets: agent-config = **/.kiro/** **/.claude/** **/.codex/** **/.opencode/** **/.agents/** **/AGENTS.md **/CLAUDE.md **/.mcp.json **/mcp.json **/opencode.json; config = **/*.{json,jsonc,yaml,yml,toml,ini,cfg,conf,properties}; docs = **/*.{md,mdx,rst,adoc,txt}; iac = **/*.tf **/*.tf.json **/cdk.json **/{template,cloudformation,serverless,samconfig}*.{yaml,yml,json,toml} **/{infra,infrastructure,iac,cdk,terraform,stacks}/**
+
+Citations for the reader (not needed to answer): `references/track-1/citations/know-how-your-fleet-is-metered.md`
