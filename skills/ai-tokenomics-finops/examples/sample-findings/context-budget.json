@@ -1,0 +1,11 @@
+{ "lever": "context-budget", "outOfScope": false,
+  "answers": [
+    { "id": "csl-q1", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:22-31"],
+      "confidence": "high",
+      "note": "No token counting, context budget or truncation; full history, system prompt and all tool specs go into every request unmeasured." },
+    { "id": "crs-q3", "answer": "no", "source": "code",
+      "refs": ["app/tools.py:21-23", "app/agent.py:36-37"],
+      "confidence": "medium",
+      "note": "Tool results are appended to the context verbatim with no size bound or output contract; run_tool is a stub, so real result sizes are unknown." }
+  ] }

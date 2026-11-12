@@ -1,0 +1,11 @@
+{ "lever": "route-to-the-right-price", "outOfScope": false,
+  "answers": [
+    { "id": "rtp-q1", "answer": "no", "source": "code",
+      "refs": ["app/nightly_summaries.py:1-3", "app/nightly_summaries.py:13-18"],
+      "confidence": "high",
+      "note": "The deadline-free nightly summary job makes one synchronous on-demand call per ticket; no batch job or service tier is used anywhere." },
+    { "id": "rtp-q2", "answer": "yes", "source": "code",
+      "refs": ["app/agent.py:14", "app/nightly_summaries.py:15"],
+      "confidence": "medium",
+      "note": "Both call sites use the us. Geographic cross-region profile; a global. profile would be about 10% cheaper if data residency does not require US-only." }
+  ] }

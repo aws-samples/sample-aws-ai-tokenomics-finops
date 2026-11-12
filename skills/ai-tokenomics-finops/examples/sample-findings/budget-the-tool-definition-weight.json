@@ -1,0 +1,11 @@
+{ "lever": "budget-the-tool-definition-weight", "outOfScope": false,
+  "answers": [
+    { "id": "crs-q1", "answer": "no", "source": "code",
+      "refs": ["app/tools.py:3-19"],
+      "confidence": "medium",
+      "note": "There is a list of 16 tool names in code, but no inventory with owner, definition tokens or measured runtime cost." },
+    { "id": "crs-q2", "answer": "no", "source": "code",
+      "refs": ["app/tools.py:1", "app/agent.py:29"],
+      "confidence": "high",
+      "note": "All 16 tool specs are sent on every call regardless of the question's intent." }
+  ] }

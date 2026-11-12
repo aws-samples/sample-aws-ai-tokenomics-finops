@@ -1,0 +1,15 @@
+{ "lever": "audit-your-orchestration-for-hidden-invocations", "outOfScope": false,
+  "answers": [
+    { "id": "teui-q1", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:25-31", "app/nightly_summaries.py:14-18", "docs/design.md:9"],
+      "confidence": "high",
+      "note": "No requestMetadata, tracing or correlation IDs on calls, and Bedrock model invocation logging is not enabled." },
+    { "id": "teui-q2", "answer": "no", "source": "docs",
+      "refs": ["docs/design.md:9"],
+      "confidence": "medium",
+      "note": "With invocation logging off and no task ledger there are no invocation records to reconcile against requested work." },
+    { "id": "teui-q3", "answer": "wip", "source": "iac",
+      "refs": ["infra/template.yaml:28-39"],
+      "confidence": "medium",
+      "note": "Only an account-level monthly budget alert at 80%; no alerts on unmatched, post-completion or over-limit calls and no anomaly monitor." }
+  ] }

@@ -1,0 +1,15 @@
+{ "lever": "know-what-you-spend", "outOfScope": false,
+  "answers": [
+    { "id": "kwys-q1", "answer": "wip", "source": "iac",
+      "refs": ["infra/template.yaml:28-39", "docs/design.md:7-8", "app/agent.py:25-33"],
+      "confidence": "high",
+      "note": "Account-level monthly budget alert and monthly bill review exist, but token usage is never read from responses, so spend is not decomposed into its terms." },
+    { "id": "kwys-q2", "answer": "no", "source": "user",
+      "refs": ["docs/design.md:4"],
+      "confidence": "high",
+      "note": "User said there is no evaluation set and cost per resolved ticket is not measured." },
+    { "id": "kwys-q3", "answer": "wip", "source": "iac",
+      "refs": ["infra/template.yaml:12-14", "app/agent.py:14", "app/agent.py:26"],
+      "confidence": "medium",
+      "note": "Lambda carries team/app tags (user confirmed no chargeback beyond tags), but Bedrock is called by raw model ID with no application inference profile or requestMetadata." }
+  ] }

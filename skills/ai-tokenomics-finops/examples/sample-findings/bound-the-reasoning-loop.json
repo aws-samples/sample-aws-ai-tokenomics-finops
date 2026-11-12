@@ -1,0 +1,15 @@
+{ "lever": "bound-the-reasoning-loop", "outOfScope": false,
+  "answers": [
+    { "id": "bso-q1", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:24", "app/agent.py:34-36"],
+      "confidence": "high",
+      "note": "The tool loop is while True with only a completion exit; no iteration cap, session token budget or retry policy." },
+    { "id": "bso-q2", "answer": "na", "source": "code",
+      "refs": ["app/agent.py:21-37"],
+      "confidence": "high",
+      "note": "The app is a single agent with no multi-agent orchestration." },
+    { "id": "bso-q3", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:25-33"],
+      "confidence": "high",
+      "note": "Per-call usage is never read, so the cost of a full answer across tool rounds is not measured." }
+  ] }

@@ -1,0 +1,11 @@
+{ "lever": "route-to-the-right-model", "outOfScope": false,
+  "answers": [
+    { "id": "rtm-q1", "answer": "no", "source": "code",
+      "refs": ["app/agent.py:14", "app/nightly_summaries.py:15", "docs/design.md:4"],
+      "confidence": "high",
+      "note": "Every request, including simple nightly ticket summaries, goes to one frontier Opus model with no routing." },
+    { "id": "rtm-q2", "answer": "unknown", "source": "none",
+      "refs": ["app/agent.py:14", "app/nightly_summaries.py:15"],
+      "confidence": "low",
+      "note": "Model ID is pinned in two places (one hard-coded duplicate); no lifecycle audit found in files and the user did not say whether one exists." }
+  ] }
