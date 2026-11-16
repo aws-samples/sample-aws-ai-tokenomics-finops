@@ -21,7 +21,7 @@ cp -r SKILL.md references assets scripts <skills directory>/ai-tokenomics-finops
 |---|---|---|---|
 | Kiro (IDE and CLI) | `.kiro/skills/` | `~/.kiro/skills/` | [Kiro: Agent Skills](https://kiro.dev/docs/skills/) (the IDE can also import a skill from a GitHub folder URL) |
 | Claude Code on Amazon Bedrock | `.claude/skills/` | `~/.claude/skills/` | [Claude Code: skills](https://code.claude.com/docs/en/skills) |
-| OpenAI Codex with Amazon Bedrock (CLI, IDE extension) | `.agents/skills/` | `~/.agents/skills/` | [Codex: skills](https://developers.openai.com/codex/skills) |
+| OpenAI Codex with Amazon Bedrock (CLI, IDE extension) | `.agents/skills/` | `~/.agents/skills/` | [Codex: skills](https://developers.openai.com/codex/skills) (launch Codex from the project's real path, not through a symlink: its sandbox rejects writes otherwise) |
 | OpenCode with Amazon Bedrock | `.opencode/skills/` (also reads `.claude/skills/`, `.agents/skills/`) | `~/.config/opencode/skills/` | [OpenCode: skills](https://opencode.ai/docs/skills) |
 
 Other agents: put the folder anywhere in the repo and add one line to `AGENTS.md`, or paste it as a prompt:
