@@ -17,6 +17,7 @@ import { join, relative, sep } from 'node:path';
 import { renderSkillFiles, SKILL_DIR, GENERATED_DIRS, RUNBOOK } from './build-skill.mjs';
 import { OUT_OF_SCOPE, NEEDLE_RE, ALIAS_RE } from './lib/public-safety.mjs';
 import { loadFindings, renderReport } from '../skills/ai-tokenomics-finops/scripts/report.mjs';
+import { MAX_LINES } from '../skills/ai-tokenomics-finops/scripts/read.mjs';
 
 // Pinned to the runbook. Change them in the same PR that adds or removes a lever or question.
 const EXPECT = { tracks: 2, levers: 28, questions: 74, perTrack: { 'track-1': [11, 35], 'track-2': [17, 39] } };
@@ -83,10 +84,14 @@ check('SKILL.md has YAML frontmatter', !!fm);
 check('name is valid and matches the folder', !!name && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(name) && name.length <= 64 && name === 'ai-tokenomics-finops', name);
 check('description is 1-1024 characters', !!desc && desc.length <= 1024, `${desc?.length ?? 0}`);
 check('SKILL.md body is under 500 lines', skill.split('\n').length < 500, `${skill.split('\n').length}`);
-check('SKILL.md limits the shell to the two node scripts', /\*\*File tools only\.\*\*[^\n]*shell only for `node scripts\/prescan\.mjs` and `node scripts\/report\.mjs --out/.test(skill));
+check('SKILL.md limits the shell to prescan, read.mjs and report', /\*\*File tools only\.\*\*[^\n]*read only with `node <this skill>\/scripts\/read\.mjs <file> <start> <end>`, one file per command[^\n]*shell is otherwise only for `node scripts\/prescan\.mjs` and `node scripts\/report\.mjs --out/.test(skill));
 const links = [...skill.matchAll(/`((?:references|scripts|assets)\/[^`<>\s]+)`/g)].map((m) => m[1]);
 check('triage reads the workspace listing from the pre-scan, not a shell listing', /^1\. \*\*Triage\.\*\*[^\n]*workspace listing[^\n]*do not list the workspace yourself/m.test(skill));
-check('File tools rule forbids chaining other commands with prescan or report', /Never chain other commands with prescan or report\./.test(skill));
+check('File tools rule forbids chaining commands', /\*\*File tools only\.\*\*[^\n]*Never chain commands\./.test(skill));
+check('Stay small forbids listing the skill folder', /\*\*Stay small\.\*\*[^\n]*never list this skill's folder/.test(skill));
+check(`SKILL.md fits one read.mjs range (${MAX_LINES} lines) and its description says how to open it without a file-read tool`, skill.trimEnd().split('\n').length <= MAX_LINES && /scripts\/read\.mjs <this skill>\/SKILL\.md 1 \d+/.test(desc || ''), `${skill.trimEnd().split('\n').length} lines`);
+const readme = readFileSync(join(SKILL_DIR, 'README.md'), 'utf8');
+check('scripts/read.mjs exists and the install command copies scripts/', existsSync(join(SKILL_DIR, 'scripts', 'read.mjs')) && /cp -r SKILL\.md references assets scripts /.test(readme));
 check('every file SKILL.md names exists', links.every((l) => existsSync(join(SKILL_DIR, l))), links.join(', '));
 
 // 4. Public safety across every text file in the skill.

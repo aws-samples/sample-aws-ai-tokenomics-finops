@@ -34,10 +34,10 @@ const SKIP_DIRS = new Set(['.git', '.hg', '.svn', 'node_modules', '.venv', 'venv
 const AGENT_DIRS = new Set(['.kiro', '.claude', '.codex', '.opencode']);
 
 // Files never opened, because they commonly hold secrets.
-const SECRET_FILE = /^(\.env(\..*)?|.*\.(pem|key|p12|pfx|jks|keystore|ppk|tfstate|tfstate\.backup|tfvars)|id_(rsa|dsa|ecdsa|ed25519)(\.pub)?|credentials(\..*)?|\.netrc|\.npmrc|\.pypirc|\.git-credentials|secrets?\..*|.*\.secrets?)$/i;
+export const SECRET_FILE = /^(\.env(\..*)?|.*\.(pem|key|p12|pfx|jks|keystore|ppk|tfstate|tfstate\.backup|tfvars)|id_(rsa|dsa|ecdsa|ed25519)(\.pub)?|credentials(\..*)?|\.netrc|\.npmrc|\.pypirc|\.git-credentials|secrets?\..*|.*\.secrets?)$/i;
 
 // A matched line that looks like it carries a secret value is reported by reference only.
-const SECRET_LINE = /(secret|passw(or)?d|api[_-]?key|access[_-]?key|private[_-]?key|auth[_-]?token|bearer)\w*["']?\s*[:=]|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY/i;
+export const SECRET_LINE = /(secret|passw(or)?d|api[_-]?key|access[_-]?key|private[_-]?key|auth[_-]?token|bearer)\w*["']?\s*[:=]|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY/i;
 
 /** Minimal glob -> RegExp: `**` (any depth), `*`, `?` and `{a,b}`, matched against a /-separated path. */
 export function globToRegExp(glob) {

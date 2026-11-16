@@ -5,12 +5,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, symlinkSync, readdirSync, statSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { renderSkillFiles, joinEvidence, RUNBOOK, EVIDENCE } from './build-skill.mjs';
 import { loadModel } from './lib/skill-model.mjs';
 import { scan, renderMarkdown, globToRegExp, workspaceListing } from '../skills/ai-tokenomics-finops/scripts/prescan.mjs';
+import { readRange, MAX_LINES } from '../skills/ai-tokenomics-finops/scripts/read.mjs';
 import { loadFindings, renderReport } from '../skills/ai-tokenomics-finops/scripts/report.mjs';
 
 const { files } = renderSkillFiles();
@@ -132,6 +133,43 @@ test('prescan: workspace listing is two levels, dirs first, skips bulky and hidd
   const capped = workspaceListing(root);
   assert.equal(capped.length, 61);
   assert.equal(capped[60], '... 17 more');
+});
+
+// ---- read.mjs -------------------------------------------------------------------------------------
+
+const lines100 = Array.from({ length: 100 }, (_, i) => `line ${i + 1}`).join('\n') + '\n';
+
+test('read: prints the requested lines, numbered, and withholds secret lines', (t) => {
+  const root = tmp(t);
+  write(root, 'app/a.py', lines100.replace('line 4', 'api_key = "abc123"'));
+  const out = readRange('app/a.py', 3, 5, { root });
+  assert.equal(out, 'app/a.py lines 3-5 of 100\n3: line 3\n4: [line withheld: may hold a secret]\n5: line 5\n');
+  assert.throws(() => readRange('app/a.py', 101, 102, { root }), /past the end/);
+  assert.throws(() => readRange('app/a.py', 5, 3, { root }), /start <= end/);
+});
+
+test('read: caps a range at MAX_LINES and says what to read next', (t) => {
+  const root = tmp(t);
+  write(root, 'a.txt', lines100);
+  const out = readRange('a.txt', 1, 100, { root }).trimEnd().split('\n');
+  assert.equal(out.length, MAX_LINES + 2);
+  assert.equal(out[MAX_LINES], `${MAX_LINES}: line ${MAX_LINES}`);
+  assert.match(out.at(-1), new RegExp(`capped at ${MAX_LINES} lines; read ${MAX_LINES + 1}-100 next`));
+});
+
+test('read: refuses paths outside the workspace, symlink escapes and secret-shaped files', (t) => {
+  const outside = tmp(t);
+  write(outside, 'x.txt', 'outside\n');
+  const root = tmp(t);
+  write(root, '.env', 'A=1\n');
+  write(root, '.aws/config', 'x\n');
+  symlinkSync(join(outside, 'x.txt'), join(root, 'link.txt'));
+  assert.throws(() => readRange(join(outside, 'x.txt'), 1, 1, { root }), /outside the workspace/);
+  assert.throws(() => readRange(relative(root, join(outside, 'x.txt')), 1, 1, { root }), /outside the workspace/);
+  assert.throws(() => readRange('link.txt', 1, 1, { root }), /outside the workspace/);
+  assert.throws(() => readRange('.env', 1, 1, { root }), /may hold secrets/);
+  assert.throws(() => readRange('.aws/config', 1, 1, { root }), /may hold secrets/);
+  assert.match(readRange(fileURLToPath(new URL('../skills/ai-tokenomics-finops/SKILL.md', import.meta.url)), 1, 2, { root }), /^.+ lines 1-2 of /);
 });
 
 // ---- report ---------------------------------------------------------------------------------------
