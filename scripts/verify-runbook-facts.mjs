@@ -472,7 +472,38 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   // plans and credit pooling; each owner is bound to the Kiro claim that replaces it.
   // 2026-11-09, sweep-2 agent-harness PR: eight newly cited references (198-205) take the Track 2
   // card's fallback count from 111 to 119, so the two Track 2 evidence phrases name 119.
+  // 2026-11-16, sweep-3 content PR: ten newly cited references (206-215) take the Track 1 card's
+  // fallback count from 61 to 63 and Track 2's from 119 to 127; the evidence phrases name them.
+  // 2026-11-16, sweep-3 content PR (R54): the tiered-routing worked card moves from GPT-5.6 Sol and
+  // Luna (In-Region rates) to GPT-6.1 Sol and GPT-6 Luna (Global rates), and its price table becomes
+  // one line. Each retired price and total is bound to the new figure that replaces it.
   contracts: [
+    {
+      id: 'sweep-3-tiered-routing-gpt-6-luna',
+      section: 'decision-guidance-cost-aware-model-routing',
+      owners: [
+        reviewedOwner('integers:22', reviewedPhrase('GPT-6.1 Sol $2.00 input and $10.00 output')),
+        reviewedOwner('money:$4.40 ', reviewedPhrase('GPT-6.1 Sol $2.00 input and $10.00 output')),
+        reviewedOwner('money:$22.00 ', reviewedPhrase('GPT-6.1 Sol $2.00 input and $10.00 output')),
+        reviewedOwner('money:$0.22 ', reviewedPhrase('GPT-6 Luna $0.10 and $0.50')),
+        reviewedOwner('money:$1.32 ', reviewedPhrase('GPT-6 Luna $0.10 and $0.50')),
+        reviewedOwner('money:$0.01980 ', reviewedPhrase('or $0.00900 per request')),
+        reviewedOwner('money:$0.01980', reviewedPhrase('or $0.00900 per request')),
+        reviewedOwner('integers:01980', reviewedPhrase('or $0.00900 per request')),
+        reviewedOwner('money:$0.00110 ', reviewedPhrase('or $0.00045 per request')),
+        reviewedOwner('money:$0.00110', reviewedPhrase('or $0.00045 per request')),
+        reviewedOwner('integers:00110', reviewedPhrase('or $0.00045 per request')),
+        reviewedOwner('money:$19,800 ', reviewedPhrase('$0.00900 = $9,000 / month')),
+        reviewedOwner('integers:19', reviewedPhrase('$0.00900 = $9,000 / month')),
+        reviewedOwner('integers:800', reviewedPhrase('$0.00900 = $9,000 / month')),
+        reviewedOwner('money:$660 ', reviewedPhrase('$270 + $3,600 = $3,870 / month')),
+        reviewedOwner('integers:660', reviewedPhrase('$270 + $3,600 = $3,870 / month')),
+        reviewedOwner('money:$7,920 ', reviewedPhrase('$270 + $3,600 = $3,870 / month')),
+        reviewedOwner('integers:920', reviewedPhrase('$270 + $3,600 = $3,870 / month')),
+        reviewedOwner('money:$8,580 ', reviewedPhrase('$270 + $3,600 = $3,870 / month')),
+        reviewedOwner('integers:580', reviewedPhrase('$270 + $3,600 = $3,870 / month'))
+      ]
+    },
     {
       id: 'lever-total-35-to-28-map',
       section: 'map-h',
@@ -484,10 +515,10 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
       owners: [
         reviewedOwner('integers:10', reviewedPhrase('11 levers 35 questions')),
         reviewedOwner('integers:32', reviewedPhrase('0/35 answered'), reviewedPhrase('0/39 answered')),
-        reviewedOwner('integers:36', reviewedPhrase('35 questions 61 references')),
+        reviewedOwner('integers:36', reviewedPhrase('35 questions 63 references')),
         reviewedOwner('integers:20', reviewedPhrase('17 levers 39 questions')),
-        reviewedOwner('integers:43', reviewedPhrase('39 questions 119 references')),
-        reviewedOwner('integers:75', reviewedPhrase('119 references'))
+        reviewedOwner('integers:43', reviewedPhrase('39 questions 127 references')),
+        reviewedOwner('integers:75', reviewedPhrase('127 references'))
       ]
     },
     {
@@ -535,7 +566,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '93dc9e658db38d0b210d105d2448a4901a95dcce435c6be049109b23dbaa849d';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '5a84fcd05f345213070be07507c7234a366f9393d984a30fd41cc23b3972c473';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**
@@ -945,8 +976,8 @@ const manifestOwnerships = FACT_REPLACEMENT_CONTRACTS.flatMap((contract) =>
   contract.owners.map((owner) => retirementOwnershipKey(contract.section, owner.factKey))
 );
 const manifestSealProofPassed = productionOwnerIntegrity.manifestSeal.ok;
-const manifestInventoryProofPassed = FACT_REPLACEMENT_CONTRACTS.length === 5
-  && manifestOwnerCount === 21 && new Set(manifestOwnerships).size === 21;
+const manifestInventoryProofPassed = FACT_REPLACEMENT_CONTRACTS.length === 6
+  && manifestOwnerCount === 41 && new Set(manifestOwnerships).size === 41;
 
 // An uncontracted front-matter owner to delete. The track-card counts are contracted since
 // 2026-11-08, so the proof deletes the sheet fallback's "JavaScript", which no contract covers.
@@ -1156,7 +1187,7 @@ const currentContractsProofPassed = productionOwnerIntegrity.errors.length === 0
   && productionOwnerIntegrity.complete;
 for (const [passed, label] of [
   [manifestSealProofPassed, 'reviewed manifest seal does not match its canonical JSON'],
-  [manifestInventoryProofPassed, 'reviewed manifest inventory is not exactly 2 contracts / 7 unique owners'],
+  [manifestInventoryProofPassed, 'reviewed manifest inventory is not exactly 6 contracts / 41 unique owners'],
   [f1OwnerProofPassed, 'owner-pair positive proof failed for the exact map-h lever-total retirement'],
   [unrelatedEvidenceDeletionProofPassed, 'full-path mutation accepted unrelated same-section evidence plus owner deletion'],
   [appendedManifestProofPassed, 'full-path mutation accepted an appended unreviewed contract without a seal update'],

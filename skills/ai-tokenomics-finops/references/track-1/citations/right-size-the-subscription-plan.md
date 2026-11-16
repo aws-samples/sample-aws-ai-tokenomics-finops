@@ -7,3 +7,4 @@ Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#right-si
 - [196] Share Kiro credits across your team with credit pooling. Kiro Blog; accessed 9 November 2026. https://kiro.dev/blog/credit-pooling/
 - [58] Pricing. Kiro. https://kiro.dev/pricing/
 - [195] Share credits across your team with credit pooling. Kiro changelog; accessed 9 November 2026. https://kiro.dev/changelog/general/credit-pooling/
+- [215] Billing. Kiro documentation, updated 1 November 2026; accessed 16 November 2026. https://kiro.dev/docs/billing/

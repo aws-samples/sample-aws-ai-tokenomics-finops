@@ -43,7 +43,7 @@ What it saves: 50% on batch-eligible work, plus up to approximately 10% on a Glo
 ### Cache what repeats
 
 Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#cache-what-repeats
-What it saves: About 90% to 95% off repeated-prefix input (cache reads at 0.1x or 0.05x base, by model), the single largest per-call saving for agentic workloads that re-send system prompts and tool definitions on every turn.
+What it saves: About 90% to 97.5% off repeated-prefix input (cache reads at 0.1x down to 0.025x base, by model), the single largest per-call saving for agentic workloads that re-send system prompts and tool definitions on every turn.
 
 - `cwr-q1` [Not covered] Is prompt caching on, with the stable content placed first?
   Source: code · Confidence: high · Evidence: app/agent.py:16-18, app/agent.py:25-31 — The ~6,000-token system prompt and 16 tool specs are resent identically every call, but no cachePoint is set.

@@ -969,7 +969,7 @@
      "layer": "Model Inference",
      "scopable": true,
      "url": "https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#cache-what-repeats",
-     "saves": "About 90% to 95% off repeated-prefix input (cache reads at 0.1x or 0.05x base, by model), the single largest per-call saving for agentic workloads that re-send system prompts and tool definitions on every turn.",
+     "saves": "About 90% to 97.5% off repeated-prefix input (cache reads at 0.1x down to 0.025x base, by model), the single largest per-call saving for agentic workloads that re-send system prompts and tool definitions on every turn.",
      "questions": [
       {
        "key": "cwr-q1",
