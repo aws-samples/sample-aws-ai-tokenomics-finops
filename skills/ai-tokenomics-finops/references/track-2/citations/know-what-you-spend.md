@@ -12,12 +12,15 @@ Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#know-wha
 - [47] Monitor model invocation using CloudWatch Logs and Amazon S3 (model invocation logging). Amazon Bedrock User Guide, AWS. https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html
 - [177] Migrating from FOCUS 1.0 to FOCUS 1.2. AWS Data Exports User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/cur/latest/userguide/table-dictionary-focus-1-2-migrating.html
 - [176] Introducing FOCUS 1.4: Invoice Reconciliation, Commitment Details, and Specification Maturity. FinOps Foundation, June 2026; accessed 5 November 2026. https://www.finops.org/insights/introducing-focus-1-4/
-- [198] FOCUS 1.5 release scope: confirmed, in review and deferred. FinOps Foundation; accessed 9 November 2026. https://focus.finops.org/focus-1-5-release-scope/
+- [198] FOCUS 1.5 release scope: confirmed, in review and deferred. FinOps Foundation; accessed 9 November 2026, re-checked 16 November 2026. https://focus.finops.org/focus-1-5-release-scope/
 - [190] Token Economics: The Atomic Unit of AI Value. FinOps Foundation (Linux Foundation), May 2026; accessed 8 November 2026. https://www.finops.org/insights/token-economics-the-atomic-unit-of-ai-value/
 - [41] FinOps for AI Working Group. FinOps Foundation (Linux Foundation). https://www.finops.org/wg/finops-for-ai/
+- [213] FinOps for AI Overview. FinOps Foundation (Linux Foundation); accessed 16 November 2026. https://www.finops.org/wg/finops-for-ai-overview/
 - [75] Track Amazon Bedrock costs by caller identity with IAM-based cost allocation. AWS Cloud Financial Management Blog. https://aws.amazon.com/blogs/aws-cloud-financial-management/track-amazon-bedrock-costs-by-caller-identity-with-iam-based-cost-allocation/
 - [18] Create an application inference profile. Amazon Bedrock User Guide, AWS. https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-create.html
+- [211] OpenAI Codex on Amazon Bedrock. AWS Machine Learning Blog, November 2026; accessed 16 November 2026. https://aws.amazon.com/blogs/machine-learning/openai-codex-on-amazon-bedrock/
 - [199] Getting started with Tokenomics on AWS. AWS Cloud Financial Management Blog; accessed 9 November 2026. https://aws.amazon.com/blogs/aws-cloud-financial-management/aws-tokenomics-strategy/
+- [212] Managing Amazon Bedrock costs end to end: a playbook for FinOps and platform teams. AWS Machine Learning Blog, October 2026; accessed 16 November 2026. https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/
 - [153] Best practices for cost attribution. Amazon Bedrock User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-best-practices.html
 - [152] AWS Cost Explorer, Budgets, and Dashboards now support Amazon Bedrock product attributes. AWS What’s New, October 2026; accessed 5 November 2026. https://aws.amazon.com/about-aws/whats-new/2026/10/aws-bedrock-attributes-in-cost-explorer/
 - [146] Claude Haiku 5.5 model card (features, pricing and long-context note). Amazon Bedrock User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html
