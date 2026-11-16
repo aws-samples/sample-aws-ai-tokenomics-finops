@@ -472,6 +472,8 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   // plans and credit pooling; each owner is bound to the Kiro claim that replaces it.
   // 2026-11-09, sweep-2 agent-harness PR: eight newly cited references (198-205) take the Track 2
   // card's fallback count from 111 to 119, so the two Track 2 evidence phrases name 119.
+  // 2026-11-16, sweep-3 content PR: ten newly cited references (206-215) take the Track 1 card's
+  // fallback count from 61 to 63 and Track 2's from 119 to 127; the evidence phrases name them.
   // 2026-11-16, sweep-3 content PR (R54): the tiered-routing worked card moves from GPT-5.6 Sol and
   // Luna (In-Region rates) to GPT-6.1 Sol and GPT-6 Luna (Global rates), and its price table becomes
   // one line. Each retired price and total is bound to the new figure that replaces it.
@@ -513,10 +515,10 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
       owners: [
         reviewedOwner('integers:10', reviewedPhrase('11 levers 35 questions')),
         reviewedOwner('integers:32', reviewedPhrase('0/35 answered'), reviewedPhrase('0/39 answered')),
-        reviewedOwner('integers:36', reviewedPhrase('35 questions 61 references')),
+        reviewedOwner('integers:36', reviewedPhrase('35 questions 63 references')),
         reviewedOwner('integers:20', reviewedPhrase('17 levers 39 questions')),
-        reviewedOwner('integers:43', reviewedPhrase('39 questions 119 references')),
-        reviewedOwner('integers:75', reviewedPhrase('119 references'))
+        reviewedOwner('integers:43', reviewedPhrase('39 questions 127 references')),
+        reviewedOwner('integers:75', reviewedPhrase('127 references'))
       ]
     },
     {
@@ -564,7 +566,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = 'd7b66a1560efc2e798686c11a757e33864ebb996586e6573af1bb6d351fb9bfd';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '5a84fcd05f345213070be07507c7234a366f9393d984a30fd41cc23b3972c473';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**
