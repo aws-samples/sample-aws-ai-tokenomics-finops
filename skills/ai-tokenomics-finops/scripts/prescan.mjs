@@ -4,7 +4,7 @@
  *
  * Runs the runbook's per-question evidence patterns (assets/assessment.json) over a workspace and prints
  * a fixed-size summary: capped hits per question, with file:line references. The agent reads this summary
- * instead of the repository.
+ * instead of the repository. The markdown output starts with a two-level workspace listing for triage.
  *
  * Guarantees: Node built-ins only; no network; read-only (writes nothing, only prints); never follows
  * symlinks; never opens secret-shaped files (.env, keys, credentials, Terraform state); withholds any
@@ -29,6 +29,9 @@ export const DEFAULTS = { maxHits: 3, context: 0, maxFiles: 5000, maxBytes: 20 *
 const SKIP_DIRS = new Set(['.git', '.hg', '.svn', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', 'out',
   'target', '.next', '.nuxt', '.terraform', 'cdk.out', '.serverless', '.aws-sam', 'coverage', 'vendor', '.aws', '.ssh',
   '.gnupg', '.ai-finops-assessment', '.idea', '.vscode']);
+
+// Hidden entries are left out of the workspace listing, except the agent-config dirs that triage needs.
+const AGENT_DIRS = new Set(['.kiro', '.claude', '.codex', '.opencode']);
 
 // Files never opened, because they commonly hold secrets.
 const SECRET_FILE = /^(\.env(\..*)?|.*\.(pem|key|p12|pfx|jks|keystore|ppk|tfstate|tfstate\.backup|tfvars)|id_(rsa|dsa|ecdsa|ed25519)(\.pub)?|credentials(\..*)?|\.netrc|\.npmrc|\.pypirc|\.git-credentials|secrets?\..*|.*\.secrets?)$/i;
@@ -96,6 +99,29 @@ function listFiles(root, opts, skipped) {
   };
   visit(root);
   return { files, truncated };
+}
+
+/**
+ * Two-level workspace listing for triage: directories first, then files, one level of children under each
+ * top-level directory, capped at `max` entries with a `... N more` line. Lists names only; never follows
+ * symlinks, so it cannot leave `root`. shortcut: no .gitignore parsing, so an ignored but visible dir is listed; upgrade if that gets noisy.
+ */
+export function workspaceListing(root, max = 60) {
+  const keep = (dir) => readdirSync(dir, { withFileTypes: true })
+    .filter((e) => !e.isSymbolicLink() && !SKIP_DIRS.has(e.name) && !SECRET_FILE.test(e.name) && (!e.name.startsWith('.') || AGENT_DIRS.has(e.name)))
+    .sort((a, b) => (b.isDirectory() - a.isDirectory()) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  const label = (e) => e.name + (e.isDirectory() ? '/' : '');
+  const lines = [];
+  for (const e of keep(root)) {
+    lines.push(`- ${label(e)}`);
+    if (!e.isDirectory()) continue;
+    let children = [];
+    try { children = keep(join(root, e.name)); } catch { /* unreadable dir: listed without children */ }
+    for (const c of children) lines.push(`  - ${label(c)}`);
+  }
+  const shown = lines.slice(0, max);
+  if (lines.length > max) shown.push(`... ${lines.length - max} more`);
+  return shown;
 }
 
 /**
@@ -205,7 +231,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const assessment = JSON.parse(readFileSync(ASSESSMENT, 'utf8'));
     if (o.track && !assessment.tracks.some((t) => t.id === o.track)) throw new Error(`unknown track ${o.track}`);
     const s = scan(o.root, assessment, o);
-    process.stdout.write(o.format === 'json' ? JSON.stringify(s, null, 1) + '\n' : renderMarkdown(s));
+    process.stdout.write(o.format === 'json' ? JSON.stringify(s, null, 1) + '\n' : ['## Workspace listing (two levels)', ...workspaceListing(o.root), '', renderMarkdown(s)].join('\n'));
   } catch (e) {
     console.error(`prescan: ${e.message}`);
     process.exit(2);

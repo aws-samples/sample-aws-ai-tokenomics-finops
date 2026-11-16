@@ -10,7 +10,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { renderSkillFiles, joinEvidence, RUNBOOK, EVIDENCE } from './build-skill.mjs';
 import { loadModel } from './lib/skill-model.mjs';
-import { scan, renderMarkdown, globToRegExp } from '../skills/ai-tokenomics-finops/scripts/prescan.mjs';
+import { scan, renderMarkdown, globToRegExp, workspaceListing } from '../skills/ai-tokenomics-finops/scripts/prescan.mjs';
 import { loadFindings, renderReport } from '../skills/ai-tokenomics-finops/scripts/report.mjs';
 
 const { files } = renderSkillFiles();
@@ -118,6 +118,20 @@ test('prescan: deterministic and writes nothing', (t) => {
   assert.equal(snap(root), before);
   assert.equal(JSON.parse(a).schema, 'ai-finops-summary/1');
   assert.equal(JSON.parse(a).questions.length, 74);
+});
+
+test('prescan: workspace listing is two levels, dirs first, skips bulky and hidden dirs, keeps agent config, caps with a count', (t) => {
+  const root = tmp(t);
+  for (const d of ['.git', 'node_modules', '.ai-finops-assessment', '.kiro/skills', 'app/sub', 'docs']) mkdirSync(join(root, d), { recursive: true });
+  write(root, 'app/agent.py', 'x\n');
+  write(root, 'app/sub/deep.py', 'x\n');
+  write(root, 'README.md', 'x\n');
+  write(root, '.env', 'x\n');
+  assert.deepEqual(workspaceListing(root), ['- .kiro/', '  - skills/', '- app/', '  - sub/', '  - agent.py', '- docs/', '- README.md']);
+  for (let i = 0; i < 70; i++) write(root, `f${String(i).padStart(2, '0')}.txt`, 'x\n');
+  const capped = workspaceListing(root);
+  assert.equal(capped.length, 61);
+  assert.equal(capped[60], '... 17 more');
 });
 
 // ---- report ---------------------------------------------------------------------------------------
