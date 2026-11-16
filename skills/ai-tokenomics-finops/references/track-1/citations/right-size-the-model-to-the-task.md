@@ -6,6 +6,7 @@ Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#right-si
 
 - [87] Auto routing. LiteLLM documentation. https://docs.litellm.ai/docs/proxy/auto_routing
 - [88] Model configuration. Claude Code documentation. https://code.claude.com/docs/en/model-config
+- [214] Model governance. Kiro documentation, updated 11 November 2026; accessed 16 November 2026. https://kiro.dev/docs/enterprise/governance/model/
 - [98] Best practices for Codex. OpenAI. https://learn.chatgpt.com/guides/best-practices
 - [103] Use ChatGPT Work and Codex with Amazon Bedrock. OpenAI Codex documentation. https://developers.openai.com/codex/amazon-bedrock
 - [197] Tokenomics for coding agents: benchmark cost and quality on your own code. AWS Cloud Financial Management Blog; accessed 9 November 2026. https://aws.amazon.com/blogs/aws-cloud-financial-management/tokenomics-for-coding-agents-benchmark-cost-and-quality-on-your-own-code/
