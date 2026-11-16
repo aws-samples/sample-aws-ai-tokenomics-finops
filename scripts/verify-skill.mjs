@@ -85,6 +85,7 @@ check('description is 1-1024 characters', !!desc && desc.length <= 1024, `${desc
 check('SKILL.md body is under 500 lines', skill.split('\n').length < 500, `${skill.split('\n').length}`);
 check('SKILL.md limits the shell to the two node scripts', /\*\*File tools only\.\*\*[^\n]*shell only for `node scripts\/prescan\.mjs` and `node scripts\/report\.mjs --out/.test(skill));
 const links = [...skill.matchAll(/`((?:references|scripts|assets)\/[^`<>\s]+)`/g)].map((m) => m[1]);
+check('triage lists the workspace with the file search tool, not ls', /^1\. \*\*Triage\.\*\*[^\n]*file search tool[^\n]*not `ls`/m.test(skill));
 check('every file SKILL.md names exists', links.every((l) => existsSync(join(SKILL_DIR, l))), links.join(', '));
 
 // 4. Public safety across every text file in the skill.
