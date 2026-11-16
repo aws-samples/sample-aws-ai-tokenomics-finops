@@ -7,11 +7,12 @@ Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#route-to
 - [1] Amazon Bedrock pricing. AWS. https://aws.amazon.com/bedrock/pricing/
 - [93] Model lifecycle policy for models launched before 7 September 2026. Amazon Bedrock User Guide, AWS. https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html
 - [16] Model lifecycle (models launched on or after 7 September 2026). Amazon Bedrock User Guide, AWS; accessed 9 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle.html
+- [148] GPT-6.1 Sol model card (features and pricing). Amazon Bedrock User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-1-sol.html
+- [209] GPT-6 Luna model card (pricing and service tiers). Amazon Bedrock User Guide, AWS; accessed 16 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-luna.html
 - [150] AWS Price List bulk offer, AmazonBedrockFoundationModels (offer version 20261012084008, us-east-1 Standard rows for Claude Sonnet 5.5 and Claude Haiku 5.5, and Claude Opus 5.5 cache-read rows). AWS; accessed 5 November 2026, cache-read rows re-checked 9 November 2026. https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrockFoundationModels/current/index.json
 - [146] Claude Haiku 5.5 model card (features, pricing and long-context note). Amazon Bedrock User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html
 - [194] OpenAI GPT-6.1 Terra is now generally available on Amazon Bedrock. AWS What’s New, October 2026; accessed 9 November 2026. https://aws.amazon.com/about-aws/whats-new/2026/10/openai-gpt-6-1-terra-on-amazon-bedrock/
 - [191] GPT-6.1 Terra model card (pricing and service tiers). Amazon Bedrock User Guide, AWS; accessed 9 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-1-terra.html
-- [148] GPT-6.1 Sol model card (features and pricing). Amazon Bedrock User Guide, AWS; accessed 5 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-1-sol.html
 - [7] Cost optimization. AWS Prescriptive Guidance, Agentic AI on serverless. https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-serverless/cost-optimization.html
 - [46] Optimizing cost for deploying Amazon Q. AWS Cloud Financial Management Blog, Jun 2025. https://aws.amazon.com/blogs/aws-cloud-financial-management/optimizing-cost-for-deploying-amazon-q/
 - [4] AGENTCOST02: Model costs. AWS Well-Architected Agentic AI Lens. https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost02.html
