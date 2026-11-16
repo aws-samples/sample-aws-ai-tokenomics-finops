@@ -1,6 +1,6 @@
 ---
 name: ai-tokenomics-finops
-description: Run the AI Tokenomics FinOps self-assessment on the current workspace and write a gap report. Reviews code, config, IaC and design docs read-only for Amazon Bedrock token-cost levers (model choice, prompt caching, batch and service tiers, max tokens, reasoning effort, context, tools, guardrails, attribution) and for coding-agent cost practices. Use when the user asks to assess or reduce the token cost of an AI coding agent or an AI application on Amazon Bedrock, or asks for a tokenomics or AI FinOps gap report.
+description: Run the AI Tokenomics FinOps self-assessment on the current workspace and write a gap report. Reviews code, config, IaC and design docs read-only for Amazon Bedrock token-cost levers (model choice, prompt caching, batch and service tiers, max tokens, reasoning effort, context, tools, guardrails, attribution) and for coding-agent cost practices. Use when the user asks to assess or reduce the token cost of an AI coding agent or an AI application on Amazon Bedrock, or asks for a tokenomics or AI FinOps gap report. Without a file-read tool (for example Codex), open this file with `node <this skill>/scripts/read.mjs <this skill>/SKILL.md 1 40`, not sed or cat.
 license: MIT-0
 compatibility: Any agent that reads Agent Skills (SKILL.md). The pre-scan and report scripts need Node.js 18 or later and a shell; without them, search with the same patterns by hand.
 metadata:
