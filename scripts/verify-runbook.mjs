@@ -26,6 +26,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { newestSnapshot } from './lib/archive.mjs';
+import { personaMarkupProblems } from './lib/skill-model.mjs';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HTML_DIR = join(REPO_ROOT, 'content');
@@ -1870,6 +1871,17 @@ if (misnumbered.length) {
 // ---------------------------------------------------------------------------
 // build-site.mjs aborts on any of these. Catching them here gives a clearer error earlier,
 // and keeps `npm run verify` meaningful even when the app build has not been run.
+
+// Every question names the roles that act on it (site/src/js/persona.mjs filters on these; the skill's report and
+// pre-scan do too). A missing tag would silently hide a question from every role but the all-questions view.
+console.log(`\n${bold('  Persona tags')}`);
+const personaProblems = personaMarkupProblems(liveRaw);
+if (personaProblems.length) {
+  for (const p of personaProblems) failures.push(`persona tags: ${p}`);
+  console.log(`  ${red('✖')} ${'every question has 1-3 valid persona tags'.padEnd(46)} ${red(`${personaProblems.length} problem(s): ${personaProblems.slice(0, 3).join('; ')}`)}`);
+} else {
+  console.log(`  ${green('✓')} ${'every question has 1-3 valid persona tags'.padEnd(46)} ${(liveRaw.match(/<div class="assess-q"/g) || []).length} questions`);
+}
 
 console.log(`\n${bold('  Site build invariants')}`);
 const styleTags = (liveRaw.match(/<style(\s[^>]*)?>/gi) || []).length;

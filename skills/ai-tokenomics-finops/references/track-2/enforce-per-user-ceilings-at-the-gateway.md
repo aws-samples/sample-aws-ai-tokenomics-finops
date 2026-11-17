@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `ceb-q1` Are concurrency, queue depth and fan-out bounded in dispatcher code?
 
+- Personas: builder
 - Fully covered looks like: A termination rule makes one workflow finite; dispatcher limits (queue depth, worker count, concurrency, fan-out width) decide how many finite workflows run at once. Enforce them in code, not in prompts.
 - Evidence: Bounded concurrency, queue depth and fan-out in dispatcher code.
 - Search: code, iac, config files for `Semaphore|max_workers|concurrency|ReservedConcurrentExecutions|MaximumConcurrency`, `asyncio\.gather|Promise\.all|ThreadPool`, `queue`
 
 ## `ceb-q2` Are request, token and connection limits enforced per caller at the gateway?
 
+- Personas: governance
 - Fully covered looks like: At the gateway, limit requests, tokens and connections per caller, tenant or target, keyed to an identity the gateway already validates. Request count alone does not describe request cost.
 - Evidence: Request, token and connection limits per caller at the gateway.
 - Search: iac, config, code files for `UsagePlan|Throttl|RateLimit|rate_?limit`, `\b(tpm|rpm)\b|max_budget`, `per.?(user|caller|tenant)`

@@ -1137,6 +1137,91 @@ async function runScenario(browser, label, url, { expectSplitBuild }) {
       && scope.readMore.t1LeadFirst && scope.readMore.t1Nested && scope.readMore.t1Total >= 35
       && scope.readMore.allClosed, JSON.stringify(scope.readMore));
 
+  // --- persona filter (site/src/js/persona.mjs) ------------------------------
+  // A role keeps only its questions, from every layer; every count follows; the export says what it skipped;
+  // the picker is labelled and keyboard-operable; and choosing All restores every question.
+  const persona = await page.evaluate(async () => {
+    const out = {};
+    const wait = () => new Promise((r) => setTimeout(r, 30));
+    const shown = (sel) => [...document.querySelectorAll(sel + ' [data-assess-q]')].filter((q) => !q.closest('[hidden], .persona-off'));
+    const picker = (t) => document.querySelector('#track-' + t + ' [data-persona-picker]');
+    const pick = async (t, v) => { picker(t).querySelector('input[value="' + v + '"]').click(); await wait(); };
+    out.pickers = [1, 2].map((t) => {
+      const p = picker(t);
+      return p && { hidden: p.hidden, legend: (p.querySelector('legend') || {}).textContent, help: (p.querySelector('.persona-help') || {}).textContent,
+        labels: [...p.querySelectorAll('label')].map((l) => l.textContent.trim()), live: (p.querySelector('[data-persona-count]') || {}).getAttribute?.('aria-live'),
+        count: p.querySelector('[data-persona-count]').textContent, moreOpen: p.querySelector('details.persona-more').open };
+    });
+    await pick(1, 'developer');
+    const dev = shown('#track-1');
+    out.dev = {
+      t1: dev.length, t2: shown('#track-2').length,
+      layers: [...new Set(dev.map((q) => q.closest('.assess').getAttribute('data-assess-group')))],
+      max: document.querySelector('[data-track-dashboard="t1"] [data-ad-progress]').getAttribute('aria-valuemax'),
+      count: picker(1).querySelector('[data-persona-count]').textContent,
+      synced: picker(2).querySelector('input[value="developer"]').checked,
+      leverOff: document.getElementById('know-how-your-fleet-is-metered').classList.contains('persona-off'),
+      navOff: document.querySelector('#sidebar a[href="#know-how-your-fleet-is-metered"]').closest('li').classList.contains('persona-off'),
+      qOut: document.querySelector('[data-key="qsh-q1"]').hasAttribute('data-persona-out'),
+      stored: localStorage.getItem('tokenomics-assessment-persona-v1')
+    };
+    await pick(1, 'builder');
+    out.builderT1 = picker(1).querySelector('[data-persona-count]').textContent;
+    await pick(2, 'governance');
+    let captured = '';
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: (t) => { captured = t; return Promise.resolve(); } } });
+    document.querySelector('[data-track-dashboard="t2"] [data-ad-copy]').click();
+    await new Promise((r) => setTimeout(r, 50));
+    out.gov = { t2: shown('#track-2').length, md: captured };
+    return out;
+  });
+  const okPicker = (p) => p && !p.hidden && p.legend === 'Show questions for' && /questions you act on, from every layer/.test(p.help || '')
+    && p.labels.join('|') === 'All questions (AI PM or leader)|Governance, platform or FinOps|Developer|App builder'
+    && p.live === 'polite' && p.moreOpen === false;
+  check(label, 'a labelled persona picker in each track, explanation always visible, detail collapsed',
+    persona.pickers.every(okPicker), JSON.stringify(persona.pickers));
+  check(label, 'the persona filter starts on All', persona.pickers.map((p) => p.count).join(' | ') === 'Showing all 35 questions. | Showing all 39 questions.',
+    persona.pickers.map((p) => p.count).join(' | '));
+  check(label, 'Developer keeps 14 Track 1 and 1 Track 2 question, across layers, and every count follows',
+    persona.dev.t1 === 14 && persona.dev.t2 === 1 && persona.dev.max === '14' && persona.dev.layers.includes('t1-model-inference') && persona.dev.layers.includes('t1-end-user')
+      && persona.dev.count === 'Showing 14 of 35 questions for Developer.', JSON.stringify(persona.dev));
+  check(label, 'a lever with no question for the role is hidden with its sidebar entry; both pickers stay in step and persist',
+    persona.dev.leverOff && persona.dev.navOff && persona.dev.qOut && persona.dev.synced && persona.dev.stored === 'developer', JSON.stringify(persona.dev));
+  check(label, 'App builder in Track 1 says it has no questions', /^Track 1 has no questions for App builder\./.test(persona.builderT1), persona.builderT1);
+  check(label, 'a persona-filtered gap report states the persona and lists the skipped questions by lever',
+    persona.gov.t2 === 10 && /^Persona: Governance, platform or FinOps\. Questions for other roles were skipped/m.test(persona.gov.md)
+      && /\(0\/10 answered\)/.test(persona.gov.md) && /^## Not assessed for this persona$/m.test(persona.gov.md) && /^- System prompt: Q1, Q2$/m.test(persona.gov.md),
+    `${persona.gov.t2} shown; ${(persona.gov.md.match(/^Persona:.*$/m) || ['no persona line'])[0]}`);
+  // Keyboard: arrow keys move through the native radio group. Only an on-screen pane can take focus.
+  const paneBefore = await page.evaluate(() => document.documentElement.getAttribute('data-scope') || 'overview');
+  await setPane(page, 't2');
+  await page.focus('#track-2 [data-persona-picker] input[value="governance"]');
+  await page.keyboard.press('ArrowDown');
+  await new Promise((r) => setTimeout(r, 30));
+  const kb = await page.evaluate(() => ({
+    checked: (document.querySelector('#track-2 [data-persona-picker] input:checked') || {}).value,
+    count: document.querySelector('#track-2 [data-persona-count]').textContent
+  }));
+  check(label, 'the picker works from the keyboard', kb.checked === 'developer' && kb.count === 'Showing 1 of 39 questions for Developer.', JSON.stringify(kb));
+  if (['overview', 't1', 't2'].includes(paneBefore)) await setPane(page, paneBefore);
+  const restored = await page.evaluate(async () => {
+    document.querySelector('#track-1 [data-persona-picker] input[value="ai-pm-leader"]').click();
+    await new Promise((r) => setTimeout(r, 30));
+    return { visible: [...document.querySelectorAll('[data-assess-q]')].filter((q) => !q.closest('[hidden], .persona-off')).length,
+      off: document.querySelectorAll('.persona-off, [data-persona-out]').length };
+  });
+  check(label, 'All questions restores every question', restored.visible === EXPECT.questions && restored.off === 0, JSON.stringify(restored));
+  // Without JavaScript the picker stays hidden and every question shows.
+  const noJs = await browser.newPage();
+  await noJs.setJavaScriptEnabled(false);
+  await noJs.goto(url, { waitUntil: 'load', timeout: 30000 });
+  const nj = await noJs.evaluate(() => ({
+    pickersHidden: [...document.querySelectorAll('[data-persona-picker]')].every((p) => p.hidden),
+    visible: [...document.querySelectorAll('[data-assess-q]')].filter((q) => !q.closest('[hidden]')).length
+  }));
+  await noJs.close();
+  check(label, 'without JavaScript the persona picker is hidden and every question shows', nj.pickersHidden && nj.visible === EXPECT.questions, JSON.stringify(nj));
+
   // --- print path ---------------------------------------------------------
   const printed = await page.evaluate(() => {
     const panel = document.querySelector('.assess-report[data-ar-scope="end-user"]');

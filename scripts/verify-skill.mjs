@@ -21,6 +21,8 @@ import { MAX_LINES } from '../skills/ai-tokenomics-finops/scripts/read.mjs';
 
 // Pinned to the runbook. Change them in the same PR that adds or removes a lever or question.
 const EXPECT = { tracks: 2, levers: 28, questions: 74, perTrack: { 'track-1': [11, 35], 'track-2': [17, 39] } };
+// Questions per persona tag, per track. Change them in the same PR that retags a question.
+const EXPECT_PERSONAS = { 'track-1': { governance: 23, developer: 14, builder: 0 }, 'track-2': { governance: 10, developer: 1, builder: 32 } };
 const SAMPLE = { dir: join(SKILL_DIR, 'examples', 'sample-findings'), report: join(SKILL_DIR, 'examples', 'sample-gap-report.md'), date: '2026-11-10', workspace: 'sample-bedrock-app' };
 
 let failed = 0;
@@ -51,6 +53,17 @@ for (const t of model.tracks) {
   const [l, q] = EXPECT.perTrack[t.id] || [];
   const tq = t.levers.reduce((n, x) => n + x.questions.length, 0);
   check(`${t.id}: ${l} levers, ${q} questions`, t.levers.length === l && tq === q, `${t.levers.length}, ${tq}`);
+}
+// Persona tags: skill-model.mjs already throws on a missing, empty, repeated or unknown tag, or ai-pm-leader used
+// as one, so reaching here means every tag is valid. These pin the totals and the generated per-persona lists.
+check('every question carries 1 to 3 valid persona tags, never ai-pm-leader', questions.every((q) => q.personas.length >= 1 && q.personas.length <= 3 && !q.personas.includes('ai-pm-leader')),
+  `${questions.length} questions`);
+check('the persona list starts with ai-pm-leader', model.personas[0]?.id === 'ai-pm-leader', model.personas.map((p) => p.id).join(', '));
+for (const t of model.tracks) {
+  const got = Object.fromEntries(model.personas.slice(1).map((p) => [p.id, t.levers.flatMap((l) => l.questions).filter((q) => q.personas.includes(p.id)).length]));
+  check(`${t.id}: persona totals`, JSON.stringify(got) === JSON.stringify(EXPECT_PERSONAS[t.id]), JSON.stringify(got));
+  const index = files[`references/${t.id}/index.md`] || '';
+  check(`${t.id}: the index lists questions by persona`, model.personas.slice(1).every((p) => index.includes(`- \`${p.id}\` (${p.label}), ${got[p.id]}`)));
 }
 const assets = JSON.parse(files['assets/assessment.json']);
 const assetKeys = assets.tracks.flatMap((t) => t.levers.flatMap((l) => l.questions.map((q) => q.key)));
@@ -87,6 +100,10 @@ check('SKILL.md body is under 500 lines', skill.split('\n').length < 500, `${ski
 check('SKILL.md limits the shell to prescan, read.mjs and report', /\*\*File tools only\.\*\*[^\n]*read only with `node <this skill>\/scripts\/read\.mjs <file> <start> <end>`, one file per command[^\n]*shell is otherwise only for `node scripts\/prescan\.mjs` and `node scripts\/report\.mjs --out/.test(skill));
 const links = [...skill.matchAll(/`((?:references|scripts|assets)\/[^`<>\s]+)`/g)].map((m) => m[1]);
 check('triage reads the workspace listing from the pre-scan, not a shell listing', /^1\. \*\*Triage\.\*\*[^\n]*workspace listing[^\n]*do not list the workspace yourself/m.test(skill));
+check('triage asks the persona with the track, ai-pm-leader by default, and handles builder in Track 1',
+  /^1\. \*\*Triage\.\*\*[^\n]*confirm the track[^\n]*`ai-pm-leader`[^\n]*the default[^\n]*`governance`, `developer` or `builder`[^\n]*`builder` has no Track 1 questions[^\n]*offer Track 2 or `ai-pm-leader`/m.test(skill));
+check('lever picking skips questions outside the persona', /^3\. \*\*Pick levers\.\*\*[^\n]*Questions by persona[^\n]*skip levers with none/m.test(skill));
+check('the report command passes the persona', /report\.mjs [^`]*--persona <id> --out/.test(skill));
 check('File tools rule forbids chaining commands', /\*\*File tools only\.\*\*[^\n]*Never chain commands\./.test(skill));
 check('Stay small forbids listing the skill folder', /\*\*Stay small\.\*\*[^\n]*never list this skill's folder/.test(skill));
 check(`SKILL.md fits one read.mjs range (${MAX_LINES} lines) and its description says how to open it without a file-read tool`, skill.trimEnd().split('\n').length <= MAX_LINES && /scripts\/read\.mjs <this skill>\/SKILL\.md 1 \d+/.test(desc || ''), `${skill.trimEnd().split('\n').length} lines`);

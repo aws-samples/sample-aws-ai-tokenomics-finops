@@ -11,6 +11,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `psr-q1` Do users specify output, constraints and scope before the agent starts?
 
+- Personas: developer
 - Fully covered looks like: Ask users to state five things before the agent starts: the required output, constraints, edge cases, one example, and what is out of scope. Every correction round re-sends the whole context, so a one-minute specification is cheaper than one retry.
 - Evidence: An interface or template that asks for output, constraints and scope before the agent starts.
 - Search: code, docs files for `output format|constraints|scope`, `template|required field|schema`

@@ -10,6 +10,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `seat-q1` Do you audit who actually uses what, and remove or downgrade inactive seats?
 
+- Personas: governance
 - Fully covered looks like: Coding assistants carry a per-seat licence cost that token-billed agentic work does not. That makes two actions here rather than one: remove or downgrade the seats nobody is using, and match the tier for the people who are (the next question).
 - Evidence: A seat-usage audit and removal of inactive seats; usually only the user knows.
 - Search: docs files for `\bseats?\b`, `inactive (users?|seats?)`, `licen[cs]e (audit|review)`
@@ -17,6 +18,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `seat-q2` Have you matched each user’s Kiro plan tier to observed usage, or moved the team to a shared credit pool?
 
+- Personas: governance
 - Fully covered looks like: Match plan capacity to observed usage, then repeat the review before renewal. Kiro’s individual plans step up from Pro through Pro+ and Pro Max to Power, each with a larger monthly credit allowance, and paid plans can buy add-on credits (Kiro pricing [58]). Move a user to a higher tier only when their observed usage keeps exceeding the lower one.
 - Evidence: Kiro plan tiers matched to usage, or a shared credit pool; usually only the user knows.
 - Search: docs files for `kiro (pro|power|enterprise)`, `credit (pool|sharing)`, `plan tier`

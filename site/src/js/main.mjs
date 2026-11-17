@@ -22,6 +22,7 @@ import { buildHeatmap } from './heatmap.mjs';
 import { buildCostMap } from './costmap.mjs';
 import { initHashDetails } from './hash.mjs';
 import { initScope } from './scope.mjs';
+import { initPersona } from './persona.mjs';
 import { assessment } from './assessment.mjs';
 import { initWayfinder } from './wayfinder.mjs';
 import { initSuggestLinks } from './suggest.mjs';
@@ -54,6 +55,8 @@ initHashDetails();
 // Before assessment(): it marks excluded levers' `.assess` blocks `data-scope-out`, which assessment()
 // reads on its first count. The reverse order would show the full totals for a frame and then recount.
 initScope();
+// Same reason as initScope: it marks questions outside the chosen role `data-persona-out` before the first count.
+initPersona();
 assessment();
 
 // The wayfinder listens for nav's `runbook:active` and assessment's `runbook:coverage`, so it must be

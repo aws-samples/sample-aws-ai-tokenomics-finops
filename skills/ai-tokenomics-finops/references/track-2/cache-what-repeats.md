@@ -11,18 +11,21 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `cwr-q1` Is prompt caching on, with the stable content placed first?
 
+- Personas: builder
 - Fully covered looks like: Turn caching on and order the request so the stable content comes first: system prompt, then tool schemas, then reference documents, then the variable user turn. A read bills at 0.1× down to 0.025× the input price, depending on the model, and a 5-minute write at 1.25×, so one re-read already pays for the write.
 - Evidence: Prompt caching enabled (cache points) with the stable system prompt and tools first.
 - Search: code files for `cachePoint|cache_control|cacheConfig|prompt_?caching`, `system\s*[=:]`
 
 ## `cwr-q2` Have you verified caching works, and do you track the hit rate?
 
+- Personas: builder
 - Fully covered looks like: Check that cacheReadInputTokens is non-zero from the second call of a session, then chart cache hit rate = cache reads / (cache reads + cache writes + uncached input) weekly per inference profile and alert when it drops.
 - Evidence: Cache hits verified and tracked: cache read and write token counts, invocation logging.
 - Search: code, iac, docs files for `cache_?read_?input_?tokens|cacheReadInputTokens|cacheWriteInputTokens|CacheRead`, `hit rate`, `invocation logging|loggingConfig|ModelInvocationLogging`
 
 ## `cwr-q3` Does your cache TTL match how often your sessions call?
 
+- Personas: builder
 - Fully covered looks like: Use the 1-hour TTL (2× write) when users can pause for more than five minutes between calls, and the 5-minute default (1.25× write) for automated sessions that finish in seconds. A hit refreshes the TTL at no charge.
 - Evidence: A cache TTL chosen to match how often sessions call.
 - Search: code, config files for `\bttl\b`, `\b(5m|1h)\b`

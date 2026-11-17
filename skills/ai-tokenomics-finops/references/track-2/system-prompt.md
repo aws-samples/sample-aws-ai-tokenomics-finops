@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `sp-q1` Is your system prompt as lean as it can be?
 
+- Personas: builder
 - Fully covered looks like: The fixed cost of a task is system prompt tokens × model calls per task × input price, paid before the user says a word. Measure the prompt in tokens, strip persona padding and redundant explanation, and keep only the instructions the behaviour needs.
 - Evidence: The system prompt: where it is built and how large it is.
 - Search: code, docs files for `system_?prompt|systemPrompt|SYSTEM_PROMPT`, `system\s*[=:]|instructions\s*=`
 
 ## `sp-q2` Is your system prompt versioned and cache-stable?
 
+- Personas: builder
 - Fully covered looks like: Treat the prompt as a versioned artefact: record token count, task success and cost per task for every version, and keep the prefix byte-stable, with volatile values (date, user, session id) placed after it, so the cache survives every call.
 - Evidence: A versioned system prompt with no per-call values (dates, IDs) that break the cache.
 - Search: code, config files for `prompt[_ -]?version|promptArn|PromptVersion`, `datetime\.now|Date\.now|time\.time\(|uuid`

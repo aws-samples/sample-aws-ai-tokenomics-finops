@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `csl-q2` Have you chosen how history is kept, instead of append-only?
 
+- Personas: builder
 - Fully covered looks like: Decide how the agent remembers before the history grows: a fixed window, rolling summaries, or retrieval from external memory. Append-only history makes cost grow with the age of the session rather than the size of the task.
 - Evidence: How conversation history is kept: append-only, windowed, summarised, or a memory store.
 - Search: code files for `history`, `messages\s*(\+|=|\.append)`, `memory|summar|compact`
 
 ## `csl-q3` Do you prune at natural boundaries, without breaking the cache every turn?
 
+- Personas: builder
 - Fully covered looks like: Prune at natural boundaries (task completion, an idle gap longer than the cache TTL, a size threshold), not every turn, because each prune rewrites the cached prefix and pays the write premium again. Keep the conclusion, drop the raw material.
 - Evidence: History pruned at natural boundaries without breaking the cache every turn.
 - Search: code files for `trim|prune|truncat|summar|compact`, `messages\[-?\d`

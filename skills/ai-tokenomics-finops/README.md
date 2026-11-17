@@ -34,6 +34,11 @@ Other agents: put the folder anywhere in the repo and add one line to `AGENTS.md
 Or invoke it directly: `/ai-tokenomics-finops` in Kiro and Claude Code, `$ai-tokenomics-finops` in Codex. See
 [`examples/`](examples/) for a real run and its report.
 
+The agent asks for your track and your role. `ai-pm-leader` (AI PM or leader, the default) gets every question;
+`governance`, `developer` or `builder` gets only the questions that role acts on, from every layer. The report names
+the role and lists the skipped question IDs by lever under "Not assessed for this persona", so you can route them.
+`builder` has no Track 1 questions.
+
 ## How it keeps a run small
 
 A triage step picks the track. A local pre-scan (`scripts/prescan.mjs`) runs each question's search patterns and

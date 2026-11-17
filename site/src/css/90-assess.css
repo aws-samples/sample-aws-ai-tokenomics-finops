@@ -202,6 +202,22 @@ details.read-more .rm-body > *:first-child { margin-top: .4rem; }
 .scope-picker .scope-item input { accent-color: var(--workload-accent); width: 15px; height: 15px; margin: 0; }
 .scope-picker .scope-item input:not(:checked) + span { color: var(--text-muted); text-decoration: line-through; }
 .scope-picker .scope-out { margin: 8px 0 0; font-size: .8rem; font-weight: 600; color: var(--text-muted); }
+/* --- Persona filter: the role picker in each track dashboard (site/src/js/persona.mjs) ---------- */
+.persona-picker {
+  margin: .8rem 0 1rem; padding: 10px 14px 12px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg-elev); color: var(--text);
+}
+.persona-picker legend { font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); padding: 0 6px; }
+.persona-picker .persona-help { margin: 0 0 8px; font-size: .84rem; color: var(--text-muted); }
+.persona-picker .persona-options label { display: inline-flex; align-items: center; gap: 6px; margin: 2px 16px 4px 0; font-size: .88rem; cursor: pointer; }
+.persona-picker .persona-options input { accent-color: var(--workload-accent); width: 15px; height: 15px; margin: 0; }
+.persona-picker .persona-count { margin: 6px 0 0; font-size: .82rem; font-weight: 600; color: var(--text-muted); }
+.persona-picker .persona-more { margin-top: 6px; font-size: .84rem; }
+.persona-picker .persona-more > summary { cursor: pointer; font-weight: 600; color: var(--link, var(--text)); }
+.persona-picker .persona-more ul { margin: .4rem 0 0; padding-left: 1.2rem; }
+/* A lever with no question for the chosen role. A class, not [hidden], so it never fights scope.mjs, which
+   owns `hidden` on the same lever nodes. */
+.persona-off { display: none !important; }
 .decflow.has-scope .df-scope { cursor: pointer; }
 .decflow.has-scope .df-scope:hover rect { stroke-width: 2.5; }
 .decflow .df-scope.df-off rect { fill: var(--neutral-fill); stroke: var(--text-muted); stroke-dasharray: 5 4; }

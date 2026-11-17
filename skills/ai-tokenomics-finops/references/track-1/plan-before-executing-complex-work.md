@@ -10,12 +10,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `pbe-q1` Is plan-then-execute the default way developers approach a non-trivial task?
 
+- Personas: developer
 - Fully covered looks like: Use a read-only planning pass for multi-file changes and unfamiliar code. Codex Plan mode can inspect context and propose an approach before implementation starts (OpenAI Codex best practices [98]).
 - Evidence: Plan-then-execute as the default for non-trivial work: plan mode, specs.
 - Search: docs, agent-config files for `plan mode|/plan|plan.?then`, `requirements\.md|design\.md|tasks\.md|specs?/`
 
 ## `pbe-q2` Does the plan define the tests, lint or type checks, review criteria, and stopping condition that prove the task is done?
 
+- Personas: developer
 - Fully covered looks like: Structure the task as Goal, Context, Constraints, and Done when. Use Codex Plan mode before implementation (OpenAI Codex best practices [98]).
 - Evidence: Plans that name tests, checks, review criteria and a stopping condition.
 - Search: docs, agent-config files for `done when|definition of done|acceptance criteria`, `stopping condition|exit criteria`

@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `cost-q1` Does your interface show users what their session costs?
 
+- Personas: builder
 - Fully covered looks like: Show a running figure in the interface, such as “this session has used about N tokens” or an approximate dollar amount. Users cannot economise on a quantity they never see.
 - Evidence: The interface shows users what their session costs.
 - Search: code files for `session.?cost|cost.?(meter|so far)|tokens? used|credits? (used|left|remaining)`, `\busage\b`
 
 ## `cost-q2` Is that cost shown during the session, while users can still act?
 
+- Personas: builder
 - Fully covered looks like: Show it live, during the session. An approximate number now changes behaviour; a precise number on next month’s invoice changes nothing.
 - Evidence: That cost shown during the session, while the user can still act.
 - Search: code files for `session.?cost|cost.?(meter|so far)|live|stream`

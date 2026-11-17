@@ -11,7 +11,7 @@
  * matched line that looks like it holds a secret; hard caps on files, bytes and output, with a
  * `truncated` marker when a cap is hit. Same input, same output: no clock, sorted traversal.
  *
- * Usage: node prescan.mjs [root] [--track track-1|track-2] [--lever <anchor>]... [--format md|json]
+ * Usage: node prescan.mjs [root] [--track track-1|track-2] [--lever <anchor>]... [--persona <id>] [--format md|json]
  *        [--max-hits 1-5] [--context 0|1] [--max-files N] [--max-bytes N]
  */
 
@@ -137,6 +137,8 @@ export function scan(root, assessment, options = {}) {
   for (const t of assessment.tracks) for (const l of t.levers) for (const q of l.questions) {
     if (opts.track && t.id !== opts.track) continue;
     if (opts.levers && opts.levers.length && !opts.levers.includes(l.anchor)) continue;
+    // ai-pm-leader is the all-questions view; any other persona keeps only the questions tagged for it.
+    if (opts.persona && opts.persona !== 'ai-pm-leader' && !q.personas.includes(opts.persona)) continue;
     questions.push({ track: t.id, lever: l.anchor, ...q, res: q.spec.patterns.map((p) => new RegExp(p, 'i')), globs: q.spec.in.flatMap((s) => sets[s]) });
   }
 
@@ -179,6 +181,7 @@ export function scan(root, assessment, options = {}) {
     schema: SCHEMA,
     level: 1,
     source: 'static',
+    ...(opts.persona && opts.persona !== 'ai-pm-leader' ? { persona: opts.persona } : {}),
     caps: { maxHits: opts.maxHits, context: opts.context, maxFiles: opts.maxFiles, maxBytes: opts.maxBytes, maxFileBytes: opts.maxFileBytes },
     scanned: { files: filesScanned, bytes: bytesScanned },
     skipped,
@@ -196,6 +199,7 @@ export function renderMarkdown(s) {
   const out = [`# AI Tokenomics FinOps pre-scan (${s.schema}, level ${s.level}, ${s.source})`, ''];
   const sk = Object.entries(s.skipped).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(', ') || 'none';
   out.push(`Scanned ${s.scanned.files} files, ${s.scanned.bytes} bytes. Skipped: ${sk}. Caps: ${s.caps.maxHits} hits per question, ${s.caps.maxFiles} files, ${s.caps.maxBytes} bytes.`);
+  if (s.persona) out.push(`Persona: ${s.persona}. Only its questions are listed; the others were not scanned.`);
   out.push(s.truncated ? `TRUNCATED: ${s.truncatedReason}. Ask the user to narrow the path.` : 'Truncated: no.', '');
   let lever = null;
   for (const q of s.questions) {
@@ -213,6 +217,7 @@ function parseArgs(argv) {
     const a = argv[i], v = () => { if (i + 1 >= argv.length) throw new Error(`${a} needs a value`); return argv[++i]; };
     if (a === '--track') o.track = v();
     else if (a === '--lever') o.levers.push(v());
+    else if (a === '--persona') o.persona = v();
     else if (a === '--format') o.format = v();
     else if (a === '--max-hits') o.maxHits = Number(v());
     else if (a === '--context') o.context = Number(v());
@@ -230,6 +235,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const o = parseArgs(process.argv.slice(2));
     const assessment = JSON.parse(readFileSync(ASSESSMENT, 'utf8'));
     if (o.track && !assessment.tracks.some((t) => t.id === o.track)) throw new Error(`unknown track ${o.track}`);
+    if (o.persona && !(assessment.personas || []).some((p) => p.id === o.persona)) throw new Error(`unknown persona ${o.persona}; use one of ${assessment.personas.map((p) => p.id).join(', ')}`);
     const s = scan(o.root, assessment, o);
     process.stdout.write(o.format === 'json' ? JSON.stringify(s, null, 1) + '\n' : ['## Workspace listing (two levels)', ...workspaceListing(o.root), '', renderMarkdown(s)].join('\n'));
   } catch (e) {

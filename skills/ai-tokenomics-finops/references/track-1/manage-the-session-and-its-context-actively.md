@@ -10,6 +10,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `msc-q1` Do developers reset context between unrelated tasks, rather than waiting for automatic compaction?
 
+- Personas: developer
 - Fully covered looks like: Run the assistant's clear command when you start a new task. Do not wait for auto-compaction. By the time it fires, the context is already full and you have paid for far more tokens than the task needed. The vendor's own worked comparison puts three tasks run in one session at 1.9x the tokens of the same three with a clear between them (Maximizing the value of your Claude Code sessions [90]).
 - Evidence: Guidance to reset context between unrelated tasks rather than wait for compaction.
 - Search: docs, agent-config files for `/clear|/new|/compact`, `(reset|clear) (the )?context|new session`
@@ -17,6 +18,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `msc-q2` Do you use rewind features to unwind a change the coding agent made?
 
+- Personas: developer
 - Fully covered looks like: If the agent goes down the wrong path, rewind to a checkpoint instead of carrying on. Otherwise the failed attempt stays in context and you pay for it again on every turn that follows.
 - Evidence: Use of rewind or checkpoints to undo an agent change.
 - Search: docs, agent-config files for `/rewind|checkpoint|/undo`
@@ -24,6 +26,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `msc-q3` When a session repeatedly reaches its context limit, do you identify the source before resetting it?
 
+- Personas: developer
 - Fully covered looks like: Most assistants have a command that shows exactly what's filling your context — which tools and files used the tokens, plus cache misses and oversized files (Claude Code, Manage costs effectively [60]). Check that before you reset, so you fix the actual cause instead of hitting the same wall next session.
 - Evidence: A habit of finding what fills the context before resetting a session.
 - Search: docs files for `/context|context (limit|usage)`
@@ -31,6 +34,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `rpt-q1` Do developers point the agent at specific files by path rather than asking it to discover them through open-ended exploration?
 
+- Personas: developer
 - Fully covered looks like: Precise reads keep the working set small from the start. Point the agent at specific files by path rather than asking it to go and find them: "read src/auth/login.ts and src/auth/session.ts" spends no tokens on exploration.
 - Evidence: Guidance to name files by path instead of open-ended exploration.
 - Search: docs, agent-config files for `by path|file paths?|@file|#file`
@@ -38,18 +42,21 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `ivs-q1` Do developers keep large command output out of the main session by filtering it or delegating bounded analysis?
 
+- Personas: developer
 - Fully covered looks like: Large command output can pollute the main context and be re-sent on later turns. Stop unnecessary output before deciding whether to delegate it.
 - Evidence: Large command output kept out of the main session: filtering, output limits, delegated analysis.
 - Search: docs, agent-config files for `\|\s*(head|tail|grep)`, `BASH_MAX_OUTPUT_LENGTH|output limit`, `delegat|sub-?agent`
 
 ## `ail-q1` Do you keep your always-loaded instruction files small, pushing occasional workflows on-demand and pruning them periodically?
 
+- Personas: developer
 - Fully covered looks like: Keep always-loaded instruction files limited to conventions, the directory map, and key commands. Move specialised workflows into on-demand skills or separate documents.
 - Evidence: Small always-loaded instruction files, with occasional workflows loaded on demand.
 - Search: agent-config files for `inclusion:\s*\w+`, `^#{1,2} `
 
 ## `msc-q4` Do developers review their configured MCP servers periodically and remove the ones no longer in use?
 
+- Personas: developer
 - Fully covered looks like: Review configured MCP servers and remove those that no longer support a real workflow. Implementations load catalogues differently, so measure standing context rather than assuming a fixed overhead.
 - Evidence: A periodic review that removes unused MCP servers.
 - Search: agent-config, docs files for `mcpServers|\[mcp_servers`, `review|prune|remove unused`
@@ -57,6 +64,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `msc-q5` Do developers pick the model and the reasoning effort before the first prompt, rather than switching part-way through a session?
 
+- Personas: developer
 - Fully covered looks like: Both settings sit in the cached prefix, so changing either one part-way through a session invalidates the cache. The whole conversation is then re-prefilled at the new model's price, and toggling fast mode does the same (Maximizing the value of your Claude Code sessions [90]). Decide both before the first prompt.
 - Evidence: A habit of picking model and effort before the first prompt.
 - Search: docs files for `/model|switch(ing)? models?`

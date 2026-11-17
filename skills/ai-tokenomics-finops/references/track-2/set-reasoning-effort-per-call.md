@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `eff-q1` Do you set reasoning effort for each type of step, rather than taking the model default?
 
+- Personas: builder
 - Fully covered looks like: Put the effort level in every request, chosen by what the step does: low for routing, extraction and formatting, and the default or higher only for steps that plan, debug or decide. Where the model lets you, turn thinking off for steps that need no reasoning.
 - Evidence: Reasoning effort or thinking budget set per type of step, not left at the model default.
 - Search: code, config files for `reasoning_?effort|reasoningEffort|reasoning_config`, `thinking|budget_tokens`, `additionalModelRequestFields`
 
 ## `eff-q2` Do you compare output tokens per successful task before you change an effort level?
 
+- Personas: builder
 - Fully covered looks like: Treat effort as a tuned setting. Run a representative set of each step type at two levels, compare output tokens per successful task, latency and task success, and keep the lowest level that still clears your quality bar.
 - Evidence: Output tokens per successful task compared before an effort change.
 - Search: code, docs files for `output_?tokens|outputTokens|OutputTokenCount`, `\beval(uation)?s?\b`

@@ -21,7 +21,7 @@
 import { mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadModel, EVIDENCE_SOURCES } from './lib/skill-model.mjs';
+import { loadModel, EVIDENCE_SOURCES, ALL_PERSONA } from './lib/skill-model.mjs';
 import { SITE_URL } from './build-site.mjs';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -66,12 +66,28 @@ const leverFile = (t, l) => `references/${t.id}/${l.anchor}.md`;
 const citationFile = (t, l) => `references/${t.id}/citations/${l.anchor}.md`;
 const answerLine = (options) => `Answer each question with: ${options.map((o) => `\`${o.v}\` (${o.label})`).join(', ')}, or \`unknown\` when neither the files nor the user answer it.`;
 
-function renderIndex(t, options) {
+/** Per-persona question lists for one track, so the agent knows what to skip before it opens a lever file. */
+function renderPersonas(t, personas) {
+  const qs = t.levers.flatMap((l) => l.questions);
+  const out = ['## Questions by persona', '',
+    `\`${ALL_PERSONA}\` (AI PM or leader) is the default and means every question in the table below.`, ''];
+  for (const p of personas.slice(1)) {
+    const mine = qs.filter((q) => q.personas.includes(p.id)).map((q) => q.key);
+    out.push(mine.length
+      ? `- \`${p.id}\` (${p.label}), ${mine.length}: ${mine.join(', ')}`
+      : `- \`${p.id}\` (${p.label}), 0: this track has no ${p.label} questions. Tell the user, and offer the other track or \`${ALL_PERSONA}\`.`);
+  }
+  out.push('', `With any persona other than \`${ALL_PERSONA}\`, answer only the questions in its list: skip the others, and skip a lever with none of them. A question's own personas are also in its lever file.`, '');
+  return out;
+}
+
+function renderIndex(t, options, personas) {
   const qn = t.levers.reduce((n, l) => n + l.questions.length, 0);
   const out = [HEADER, '', `# ${t.title}: lever index`, '',
     `${t.levers.length} levers, ${qn} questions, in runbook order. Load ONE lever file at a time, only for levers the triage kept. Runbook: ${SITE_URL}#${t.id}`, '',
     answerLine(options), ''];
   if (t.levers.some((l) => l.scopable)) out.push('Levers marked "scopable" may be reported Out of scope when the user confirms they do not apply.', '');
+  out.push(...renderPersonas(t, personas));
   out.push('| Layer | Lever | Questions | File |', '|---|---|---|---|');
   for (const l of t.levers) {
     out.push(`| ${l.layer} | ${l.name}${l.scopable ? ' (scopable)' : ''} | ${l.questions.map((q) => q.key).join(', ')} | \`${leverFile(t, l)}\` |`);
@@ -85,6 +101,7 @@ function renderLever(t, l, options, globSets) {
   out.push(`- What it saves: ${l.saves}`, '', answerLine(options), '');
   for (const q of l.questions) {
     out.push(`## \`${q.key}\` ${q.text}`, '');
+    out.push(`- Personas: ${q.personas.join(', ')}`);
     if (q.bestPractice) out.push(`- Fully covered looks like: ${q.bestPractice}`);
     out.push(`- Evidence: ${q.spec.evidence}`);
     out.push(`- Search: ${q.spec.in.join(', ')} files for ${q.spec.patterns.map((p) => '`' + p + '`').join(', ')}`);
@@ -117,9 +134,10 @@ function renderReportDoc(model) {
     `- source: ${ev.emit.map((s) => `\`${s}\``).join(', ')}; \`${ev.unknown}\` only with \`unknown\`. Reserved for later levels, never use now: ${ev.reserved.map((s) => `\`${s}\``).join(', ')}.`,
     '- refs: `path:line` or `path:line-line`, never pasted file content; required for code, config, iac and docs answers.',
     '- confidence: `high`, `medium` or `low`. A `user` answer needs a note saying what the user said.', '',
+    `With a persona other than \`${ALL_PERSONA}\`, a findings file lists only that persona's questions (see the track index), and a lever with none of them gets no file. Pass the same persona to the report with \`--persona <id>\`: it states the persona, counts only its questions and lists the skipped ones under "Not assessed for this persona". Personas: ${model.personas.map((p) => `\`${p.id}\``).join(', ')}.`, '',
     'Then assemble the report (it validates every file and exits 2 with the problems):', '',
     '```sh',
-    'node <skill>/scripts/report.mjs .ai-finops-assessment/findings --date YYYY-MM-DD --workspace <name> --out .ai-finops-assessment/report.md',
+    'node <skill>/scripts/report.mjs .ai-finops-assessment/findings --date YYYY-MM-DD --workspace <name> [--persona <id>] --out .ai-finops-assessment/report.md',
     '```', '',
     'Without a shell, write the report by hand in the same shape: title, date line, the disclaimer quote, a coverage line, "Gaps to address" (levers with a Not covered or Partially answer, in runbook order, each with its runbook link and "What it saves" line), "Full answer log" (every lever and question), and "Next step" with the paragraph below, copied exactly. Do not rank or prioritise gaps.', '',
     'Disclaimer:', '', `> ${model.disclaimer} ${REPORT_NOTE}`, '',
@@ -133,7 +151,7 @@ export function renderSkillFiles(htmlPath = RUNBOOK, evidencePath = EVIDENCE) {
   const files = {};
   for (const t of model.tracks) {
     if (!/^track-\d+$/.test(t.id)) throw new Error(`unexpected track section id #${t.id}`);
-    files[`references/${t.id}/index.md`] = renderIndex(t, model.options);
+    files[`references/${t.id}/index.md`] = renderIndex(t, model.options, model.personas);
     for (const l of t.levers) {
       files[leverFile(t, l)] = renderLever(t, l, model.options, evidence.globSets);
       files[citationFile(t, l)] = renderCitations(t, l);
@@ -144,6 +162,7 @@ export function renderSkillFiles(htmlPath = RUNBOOK, evidencePath = EVIDENCE) {
     $comment: 'GENERATED from content/ by scripts/build-skill.mjs. Do not edit; run npm run build:skill.',
     runbook: SITE_URL,
     options: model.options,
+    personas: model.personas,
     evidenceSources: EVIDENCE_SOURCES,
     disclaimer: model.disclaimer,
     reportNote: REPORT_NOTE,
@@ -153,7 +172,7 @@ export function renderSkillFiles(htmlPath = RUNBOOK, evidencePath = EVIDENCE) {
       id: t.id, title: t.title,
       levers: t.levers.map((l) => ({
         anchor: l.anchor, name: l.name, layer: l.layer, scopable: l.scopable, url: `${SITE_URL}#${l.anchor}`, saves: l.saves,
-        questions: l.questions.map((q) => ({ key: q.key, qid: q.qid, text: q.text, spec: q.spec }))
+        questions: l.questions.map((q) => ({ key: q.key, qid: q.qid, text: q.text, personas: q.personas, spec: q.spec }))
       }))
     }))
   };

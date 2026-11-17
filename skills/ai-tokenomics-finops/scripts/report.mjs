@@ -9,7 +9,9 @@
  *                   "refs": ["path:line"], "confidence": "high|medium|low", "note": "..." }] }
  *
  * Usage: node report.mjs <findings-dir> --date YYYY-MM-DD --workspace <name> [--track track-1|track-2]...
- *        [--out .ai-finops-assessment/report.md]
+ *        [--persona <id>] [--out .ai-finops-assessment/report.md]
+ * --persona keeps only the questions tagged for that role, says so in the header, and lists the skipped question
+ * ids by lever under "Not assessed for this persona". Without it, or with ai-pm-leader, every question is in.
  * Without --out the report goes to stdout. With --out it is written to that file, which must be inside
  * .ai-finops-assessment/ under the current directory, and only a one-line confirmation is printed.
  * Exit 2 on invalid findings, listing every problem, or on a refused --out path.
@@ -25,9 +27,20 @@ export const ASSESSMENT = join(HERE, '..', 'assets', 'assessment.json');
 const ANSWERS = ['yes', 'wip', 'no', 'na', 'unknown'];
 const CONFIDENCE = ['high', 'medium', 'low'];
 const REF = /^[^\s:][^:]*:\d+(-\d+)?$/;
+const ALL_PERSONA = 'ai-pm-leader';
 
-/** Read and validate every findings file. Returns { byLever, errors }. */
-export function loadFindings(dir, assessment) {
+/** The persona record for an id, or null for the all-questions view. Throws on an unknown id. */
+export function personaFor(assessment, id) {
+  if (!id || id === ALL_PERSONA) return null;
+  const p = (assessment.personas || []).find((x) => x.id === id);
+  if (!p) throw new Error(`unknown persona "${id}"; use one of ${(assessment.personas || []).map((x) => x.id).join(', ')}`);
+  return p;
+}
+const forPersona = (persona) => (q) => !persona || q.personas.includes(persona.id);
+
+/** Read and validate every findings file. Returns { byLever, errors }. With a persona, an answer to another role's question is an error. */
+export function loadFindings(dir, assessment, { persona } = {}) {
+  const p = personaFor(assessment, persona);
   const errors = [];
   const byLever = new Map();
   const levers = new Map(assessment.tracks.flatMap((t) => t.levers.map((l) => [l.anchor, { ...l, track: t.id }])));
@@ -46,6 +59,7 @@ export function loadFindings(dir, assessment) {
     for (const a of f.answers || []) {
       const at = `${where} ${a.id}`;
       if (!ids.has(a.id)) { errors.push(`${at}: not a question of lever "${f.lever}"`); continue; }
+      if (!forPersona(p)(lever.questions.find((q) => q.key === a.id))) errors.push(`${at}: not a question for persona "${p.id}"; leave it out`);
       if (answers.has(a.id)) errors.push(`${at}: answered twice`);
       if (!ANSWERS.includes(a.answer)) errors.push(`${at}: answer must be one of ${ANSWERS.join(', ')}`);
       if (ev.reserved.includes(a.source)) errors.push(`${at}: evidence source "${a.source}" is reserved for a later level`);
@@ -65,15 +79,18 @@ export function loadFindings(dir, assessment) {
 }
 
 /** Render the report for the given tracks (default: every track with at least one findings file). */
-export function renderReport(assessment, byLever, { date, workspace, tracks }) {
+export function renderReport(assessment, byLever, { date, workspace, tracks, persona }) {
+  const p = personaFor(assessment, persona);
+  const mine = forPersona(p);
   const label = Object.fromEntries(assessment.options.map((o) => [o.v, o.label]));
   label.unknown = 'Unknown';
   const chosen = assessment.tracks.filter((t) => (tracks && tracks.length ? tracks.includes(t.id) : t.levers.some((l) => byLever.has(l.anchor))));
   const docs = [];
   for (const t of chosen) {
-    const rows = t.levers.map((l) => {
+    const skipped = t.levers.map((l) => ({ l, ids: l.questions.filter((q) => !mine(q)).map((q) => q.key) })).filter((x) => x.ids.length);
+    const rows = t.levers.filter((l) => l.questions.some(mine)).map((l) => {
       const f = byLever.get(l.anchor);
-      const qs = l.questions.map((q) => ({ q, a: f?.answers.get(q.key) || { answer: 'unknown', source: 'none', refs: [], confidence: 'low', note: 'Not assessed.' } }));
+      const qs = l.questions.filter(mine).map((q) => ({ q, a: f?.answers.get(q.key) || { answer: 'unknown', source: 'none', refs: [], confidence: 'low', note: 'Not assessed.' } }));
       const states = qs.map((x) => x.a.answer);
       const status = f?.outOfScope ? 'Out of scope'
         : states.some((s) => s === 'no' || s === 'wip') ? 'Gap'
@@ -91,6 +108,7 @@ export function renderReport(assessment, byLever, { date, workspace, tracks }) {
     const out = [
       `# AI Tokenomics FinOps assessment — ${t.title}`, '',
       `Agent-assisted static review (Level 1) of ${workspace}, ${date}. Dated, not attributed.`, '',
+      ...(p ? [`Persona: ${p.label}. Questions for other roles were skipped and are listed under "Not assessed for this persona".`, ''] : []),
       `> ${assessment.disclaimer} ${assessment.reportNote}`, '',
       `Coverage: ${c.yes} fully covered · ${c.wip} partially · ${c.no} not covered · ${c.na} N/A · ${c.unknown} unknown (${answered}/${counted.length} answered).`, ''
     ];
@@ -108,6 +126,12 @@ export function renderReport(assessment, byLever, { date, workspace, tracks }) {
     for (const r of rows) {
       out.push(`### ${r.l.layer} · ${r.l.name} — ${r.status}`, '');
       if (r.status !== 'Out of scope') for (const x of r.qs) out.push(...line(x));
+      out.push('');
+    }
+    if (p) {
+      out.push('## Not assessed for this persona', '', `In runbook order, so you can pass them to the role that owns them. Not counted above.`, '');
+      if (!skipped.length) out.push('_None._');
+      for (const x of skipped) out.push(`- ${x.l.name}: ${x.ids.map((id) => `\`${id}\``).join(', ')}`);
       out.push('');
     }
     out.push('## Next step', '', assessment.cta, '');
@@ -152,6 +176,7 @@ function parseArgs(argv) {
     if (a === '--date') o.date = v();
     else if (a === '--workspace') o.workspace = v();
     else if (a === '--track') o.tracks.push(v());
+    else if (a === '--persona') o.persona = v();
     else if (a === '--out') o.out = v();
     else if (a.startsWith('--')) throw new Error(`unknown option ${a}`);
     else o.dir = a;
@@ -166,7 +191,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try {
     const o = parseArgs(process.argv.slice(2));
     const assessment = JSON.parse(readFileSync(ASSESSMENT, 'utf8'));
-    const { byLever, errors } = loadFindings(o.dir, assessment);
+    const { byLever, errors } = loadFindings(o.dir, assessment, o);
     if (errors.length) { console.error(`report: ${errors.length} problem(s) in the findings:\n- ${errors.join('\n- ')}`); process.exit(2); }
     const md = renderReport(assessment, byLever, o);
     if (o.out) console.log(`report: wrote ${writeReport(md, o.out)} (${Buffer.byteLength(md)} bytes)`);

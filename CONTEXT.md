@@ -10,11 +10,15 @@ _Avoid_: tool, app, site (when meaning the product)
 
 **Track**:
 One of the two audiences the runbook serves: AI Coding Assistant (Track 1) or Purpose-Built Agentic AI Application (Track 2).
-_Avoid_: path, mode, persona
+_Avoid_: path, mode, persona (a persona is a role within a track)
 
 **Actor layer**:
 A grouping of levers within a track by who controls them: Model Inference, Agent Harness, End User.
 _Avoid_: category, pillar
+
+**Persona**:
+The role an assessment is run for: AI PM or leader (every question, the default), Governance, Developer or App builder. Each diagnostic question is tagged with 1 to 3 of the last three, by who acts on its answer, so a persona draws questions from any actor layer.
+_Avoid_: audience (that is the track), user type
 
 **Lever**:
 One decision that moves the bill, with its diagnostic questions and detailed guidance.

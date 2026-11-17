@@ -31,6 +31,14 @@ read-only and drafts the gap report for you to check.
 | 2. Purpose-Built Agentic AI Application | build and operate their own agent on Amazon Bedrock | 17 |
 
 Each track groups its levers into three actor layers: Model Inference, Agent Harness, End User.
+Each question is also tagged with the roles that act on it:
+
+| Role | Sees |
+|---|---|
+| AI PM or leader (default) | every question in the track |
+| Governance, platform or FinOps | metering, plans, attribution, caps, fleet configuration, plugins, gateways, observability |
+| Developer | sessions, context, reasoning effort and planning; in Track 2, how a user specifies a request |
+| App builder | Track 2 only: routing, caching, prompts, context, retrieval, memory, tools, orchestration |
 
 ## How to use the runbook
 
@@ -38,9 +46,12 @@ Each track groups its levers into three actor layers: Model Inference, Agent Har
    For offline use, download [`content/index.html`](content/index.html) (**Download raw file**) and open it
    from disk.
 2. Pick your track. "Which track am I in?" helps if you are unsure.
-3. For each lever, answer the diagnostic questions: Fully covered, Partially, Not covered, N/A.
-4. Open the detailed guidance only where you have a gap.
-5. Export the gap report from your track's "progress and gaps" page as Markdown or PDF.
+3. Pick your role. AI PM or leader sees every question; Governance, Developer or App builder sees only the
+   questions that role acts on, from every layer. The gap report lists the skipped questions by lever, so you can
+   pass them on.
+4. For each lever, answer the diagnostic questions: Fully covered, Partially, Not covered, N/A.
+5. Open the detailed guidance only where you have a gap.
+6. Export the gap report from your track's "progress and gaps" page as Markdown or PDF.
 
 Run it alone, or as a quarterly session with engineering and finance.
 
