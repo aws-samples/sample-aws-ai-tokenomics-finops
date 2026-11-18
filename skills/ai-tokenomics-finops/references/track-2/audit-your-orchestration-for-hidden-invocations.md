@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `teui-q1` Can you trace every model and tool call to its caller and task?
 
+- Personas: governance
 - Fully covered looks like: Stamp caller, task, workflow and harness version on every model and tool call when work enters the harness, and turn on Bedrock model invocation logging, which is off by default.
 - Evidence: Every model and tool call traceable to its caller and task: request metadata, tracing, invocation logging.
 - Search: code, iac files for `requestMetadata|correlation|request_?id|task_?id`, `x-?ray|opentelemetry|\botel\b|trace`, `invocation logging|loggingConfig|ModelInvocationLogging`
 
 ## `teui-q2` Do you reconcile invocations against requested work to find orphans?
 
+- Personas: governance
 - Fully covered looks like: Join invocation records to the task ledger. Any call with no valid task, after a terminal outcome, or above the configured calls per task is a finding, not usage.
 - Evidence: Invocations reconciled against requested work to find orphans.
 - Search: docs, code files for `reconcil|orphan`, `invocation log`
@@ -24,6 +26,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `teui-q3` Do you alert on calls with no task, after completion, or over budget?
 
+- Personas: governance
 - Fully covered looks like: Publish the reconciliation as metrics and alert on contract violations (unmatched calls, post-completion calls, calls per task over the limit), routed to the owner of that workflow and harness version.
 - Evidence: Alerts on calls with no task, after completion, or over budget.
 - Search: iac, code files for `alarm|anomaly`, `AWS::CE::Anomaly|aws_ce_anomaly`, `budget`

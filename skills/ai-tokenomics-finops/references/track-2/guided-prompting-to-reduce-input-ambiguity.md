@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `guid-q1` Does your interface offer clickable options instead of a blank text box?
 
+- Personas: builder
 - Fully covered looks like: Offer suggested follow-ups, quick replies or slot filling, so the user selects a precise next request instead of typing an ambiguous one.
 - Evidence: Clickable options in the interface instead of only a blank text box.
 - Search: code files for `<button|<select|radio|chip`, `suggest(ed|ion)s?|quick.?repl(y|ies)`
 
 ## `guid-q2` Are those inputs low-variance, so clarifying round-trips are rare?
 
+- Personas: builder
 - Fully covered looks like: Design each option so the agent can act on it in one pass. A predictable input removes the clarifying call and the redo.
 - Evidence: Low-variance inputs (choices, validation) so clarifying round-trips are rare.
 - Search: code files for `\benum\b|<select|dropdown|validat`, `clarif`

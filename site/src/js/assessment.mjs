@@ -46,7 +46,7 @@ export function assessment() {
     }
 
     function updateTally(box) {
-      var qs = Array.prototype.slice.call(box.querySelectorAll('[data-assess-q]'));
+      var qs = Array.prototype.slice.call(box.querySelectorAll('[data-assess-q]')).filter(inScope);
       var total = qs.length, yes = 0, gaps = 0, answered = 0;
       qs.forEach(function (q) {
         var v = state[q.getAttribute('data-key')] || '';
@@ -71,9 +71,40 @@ export function assessment() {
     // block `data-scope-out`) contributes no questions anywhere: not to the tally, the panel, the
     // dashboard, the cost map or an export. Reading the attribute rather than importing the module keeps
     // the two independent; `runbook:scope` tells this module when to recount.
+    //
+    // A question outside the reader's role (site/src/js/persona.mjs marks it `data-persona-out`) is left out
+    // the same way, on every surface; `runbook:persona` tells this module when to recount.
     function inScope(q) {
+      if (q.hasAttribute('data-persona-out')) return false;
       var blk = q.closest('.assess');
       return !(blk && blk.hasAttribute('data-scope-out'));
+    }
+
+    /** The chosen role, or null for the all-questions view (ai-pm-leader), read from the attribute persona.mjs sets. */
+    function personaInfo() {
+      var id = document.documentElement.getAttribute('data-persona');
+      if (!id || id === 'ai-pm-leader') return null;
+      return { id: id, label: document.documentElement.getAttribute('data-persona-label') || id };
+    }
+    function personaLine(p) {
+      return 'Persona: ' + p.label + '. Questions for other roles were skipped and are listed under "Not assessed for this persona".';
+    }
+
+    /** Questions skipped for the role, by lever in page order, for levers the reader did not scope out. */
+    function skippedFor(sections) {
+      var out = [], idx = {};
+      sections.forEach(function (sec) {
+        allQuestions.forEach(function (q) {
+          if (!q.hasAttribute('data-persona-out')) return;
+          var blk = q.closest('.assess');
+          if (!blk || blk.hasAttribute('data-scope-out')) return;
+          if (sec.scope && blk.getAttribute('data-assess-group') !== sec.scope) return;
+          var lev = q.getAttribute('data-lever');
+          if (!(lev in idx)) { idx[lev] = out.length; out.push({ lever: lev, qids: [] }); }
+          out[idx[lev]].qids.push(qId(q));
+        });
+      });
+      return out;
     }
     function questionsForScope(scope) {
       if (!scope) return allQuestions.filter(inScope);
@@ -134,6 +165,8 @@ export function assessment() {
       var lines = ['# AI Tokenomics FinOps assessment — ' + title, ''];
       // When it was run. The static site has no sign-in, so the report is dated rather than attributed.
       lines.push(assessorLine(), '');
+      var persona = personaInfo();
+      if (persona) lines.push(personaLine(persona), '');
       lines.push(coverageSentence(t.c), '');
       // A report that silently omits a lever reads as if the lever were covered. Say what was left out.
       var outAll = sections.reduce(function (acc, sec) { return acc.concat(sec.out || []); }, []);
@@ -190,6 +223,13 @@ export function assessment() {
         });
         lines.push('');
       });
+      if (persona) {
+        var skipped = skippedFor(sections);
+        lines.push('## Not assessed for this persona', '', 'Not counted above. Pass them to the role that owns them.', '');
+        if (!skipped.length) lines.push('_None._');
+        skipped.forEach(function (x) { lines.push('- ' + x.lever + ': ' + x.qids.join(', ')); });
+        lines.push('');
+      }
       return lines.join('\n');
     }
 
@@ -210,6 +250,8 @@ export function assessment() {
       html.push('<h1>AI Tokenomics FinOps assessment</h1>');
       html.push('<p class="apr-scope">' + esc(title) + '</p>');
       html.push('<p class="apr-by">' + esc(assessorLine()) + '</p>');
+      var persona = personaInfo();
+      if (persona) html.push('<p class="apr-out">' + esc(personaLine(persona)) + '</p>');
       html.push('<p class="apr-cov">' + esc(coverageSentence(t.c)) + '</p>');
       var outAllPrint = sections.reduce(function (acc, sec) { return acc.concat(sec.out || []); }, []);
       if (outAllPrint.length) html.push('<p class="apr-out">Out of scope (excluded from every count): ' + esc(outAllPrint.join(', ')) + '.</p>');
@@ -274,6 +316,12 @@ export function assessment() {
       if (t.c.answered < t.c.total) {
         html.push('<p class="apr-appendix">This concise printout omits ' + (t.c.total - t.c.answered)
           + ' unanswered questions. Complete the assessment or download the Markdown report for the full question log.</p>');
+      }
+
+      if (persona) {
+        var skippedP = skippedFor(sections);
+        html.push('<h2>Not assessed for this persona</h2>');
+        html.push('<p class="apr-none">' + (skippedP.length ? esc(skippedP.map(function (x) { return x.lever + ': ' + x.qids.join(', '); }).join('; ')) + '.' : 'None.') + '</p>');
       }
 
       var root = document.getElementById('assess-print-root');
@@ -718,4 +766,5 @@ export function assessment() {
     // scope.mjs has already marked the DOM by the time this runs (main.mjs orders it first); this is for the
     // reader changing their mind later, when every count on the page has to follow.
     document.addEventListener('runbook:scope', function () { refreshAll(); });
+    document.addEventListener('runbook:persona', function () { refreshAll(); });
 }

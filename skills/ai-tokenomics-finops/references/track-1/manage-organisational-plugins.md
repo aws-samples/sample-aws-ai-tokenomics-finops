@@ -10,12 +10,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `mop-q1` Do you ship a reviewed, approved baseline of MCP servers and skills at organisation, team, and project level, rather than leaving each developer to assemble their own?
 
+- Personas: governance
 - Fully covered looks like: Curate the toolset in layers that match the work. An organisation baseline carries common tools, a team layer carries domain tools, and a repository layer carries project-specific tools.
 - Evidence: A committed baseline of approved MCP servers and skills at org, team or project level.
 - Search: agent-config files for `mcpServers`, `\[mcp_servers`, `"mcp"\s*:`, `skills?/`
 
 ## `mop-q2` Does third-party token-efficiency tooling go through your own security, supply-chain, and data-handling review?
 
+- Personas: governance
 - Fully covered looks like: Community tooling cuts cost at points the assistant does not. Put each tool through your own security review before you adopt it.
 - Evidence: A security, supply-chain and data-handling review for third-party agent tooling.
 - Search: docs files for `security review`, `supply.?chain`, `approved (tools|plugins|servers|extensions)`, `allow.?list`

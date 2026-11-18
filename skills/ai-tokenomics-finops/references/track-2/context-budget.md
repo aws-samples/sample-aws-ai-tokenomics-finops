@@ -11,12 +11,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `csl-q1` Do you measure and budget what each request’s context contains?
 
+- Personas: builder
 - Fully covered looks like: Measure before you cut: input tokens per call = instructions + capability definitions + working context + runtime output + retained state. Record each source’s tokens and how many rounds it survives; whatever is both large and carried across rounds is billed again on every round.
 - Evidence: Context per request measured and budgeted: token counts, limits, truncation.
 - Search: code files for `count_?tokens|countTokens|input_?tokens|inputTokens`, `token.?budget|max_?context|context.?window|truncat`
 
 ## `crs-q3` Are tool and runtime outputs bounded before they enter the context?
 
+- Personas: builder
 - Fully covered looks like: Give every tool an output contract: return the smallest result that supports the next decision, with a pointer to the rest, so a file read, a log search or a page snapshot cannot flood the context.
 - Evidence: Tool and runtime outputs bounded before they enter the context.
 - Search: code files for `toolResult|tool_result`, `truncat|max_?(output|result)_?(chars|bytes|tokens)|\[:\d+\]`

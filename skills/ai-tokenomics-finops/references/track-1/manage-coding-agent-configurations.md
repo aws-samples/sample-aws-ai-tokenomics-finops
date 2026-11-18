@@ -10,12 +10,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `mcc-q1` Do you maintain an evidence-backed inventory of optional features that materially increase token use?
 
+- Personas: governance
 - Fully covered looks like: You cannot manage what you have not inventoried. Work with your internal AI champions (Developer education, Q4) to list the optional capabilities enabled across the fleet.
 - Evidence: An inventory of optional agent features that raise token use (agent teams, 1M context, scheduled tasks).
 - Search: docs, agent-config files for `agent teams?`, `1M|1m-context|context window`, `scheduled tasks?|background agents?`, `token.?(hungry|heavy|cost)`
 
 ## `mcc-q2` Have you disabled these token-hungry features centrally?
 
+- Personas: governance
 - Fully covered looks like: Turn the inventory into version-controlled fleet configuration alongside model and reasoning-effort defaults. Use managed settings where the product provides them (Claude Code settings, available settings [80]; Claude Code, Permissions [81]).
 - Evidence: Managed or shared settings that switch those features off centrally.
 - Search: agent-config, config files for `managed-settings`, `DISABLE_\w+`, `"disable\w*"\s*:\s*true`, `enabled\s*[:=]\s*false`

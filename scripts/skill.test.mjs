@@ -9,7 +9,7 @@ import { join, relative } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { renderSkillFiles, joinEvidence, RUNBOOK, EVIDENCE } from './build-skill.mjs';
-import { loadModel } from './lib/skill-model.mjs';
+import { loadModel, personaMarkupProblems } from './lib/skill-model.mjs';
 import { scan, renderMarkdown, globToRegExp, workspaceListing } from '../skills/ai-tokenomics-finops/scripts/prescan.mjs';
 import { readRange, MAX_LINES } from '../skills/ai-tokenomics-finops/scripts/read.mjs';
 import { loadFindings, renderReport } from '../skills/ai-tokenomics-finops/scripts/report.mjs';
@@ -244,4 +244,103 @@ test('report --out: refuses paths outside .ai-finops-assessment/, writing nothin
   }
   assert.deepEqual(readdirSync(join(cwd, 'elsewhere')), []);
   assert.deepEqual(readdirSync(outside), []);
+});
+
+// ---- personas -------------------------------------------------------------------------------------
+
+
+test('personas: a missing tag, an unknown tag or ai-pm-leader as a tag fails the build and verify', (t) => {
+  const html = readFileSync(RUNBOOK, 'utf8');
+  assert.deepEqual(personaMarkupProblems(html), []);
+  const cases = [
+    [html.replace(/(data-key="cwr-q1") data-personas="[^"]*"/, '$1'), /cwr-q1: data-personas is missing or empty/],
+    [html.replace(/(data-key="cwr-q1") data-personas="[^"]*"/, '$1 data-personas="finance"'), /cwr-q1: unknown persona tag finance/],
+    [html.replace(/(data-key="cwr-q1") data-personas="[^"]*"/, '$1 data-personas="ai-pm-leader"'), /cwr-q1: ai-pm-leader is the all-questions view/]
+  ];
+  for (const [bad, re] of cases) {
+    assert.ok(personaMarkupProblems(bad).some((p) => re.test(p)), String(re));
+    const d = tmp(t);
+    writeFileSync(join(d, 'index.html'), bad);
+    assert.throws(() => loadModel(join(d, 'index.html')), re);
+  }
+});
+
+test('personas: tags reach the assets, the track index and each lever file', () => {
+  assert.deepEqual(assessment.personas.map((p) => p.id), ['ai-pm-leader', 'governance', 'developer', 'builder']);
+  const all = assessment.tracks.flatMap((t) => t.levers.flatMap((l) => l.questions));
+  assert.ok(all.every((x) => x.personas.length >= 1));
+  assert.match(files['references/track-1/index.md'], /^- `builder` \(App builder\), 0: this track has no App builder questions\./m);
+  assert.match(files['references/track-2/index.md'], /^- `developer` \(Developer\), 1: psr-q1\. Do not open these lever files: `know-what-you-spend`/m);
+  assert.match(files['references/track-1/right-size-the-model-to-the-task.md'], /## `rsm-q2`[^\n]*\n\n- Personas: governance, developer\n/);
+});
+
+test('prescan --persona: scans only that role\'s questions; ai-pm-leader scans all', (t) => {
+  const root = fixture(t);
+  const ids = (o) => scan(root, assessment, o).questions.map((x) => x.id);
+  const dev = ids({ persona: 'developer' });
+  assert.equal(dev.length, 15);
+  assert.ok(dev.includes('psr-q1') && dev.includes('msc-q1') && !dev.includes('qsh-q1') && !dev.includes('cwr-q1'));
+  assert.deepEqual(ids({ persona: 'ai-pm-leader' }), ids({}));
+  assert.equal(scan(root, assessment, { persona: 'governance', track: 'track-2' }).persona, 'governance');
+  assert.ok(!('persona' in scan(root, assessment, {})));
+  assert.match(renderMarkdown(scan(root, assessment, { persona: 'builder' })), /^Persona: builder\. Only its questions are listed/m);
+  const cli = spawnSync(process.execPath, [fileURLToPath(new URL('../skills/ai-tokenomics-finops/scripts/prescan.mjs', import.meta.url)), root, '--persona', 'finance'], { encoding: 'utf8' });
+  assert.equal(cli.status, 2);
+  assert.match(cli.stderr, /unknown persona finance/);
+});
+
+test('report: without --persona, and with ai-pm-leader, the output is byte-identical to main', (t) => {
+  // examples/sample-gap-report.md is the report main's report.mjs produced from the sample findings (this PR does
+  // not change it), so it is the fixture for "unchanged".
+  const fromMain = readFileSync(fileURLToPath(new URL('../skills/ai-tokenomics-finops/examples/sample-gap-report.md', import.meta.url)), 'utf8');
+  const cwd = tmp(t);
+  assert.equal(runReport(cwd, []).stdout, fromMain);
+  assert.equal(runReport(cwd, ['--persona', 'ai-pm-leader']).stdout, fromMain);
+});
+
+const forRole = (t, role) => {
+  const d = tmp(t);
+  const keys = new Map(assessment.tracks.flatMap((tr) => tr.levers.flatMap((l) => l.questions.map((x) => [x.key, x.personas]))));
+  for (const name of readdirSync(SAMPLE_FINDINGS)) {
+    const f = JSON.parse(readFileSync(join(SAMPLE_FINDINGS, name), 'utf8'));
+    f.answers = f.answers.filter((a) => keys.get(a.id).includes(role));
+    if (f.answers.length || f.outOfScope) writeFileSync(join(d, name), JSON.stringify(f));
+  }
+  return d;
+};
+
+test('report --persona governance: header, in-scope counts and the skipped list by lever', (t) => {
+  const { byLever, errors } = loadFindings(forRole(t, 'governance'), assessment, { persona: 'governance' });
+  assert.deepEqual(errors, []);
+  const md = renderReport(assessment, byLever, { date: '2026-11-10', workspace: 'w', persona: 'governance' });
+  assert.match(md, /^Persona: Governance, platform or FinOps\. Questions for other roles were skipped and are listed under "Not assessed for this persona"\.$/m);
+  // 10 governance questions; Self-host or distill is scoped out, so 9 are counted.
+  assert.match(md, /Coverage: 1 fully covered · 3 partially · 4 not covered · 0 N\/A · 1 unknown \(8\/9 answered\)/);
+  const skipped = md.split('## Not assessed for this persona')[1].split('## Next step')[0];
+  assert.equal((skipped.match(/`[a-z]+-q\d`/g) || []).length, 29);
+  assert.match(skipped, /^- Route to the right model: `rtm-q1`$/m);
+  assert.match(skipped, /^- System prompt: `sp-q1`, `sp-q2`$/m);
+  assert.ok(!/kwys-q/.test(skipped) && !/`cwr-q1`[\s\S]*Full answer log/.test(md.split('## Not assessed')[0]));
+  assert.ok(!md.includes('### Agent Harness · System prompt'));
+  assert.ok(md.trimEnd().endsWith(assessment.cta));
+});
+
+test('report --persona developer and builder on Track 1', () => {
+  const dev = renderReport(assessment, new Map(), { date: '2026-11-10', workspace: 'w', tracks: ['track-1'], persona: 'developer' });
+  assert.match(dev, /^Persona: Developer\./m);
+  assert.match(dev, /\(0\/14 answered\)/);
+  assert.match(dev, /^- Know how your coding agent is metered: `qsh-q1`, `qsh-q2`, `qsh-q3`$/m);
+  assert.match(dev, /^- Right-size the model to the task: `rsm-q1`, `rsm-q3`, `rsm-q4`$/m);
+  const builder = renderReport(assessment, new Map(), { date: '2026-11-10', workspace: 'w', tracks: ['track-1'], persona: 'builder' });
+  assert.match(builder, /\(0\/0 answered\)/);
+  assert.equal((builder.split('## Not assessed for this persona')[1].match(/`[a-z]+-q\d`/g) || []).length, 35);
+});
+
+test('report --persona: rejects an answer to another role\'s question and an unknown persona', (t) => {
+  const { errors } = loadFindings(SAMPLE_FINDINGS, assessment, { persona: 'developer' });
+  assert.ok(errors.some((e) => /cwr-q1: not a question for persona "developer"/.test(e)));
+  assert.throws(() => renderReport(assessment, new Map(), { date: '2026-11-10', workspace: 'w', persona: 'finance' }), /unknown persona "finance"/);
+  const cli = runReport(tmp(t), ['--persona', 'finance']);
+  assert.equal(cli.status, 2);
+  assert.match(cli.stderr, /unknown persona "finance"/);
 });

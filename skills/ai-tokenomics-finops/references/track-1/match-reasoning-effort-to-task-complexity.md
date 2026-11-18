@@ -10,12 +10,14 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 ## `mre-q1` Do developers choose reasoning effort from task difficulty and validate it on representative workflows?
 
+- Personas: developer
 - Fully covered looks like: Choose reasoning effort from task difficulty, then validate it on representative workflows. Use lower effort for routine, well-specified work and raise it only when deeper analysis improves results.
 - Evidence: Reasoning effort chosen by task difficulty and validated on representative work.
 - Search: docs, agent-config files for `reasoning.?effort|\beffort\b`, `thinking`
 
 ## `mre-q2` Is deep reasoning escalated by exception, reserved for complex work?
 
+- Personas: developer
 - Fully covered looks like: Reserve deep reasoning for multi-step planning, architecture decisions, subtle concurrency bugs, and long-horizon refactors. Escalating by exception keeps the expensive setting where it earns its cost.
 - Evidence: Deep reasoning escalated by exception only.
 - Search: docs, agent-config files for `ultrathink|think hard|xhigh|\bmax\b effort`, `deep reasoning`

@@ -24,6 +24,13 @@ export const EVIDENCE_SOURCES = {
   unknown: 'none'
 };
 
+/**
+ * The role filter. `ai-pm-leader` is the all-questions view and is never a tag; every question carries 1 to 3
+ * of the others in `data-personas`, naming the roles that act on its answer. The ids and labels come from the
+ * runbook's own persona pickers, so the site and the skill cannot disagree.
+ */
+export const ALL_PERSONA = 'ai-pm-leader';
+
 const attr = (n, name) => (n.attrs || []).find((a) => a.name === name)?.value;
 const hasClass = (n, c) => (attr(n, 'class') || '').split(/\s+/).includes(c);
 const isEl = (n) => !!n.tagName;
@@ -83,6 +90,16 @@ export function loadModel(htmlPath) {
     refs.set(attr(li, 'id'), { n: Number(attr(li, 'id').slice(4)), title: text(li).replace(a ? text(a) : '', '').trim(), url: a ? attr(a, 'href') : '' });
   }
 
+  // The persona pickers: one per track, identical, the all-questions view first.
+  const pickers = all(doc, (n) => attr(n, 'data-persona-picker') !== undefined);
+  const personaSets = pickers.map((p) => all(p, (n) => n.tagName === 'input' && attr(n, 'type') === 'radio')
+    .map((i) => ({ id: attr(i, 'value'), label: text(i.parentNode) })));
+  if (!personaSets.length) throw new Error('no [data-persona-picker] in the runbook');
+  if (personaSets.some((s) => JSON.stringify(s) !== JSON.stringify(personaSets[0]))) throw new Error('the persona pickers do not list the same personas');
+  const personas = personaSets[0];
+  if (personas[0]?.id !== ALL_PERSONA) throw new Error(`the first persona must be ${ALL_PERSONA}`);
+  const tagIds = personas.slice(1).map((p) => p.id);
+
   const tracks = [];
   for (const sec of all(doc, (n) => n.tagName === 'section' && hasClass(n, 'track-route'))) {
     const track = { id: attr(sec, 'id'), title: text(first(sec, (n) => n.tagName === 'h2')), levers: [] };
@@ -119,8 +136,13 @@ export function loadModel(htmlPath) {
           // shortcut: one answer scale for every question; if a question ever gets its own, emit options per question.
           else if (sig !== JSON.stringify(options)) throw new Error(`question ${attr(q, 'data-key')} has a different answer scale: ${sig}`);
           const lead = first(q, (n) => hasClass(n, 'gap-lead'));
+          const key = attr(q, 'data-key');
+          const tags = (attr(q, 'data-personas') || '').trim().split(/\s+/).filter(Boolean);
+          const bad = personaTagProblems(tags, tagIds);
+          if (bad) throw new Error(`question ${key}: ${bad}`);
           return {
-            key: attr(q, 'data-key'),
+            key,
+            personas: tags,
             qid: text(first(q, (n) => hasClass(n, 'qid'))),
             text: text(first(q, (n) => hasClass(n, 'assess-qtext'))).replace(/^Q\d+\s*/, ''),
             // The bold run-in label ("Best practice." / "The short answer.") is page furniture, not guidance.
@@ -140,8 +162,41 @@ export function loadModel(htmlPath) {
   };
   return {
     tracks,
+    personas,
     options,
     cta: one('track-gap-cta'),
     disclaimer: one('beta-note').replace(/\s*To suggest a correction.*$/, '')
   };
+}
+
+/** Why a question's persona tags are invalid, or '' when they are valid. Shared by the build and verify. */
+export function personaTagProblems(tags, tagIds) {
+  if (!tags.length) return 'data-personas is missing or empty; tag it with 1 to 3 of ' + tagIds.join(', ');
+  if (tags.length > 3) return `data-personas has ${tags.length} tags; at most 3`;
+  if (new Set(tags).size !== tags.length) return 'data-personas repeats a tag';
+  if (tags.includes(ALL_PERSONA)) return `${ALL_PERSONA} is the all-questions view and is never a tag`;
+  const unknown = tags.filter((t) => !tagIds.includes(t));
+  if (unknown.length) return `unknown persona tag ${unknown.join(', ')}; use ${tagIds.join(', ')}`;
+  return '';
+}
+
+/**
+ * Every persona-tag problem in the runbook markup, as messages; empty when every question is validly tagged.
+ * verify-runbook.mjs runs this so `npm run verify` fails on a missing tag, an unknown tag or ai-pm-leader used
+ * as a tag, listing all of them at once instead of the first one loadModel() throws on.
+ */
+export function personaMarkupProblems(html) {
+  const picker = (html.match(/<fieldset[^>]*data-persona-picker[\s\S]*?<\/fieldset>/) || [''])[0];
+  const ids = [...picker.matchAll(/<input type="radio"[^>]*\svalue="([^"]+)"/g)].map((m) => m[1]);
+  if (!ids.length) return ['no persona picker ([data-persona-picker]) with radio options'];
+  const tagIds = ids.filter((id) => id !== ALL_PERSONA);
+  const problems = [];
+  for (const m of html.matchAll(/<div class="assess-q"[^>]*>/g)) {
+    const tag = m[0];
+    const key = (tag.match(/\sdata-key="([^"]+)"/) || [])[1] || '(no data-key)';
+    const raw = (tag.match(/\sdata-personas="([^"]*)"/) || [])[1];
+    const bad = personaTagProblems((raw || '').trim().split(/\s+/).filter(Boolean), tagIds);
+    if (bad) problems.push(`${key}: ${bad}`);
+  }
+  return problems;
 }

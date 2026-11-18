@@ -1825,6 +1825,22 @@ details.read-more .rm-body > *:first-child { margin-top: .4rem; }
 .scope-picker .scope-item input { accent-color: var(--workload-accent); width: 15px; height: 15px; margin: 0; }
 .scope-picker .scope-item input:not(:checked) + span { color: var(--text-muted); text-decoration: line-through; }
 .scope-picker .scope-out { margin: 8px 0 0; font-size: .8rem; font-weight: 600; color: var(--text-muted); }
+/* --- Persona filter: the role picker in each track dashboard (site/src/js/persona.mjs) ---------- */
+.persona-picker {
+  margin: .8rem 0 1rem; padding: 10px 14px 12px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg-elev); color: var(--text);
+}
+.persona-picker legend { font-size: .78rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); padding: 0 6px; }
+.persona-picker .persona-help { margin: 0 0 8px; font-size: .84rem; color: var(--text-muted); }
+.persona-picker .persona-options label { display: inline-flex; align-items: center; gap: 6px; margin: 2px 16px 4px 0; font-size: .88rem; cursor: pointer; }
+.persona-picker .persona-options input { accent-color: var(--workload-accent); width: 15px; height: 15px; margin: 0; }
+.persona-picker .persona-count { margin: 6px 0 0; font-size: .82rem; font-weight: 600; color: var(--text-muted); }
+.persona-picker .persona-more { margin-top: 6px; font-size: .84rem; }
+.persona-picker .persona-more > summary { cursor: pointer; font-weight: 600; color: var(--link, var(--text)); }
+.persona-picker .persona-more ul { margin: .4rem 0 0; padding-left: 1.2rem; }
+/* A lever with no question for the chosen role. A class, not [hidden], so it never fights scope.mjs, which
+   owns `hidden` on the same lever nodes. */
+.persona-off { display: none !important; }
 .decflow.has-scope .df-scope { cursor: pointer; }
 .decflow.has-scope .df-scope:hover rect { stroke-width: 2.5; }
 .decflow .df-scope.df-off rect { fill: var(--neutral-fill); stroke: var(--text-muted); stroke-dasharray: 5 4; }
@@ -2272,6 +2288,29 @@ details.assess-gap { margin-top: 12px; }
           <h3 id="assessment-t1-heading">Your AI Coding Assistant cost assessment</h3>
           <p>Work one layer at a time. Answers and notes stay in this browser, and Track 2 never contributes to these totals, gaps, exports or reset actions.</p>
         </div>
+        <!-- Role filter (site/src/js/persona.mjs). Hidden until the script runs, so without JavaScript every
+             question shows. Tags live on each question's data-personas; ai-pm-leader is the all view. -->
+        <fieldset class="persona-picker" data-persona-picker hidden>
+          <legend>Show questions for</legend>
+          <p class="persona-help">Pick your role to see only the questions you act on, from every layer. Hidden questions stay out of your counts, and your gap report lists them so you can pass them on.</p>
+          <div class="persona-options">
+            <label><input type="radio" name="persona-t1" value="ai-pm-leader" checked> All questions (AI PM or leader)</label>
+            <label><input type="radio" name="persona-t1" value="governance"> Governance, platform or FinOps</label>
+            <label><input type="radio" name="persona-t1" value="developer"> Developer</label>
+            <label><input type="radio" name="persona-t1" value="builder"> App builder</label>
+          </div>
+          <p class="persona-count" data-persona-count aria-live="polite"></p>
+          <details class="persona-more">
+            <summary>Read more</summary>
+            <p>Each question is tagged with the roles that act on its answer, so one role can draw questions from Model Inference, Agent Harness and End User alike. A question can belong to more than one role. Your choice applies to both tracks and stays in this browser.</p>
+            <ul>
+              <li><strong>All questions (AI PM or leader):</strong> every question in the track. This is the default.</li>
+              <li><strong>Governance, platform or FinOps:</strong> metering, plans, attribution, spending caps, fleet configuration, plugins, gateways and observability.</li>
+              <li><strong>Developer:</strong> how you run a coding-agent session, manage its context, choose reasoning effort and plan work. In Track 2, how a user specifies a request.</li>
+              <li><strong>App builder:</strong> Track 2 only: model and price routing, caching, the system prompt, context, retrieval, memory, tools and orchestration.</li>
+            </ul>
+          </details>
+        </fieldset>
         <div class="track-progress-wrap">
           <div class="track-progress-label" data-ad-progress-label aria-live="polite">0 / 32 answered · 0% complete</div>
           <div class="track-progress" data-ad-progress role="progressbar" aria-label="Track 1 assessment completion" aria-valuemin="0" aria-valuemax="32" aria-valuenow="0"><span data-ad-progress-fill></span></div>
@@ -2315,7 +2354,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="qsh-q1" data-lever="Know how your coding agent is metered" data-anchor="know-how-your-fleet-is-metered">
+        <div class="assess-q" data-assess-q data-key="qsh-q1" data-personas="governance" data-lever="Know how your coding agent is metered" data-anchor="know-how-your-fleet-is-metered">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you know how your AI coding agent meters usage?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2346,7 +2385,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="qsh-q2" data-lever="Know how your coding agent is metered" data-anchor="know-how-your-fleet-is-metered">
+        <div class="assess-q" data-assess-q data-key="qsh-q2" data-personas="governance" data-lever="Know how your coding agent is metered" data-anchor="know-how-your-fleet-is-metered">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you know what happens when the quota runs out: a hard stop, a queue, or paid overage?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2367,7 +2406,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="qsh-q3" data-lever="Know how your coding agent is metered" data-anchor="know-how-your-fleet-is-metered">
+        <div class="assess-q" data-assess-q data-key="qsh-q3" data-personas="governance" data-lever="Know how your coding agent is metered" data-anchor="know-how-your-fleet-is-metered">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Do you monitor that meter and alert before it empties?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -2405,7 +2444,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="rsm-q1" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
+        <div class="assess-q" data-assess-q data-key="rsm-q1" data-personas="governance" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you set version-controlled model defaults centrally for the fleet?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2431,7 +2470,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="rsm-q2" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
+        <div class="assess-q" data-assess-q data-key="rsm-q2" data-personas="governance developer" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>For each subagent, do you select its model and reasoning effort for the delegated task?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2454,7 +2493,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="rsm-q3" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
+        <div class="assess-q" data-assess-q data-key="rsm-q3" data-personas="governance" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Does your fleet default to low-to-moderate reasoning effort for routine, well-specified work, with deep reasoning switched on only by exception rather than left on by default?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -2477,7 +2516,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" id="manage-the-model-lifecycle" data-assess-q data-key="rsm-q4" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
+        <div class="assess-q" id="manage-the-model-lifecycle" data-assess-q data-key="rsm-q4" data-personas="governance" data-lever="Right-size the model to the task" data-anchor="right-size-the-model-to-the-task">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q4</span>Do you manage your fleet's model default as a lifecycle, not a one-time choice: trialling new models with a small group before they become the default, and auditing your pinned configuration against the provider's retirement schedule?</div>
             <div class="seg" role="group" aria-label="Status for Q4">
@@ -2510,7 +2549,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="seat-q1" data-lever="Right-size the subscription plan" data-anchor="right-size-the-subscription-plan">
+        <div class="assess-q" data-assess-q data-key="seat-q1" data-personas="governance" data-lever="Right-size the subscription plan" data-anchor="right-size-the-subscription-plan">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you audit who actually uses what, and remove or downgrade inactive seats?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2531,7 +2570,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="seat-q2" data-lever="Right-size the subscription plan" data-anchor="right-size-the-subscription-plan">
+        <div class="assess-q" data-assess-q data-key="seat-q2" data-personas="governance" data-lever="Right-size the subscription plan" data-anchor="right-size-the-subscription-plan">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Have you matched each user’s Kiro plan tier to observed usage, or moved the team to a shared credit pool?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2570,7 +2609,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="scap-q1" data-lever="Cost attribution and spending caps" data-anchor="cost-attribution-and-spending-caps">
+        <div class="assess-q" data-assess-q data-key="scap-q1" data-personas="governance" data-lever="Cost attribution and spending caps" data-anchor="cost-attribution-and-spending-caps">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you understand your team's usage pattern and break down spend at user, team, and department level?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2610,7 +2649,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="scap-q2" data-lever="Cost attribution and spending caps" data-anchor="cost-attribution-and-spending-caps">
+        <div class="assess-q" data-assess-q data-key="scap-q2" data-personas="governance" data-lever="Cost attribution and spending caps" data-anchor="cost-attribution-and-spending-caps">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you have organisation-level spend caps and per-user limits enforced?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2635,7 +2674,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="scap-q3" data-lever="Cost attribution and spending caps" data-anchor="cost-attribution-and-spending-caps">
+        <div class="assess-q" data-assess-q data-key="scap-q3" data-personas="governance" data-lever="Cost attribution and spending caps" data-anchor="cost-attribution-and-spending-caps">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Do you have a defined process for developers to request more quota when a task calls for it, a named approver, and a short turnaround?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -2694,7 +2733,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="mcc-q1" data-lever="Manage coding agent configurations" data-anchor="manage-coding-agent-configurations">
+        <div class="assess-q" data-assess-q data-key="mcc-q1" data-personas="governance" data-lever="Manage coding agent configurations" data-anchor="manage-coding-agent-configurations">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you maintain an evidence-backed inventory of optional features that materially increase token use?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2716,7 +2755,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="mcc-q2" data-lever="Manage coding agent configurations" data-anchor="manage-coding-agent-configurations">
+        <div class="assess-q" data-assess-q data-key="mcc-q2" data-personas="governance" data-lever="Manage coding agent configurations" data-anchor="manage-coding-agent-configurations">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Have you disabled these token-hungry features centrally?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2756,7 +2795,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="mop-q1" data-lever="Manage organisational plugins" data-anchor="manage-organisational-plugins">
+        <div class="assess-q" data-assess-q data-key="mop-q1" data-personas="governance" data-lever="Manage organisational plugins" data-anchor="manage-organisational-plugins">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you ship a reviewed, approved baseline of MCP servers and skills at organisation, team, and project level, rather than leaving each developer to assemble their own?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2781,7 +2820,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="mop-q2" data-lever="Manage organisational plugins" data-anchor="manage-organisational-plugins">
+        <div class="assess-q" data-assess-q data-key="mop-q2" data-personas="governance" data-lever="Manage organisational plugins" data-anchor="manage-organisational-plugins">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Does third-party token-efficiency tooling go through your own security, supply-chain, and data-handling review?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2825,7 +2864,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="owm-q1" data-lever="Run an open-weight model behind your coding-agent harness" data-anchor="run-an-open-weight-model-behind-your-coding-agent-harness">
+        <div class="assess-q" data-assess-q data-key="owm-q1" data-personas="governance" data-lever="Run an open-weight model behind your coding-agent harness" data-anchor="run-an-open-weight-model-behind-your-coding-agent-harness">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Have you measured cost per solved task, not price per token, for each candidate open-weight model and harness pair on your own repositories and tasks?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2852,7 +2891,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="owm-q2" data-lever="Run an open-weight model behind your coding-agent harness" data-anchor="run-an-open-weight-model-behind-your-coding-agent-harness">
+        <div class="assess-q" data-assess-q data-key="owm-q2" data-personas="governance" data-lever="Run an open-weight model behind your coding-agent harness" data-anchor="run-an-open-weight-model-behind-your-coding-agent-harness">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Have you reviewed the gateway, data-handling, and model-provenance path for the open-weight model, including whether it runs in your account on Amazon Bedrock or through a third-party API?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2878,7 +2917,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="owm-q3" data-lever="Run an open-weight model behind your coding-agent harness" data-anchor="run-an-open-weight-model-behind-your-coding-agent-harness">
+        <div class="assess-q" data-assess-q data-key="owm-q3" data-personas="governance" data-lever="Run an open-weight model behind your coding-agent harness" data-anchor="run-an-open-weight-model-behind-your-coding-agent-harness">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Have you confirmed that the chosen model's tool calling works cleanly through your gateway into the specific harness you run?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -2938,7 +2977,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="dedu-q1" data-lever="Developer education" data-anchor="developer-education">
+        <div class="assess-q" data-assess-q data-key="dedu-q1" data-personas="governance" data-lever="Developer education" data-anchor="developer-education">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Have you published an organisational AI coding agent guide, kept as a living document, that covers setup, the constraints in place and why they exist, session best practices, and how to request a higher limit?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -2960,7 +2999,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="dedu-q2" data-lever="Developer education" data-anchor="developer-education">
+        <div class="assess-q" data-assess-q data-key="dedu-q2" data-personas="governance" data-lever="Developer education" data-anchor="developer-education">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Does onboarding get the assistant installed and correctly configured on day one, with the organisation-level settings and skills, the team's own, and whatever the repository ships?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -2982,7 +3021,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="dedu-q3" data-lever="Developer education" data-anchor="developer-education">
+        <div class="assess-q" data-assess-q data-key="dedu-q3" data-personas="governance developer" data-lever="Developer education" data-anchor="developer-education">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Do developers learn the habits through pair and mob programming on real work, using existing external courses for the fundamentals instead of building your own training from scratch?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -3003,7 +3042,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="dedu-q4" data-lever="Developer education" data-anchor="developer-education">
+        <div class="assess-q" data-assess-q data-key="dedu-q4" data-personas="governance" data-lever="Developer education" data-anchor="developer-education">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q4</span>Do you sponsor internal AI champions and run a community of practice, so new practices and cost wins found by individuals spread across the organisation?</div>
             <div class="seg" role="group" aria-label="Status for Q4">
@@ -3041,7 +3080,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="msc-q1" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="msc-q1" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do developers reset context between unrelated tasks, rather than waiting for automatic compaction?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -3064,7 +3103,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="msc-q2" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="msc-q2" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you use rewind features to unwind a change the coding agent made?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -3085,7 +3124,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="msc-q3" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="msc-q3" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>When a session repeatedly reaches its context limit, do you identify the source before resetting it?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -3107,7 +3146,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="rpt-q1" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="rpt-q1" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q4</span>Do developers point the agent at specific files by path rather than asking it to discover them through open-ended exploration?</div>
             <div class="seg" role="group" aria-label="Status for Q4">
@@ -3129,7 +3168,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="ivs-q1" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="ivs-q1" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q5</span>Do developers keep large command output out of the main session by filtering it or delegating bounded analysis?</div>
             <div class="seg" role="group" aria-label="Status for Q5">
@@ -3153,7 +3192,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="ail-q1" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="ail-q1" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q6</span>Do you keep your always-loaded instruction files small, pushing occasional workflows on-demand and pruning them periodically?</div>
             <div class="seg" role="group" aria-label="Status for Q6">
@@ -3176,7 +3215,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="msc-q4" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="msc-q4" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q7</span>Do developers review their configured MCP servers periodically and remove the ones no longer in use?</div>
             <div class="seg" role="group" aria-label="Status for Q7">
@@ -3198,7 +3237,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="msc-q5" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
+        <div class="assess-q" data-assess-q data-key="msc-q5" data-personas="developer" data-lever="Manage the session and its context actively" data-anchor="manage-the-session-and-its-context-actively">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q8</span>Do developers pick the model and the reasoning effort before the first prompt, rather than switching part-way through a session?</div>
             <div class="seg" role="group" aria-label="Status for Q8">
@@ -3237,7 +3276,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="mre-q1" data-lever="Match reasoning effort to task complexity" data-anchor="match-reasoning-effort-to-task-complexity">
+        <div class="assess-q" data-assess-q data-key="mre-q1" data-personas="developer" data-lever="Match reasoning effort to task complexity" data-anchor="match-reasoning-effort-to-task-complexity">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do developers choose reasoning effort from task difficulty and validate it on representative workflows?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -3259,7 +3298,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="mre-q2" data-lever="Match reasoning effort to task complexity" data-anchor="match-reasoning-effort-to-task-complexity">
+        <div class="assess-q" data-assess-q data-key="mre-q2" data-personas="developer" data-lever="Match reasoning effort to task complexity" data-anchor="match-reasoning-effort-to-task-complexity">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Is deep reasoning escalated by exception, reserved for complex work?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -3297,7 +3336,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-        <div class="assess-q" data-assess-q data-key="pbe-q1" data-lever="Plan before executing complex work" data-anchor="plan-before-executing-complex-work">
+        <div class="assess-q" data-assess-q data-key="pbe-q1" data-personas="developer" data-lever="Plan before executing complex work" data-anchor="plan-before-executing-complex-work">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Is plan-then-execute the default way developers approach a non-trivial task?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -3318,7 +3357,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-        <div class="assess-q" data-assess-q data-key="pbe-q2" data-lever="Plan before executing complex work" data-anchor="plan-before-executing-complex-work">
+        <div class="assess-q" data-assess-q data-key="pbe-q2" data-personas="developer" data-lever="Plan before executing complex work" data-anchor="plan-before-executing-complex-work">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Does the plan define the tests, lint or type checks, review criteria, and stopping condition that prove the task is done?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -3379,6 +3418,29 @@ details.assess-gap { margin-top: 12px; }
           <h3 id="assessment-t2-heading">Your Purpose-Built Agentic AI Application cost assessment</h3>
           <p>Work one layer at a time. Answers and notes stay in this browser, and Track 1 never contributes to these totals, gaps, exports or reset actions.</p>
         </div>
+        <!-- Role filter (site/src/js/persona.mjs). Hidden until the script runs, so without JavaScript every
+             question shows. Tags live on each question's data-personas; ai-pm-leader is the all view. -->
+        <fieldset class="persona-picker" data-persona-picker hidden>
+          <legend>Show questions for</legend>
+          <p class="persona-help">Pick your role to see only the questions you act on, from every layer. Hidden questions stay out of your counts, and your gap report lists them so you can pass them on.</p>
+          <div class="persona-options">
+            <label><input type="radio" name="persona-t2" value="ai-pm-leader" checked> All questions (AI PM or leader)</label>
+            <label><input type="radio" name="persona-t2" value="governance"> Governance, platform or FinOps</label>
+            <label><input type="radio" name="persona-t2" value="developer"> Developer</label>
+            <label><input type="radio" name="persona-t2" value="builder"> App builder</label>
+          </div>
+          <p class="persona-count" data-persona-count aria-live="polite"></p>
+          <details class="persona-more">
+            <summary>Read more</summary>
+            <p>Each question is tagged with the roles that act on its answer, so one role can draw questions from Model Inference, Agent Harness and End User alike. A question can belong to more than one role. Your choice applies to both tracks and stays in this browser.</p>
+            <ul>
+              <li><strong>All questions (AI PM or leader):</strong> every question in the track. This is the default.</li>
+              <li><strong>Governance, platform or FinOps:</strong> metering, plans, attribution, spending caps, fleet configuration, plugins, gateways and observability.</li>
+              <li><strong>Developer:</strong> how you run a coding-agent session, manage its context, choose reasoning effort and plan work. In Track 2, how a user specifies a request.</li>
+              <li><strong>App builder:</strong> Track 2 only: model and price routing, caching, the system prompt, context, retrieval, memory, tools and orchestration.</li>
+            </ul>
+          </details>
+        </fieldset>
         <div class="track-progress-wrap">
           <div class="track-progress-label" data-ad-progress-label aria-live="polite">0 / 32 answered · 0% complete</div>
           <div class="track-progress" data-ad-progress role="progressbar" aria-label="Track 2 assessment completion" aria-valuemin="0" aria-valuemax="32" aria-valuenow="0"><span data-ad-progress-fill></span></div>
@@ -3521,7 +3583,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q1: Decompose total spend -->
-                <div class="assess-q" data-assess-q data-key="kwys-q1" data-lever="Know what you spend and what it buys" data-anchor="know-what-you-spend">
+                <div class="assess-q" data-assess-q data-key="kwys-q1" data-personas="governance" data-lever="Know what you spend and what it buys" data-anchor="know-what-you-spend">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you know your total agent spend and how it is constructed?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -3553,7 +3615,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q2: Cost per business outcome -->
-                <div class="assess-q" data-assess-q data-key="kwys-q2" data-lever="Know what you spend and what it buys" data-anchor="know-what-you-spend">
+                <div class="assess-q" data-assess-q data-key="kwys-q2" data-personas="governance builder" data-lever="Know what you spend and what it buys" data-anchor="know-what-you-spend">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you track cost per successful task, and gate releases on it?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -3580,7 +3642,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q3: Attribution -->
-                <div class="assess-q" data-assess-q data-key="kwys-q3" data-lever="Know what you spend and what it buys" data-anchor="know-what-you-spend">
+                <div class="assess-q" data-assess-q data-key="kwys-q3" data-personas="governance" data-lever="Know what you spend and what it buys" data-anchor="know-what-you-spend">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Is every dollar attributed to the team or workload that caused it?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -3633,7 +3695,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q1: Tiered routing -->
-                <div class="assess-q" data-assess-q data-key="rtm-q1" data-lever="Route to the right model" data-anchor="route-to-the-right-model">
+                <div class="assess-q" data-assess-q data-key="rtm-q1" data-personas="builder" data-lever="Route to the right model" data-anchor="route-to-the-right-model">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Does each request go to the cheapest model that meets your quality bar?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -3701,7 +3763,7 @@ details.assess-gap { margin-top: 12px; }
         <!-- Q2: Lifecycle audit (the former Q2 quota-posture question was removed 2026-09-03 because quota
              mechanics are not a cost-optimisation lever; the quota mechanics reference table is retained
              under Route to the right price Q1 as the target of the Track 1 crosswalk and appendix links) -->
-                <div class="assess-q" data-assess-q data-key="rtm-q2" data-lever="Route to the right model" data-anchor="route-to-the-right-model">
+                <div class="assess-q" data-assess-q data-key="rtm-q2" data-personas="governance builder" data-lever="Route to the right model" data-anchor="route-to-the-right-model">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you audit pinned model IDs against the lifecycle pages?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -3761,7 +3823,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q1: Service tier + batch -->
-                <div class="assess-q" data-assess-q data-key="rtp-q1" data-lever="Route to the right price" data-anchor="route-to-the-right-price">
+                <div class="assess-q" data-assess-q data-key="rtp-q1" data-personas="builder" data-lever="Route to the right price" data-anchor="route-to-the-right-price">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you choose Standard or batch deliberately for each workload?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -3811,7 +3873,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q2: Cross-region -->
-                <div class="assess-q" data-assess-q data-key="rtp-q2" data-lever="Route to the right price" data-anchor="route-to-the-right-price">
+                <div class="assess-q" data-assess-q data-key="rtp-q2" data-personas="governance builder" data-lever="Route to the right price" data-anchor="route-to-the-right-price">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you call cross-region inference profiles rather than single-Region model IDs?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -3872,7 +3934,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q1: How to implement prompt caching -->
-                <div class="assess-q" data-assess-q data-key="cwr-q1" data-lever="Cache what repeats" data-anchor="cache-what-repeats">
+                <div class="assess-q" data-assess-q data-key="cwr-q1" data-personas="builder" data-lever="Cache what repeats" data-anchor="cache-what-repeats">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Is prompt caching on, with the stable content placed first?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -3916,7 +3978,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q2: How to verify caching is working -->
-                <div class="assess-q" data-assess-q data-key="cwr-q2" data-lever="Cache what repeats" data-anchor="cache-what-repeats">
+                <div class="assess-q" data-assess-q data-key="cwr-q2" data-personas="builder" data-lever="Cache what repeats" data-anchor="cache-what-repeats">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Have you verified caching works, and do you track the hit rate?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -3948,7 +4010,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q3: TTL strategy -->
-                <div class="assess-q" data-assess-q data-key="cwr-q3" data-lever="Cache what repeats" data-anchor="cache-what-repeats">
+                <div class="assess-q" data-assess-q data-key="cwr-q3" data-personas="builder" data-lever="Cache what repeats" data-anchor="cache-what-repeats">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Does your cache TTL match how often your sessions call?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -4000,7 +4062,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q1: Explicit effort per step type -->
-                <div class="assess-q" data-assess-q data-key="eff-q1" data-lever="Set reasoning effort per call" data-anchor="set-reasoning-effort-per-call">
+                <div class="assess-q" data-assess-q data-key="eff-q1" data-personas="builder" data-lever="Set reasoning effort per call" data-anchor="set-reasoning-effort-per-call">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you set reasoning effort for each type of step, rather than taking the model default?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4036,7 +4098,7 @@ details.assess-gap { margin-top: 12px; }
         </div>
 
         <!-- Q2: Measure the effect -->
-                <div class="assess-q" data-assess-q data-key="eff-q2" data-lever="Set reasoning effort per call" data-anchor="set-reasoning-effort-per-call">
+                <div class="assess-q" data-assess-q data-key="eff-q2" data-personas="builder" data-lever="Set reasoning effort per call" data-anchor="set-reasoning-effort-per-call">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you compare output tokens per successful task before you change an effort level?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4082,7 +4144,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-                <div class="assess-q" data-assess-q data-key="dis-q1" data-lever="Self-host or distill when volume justifies it" data-anchor="distill-when-volume-justifies-it">
+                <div class="assess-q" data-assess-q data-key="dis-q1" data-personas="governance builder" data-lever="Self-host or distill when volume justifies it" data-anchor="distill-when-volume-justifies-it">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Does your volume clear the break-even for distillation or self-hosting?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4105,7 +4167,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-                <div class="assess-q" data-assess-q data-key="dis-q2" data-lever="Self-host or distill when volume justifies it" data-anchor="distill-when-volume-justifies-it">
+                <div class="assess-q" data-assess-q data-key="dis-q2" data-personas="builder" data-lever="Self-host or distill when volume justifies it" data-anchor="distill-when-volume-justifies-it">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Have you chosen the managed, managed-compute or self-managed path deliberately?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4142,7 +4204,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-                <div class="assess-q" data-assess-q data-key="dis-q3" data-lever="Self-host or distill when volume justifies it" data-anchor="distill-when-volume-justifies-it">
+                <div class="assess-q" data-assess-q data-key="dis-q3" data-personas="builder" data-lever="Self-host or distill when volume justifies it" data-anchor="distill-when-volume-justifies-it">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Do you curate the training data, A/B test the student and plan a refresh?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -4294,7 +4356,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="sp-q1" data-lever="System prompt" data-anchor="system-prompt">
+        <div class="assess-q" data-assess-q data-key="sp-q1" data-personas="builder" data-lever="System prompt" data-anchor="system-prompt">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Is your system prompt as lean as it can be?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4315,7 +4377,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="sp-q2" data-lever="System prompt" data-anchor="system-prompt">
+        <div class="assess-q" data-assess-q data-key="sp-q2" data-personas="builder" data-lever="System prompt" data-anchor="system-prompt">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Is your system prompt versioned and cache-stable?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4357,7 +4419,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="csl-q1" data-lever="Context" data-anchor="context-budget">
+        <div class="assess-q" data-assess-q data-key="csl-q1" data-personas="builder" data-lever="Context" data-anchor="context-budget">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you measure and budget what each request’s context contains?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4403,7 +4465,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="crs-q3" data-lever="Context" data-anchor="context-budget">
+        <div class="assess-q" data-assess-q data-key="crs-q3" data-personas="builder" data-lever="Context" data-anchor="context-budget">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Are tool and runtime outputs bounded before they enter the context?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4462,7 +4524,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="rag-q1" data-lever="Retrieval" data-anchor="retrieval-cost">
+        <div class="assess-q" data-assess-q data-key="rag-q1" data-personas="builder" data-lever="Retrieval" data-anchor="retrieval-cost">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Does your vector store’s pricing model fit your query volume?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4494,7 +4556,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="rag-q2" data-lever="Retrieval" data-anchor="retrieval-cost">
+        <div class="assess-q" data-assess-q data-key="rag-q2" data-personas="builder" data-lever="Retrieval" data-anchor="retrieval-cost">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you retrieve the fewest, smallest chunks that answer the question?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4518,7 +4580,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="rag-q3" data-lever="Retrieval" data-anchor="retrieval-cost">
+        <div class="assess-q" data-assess-q data-key="rag-q3" data-personas="builder" data-lever="Retrieval" data-anchor="retrieval-cost">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Do your re-syncs embed only what changed?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -4561,7 +4623,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="csl-q2" data-lever="Memory" data-anchor="design-memory-and-compaction-as-architecture">
+        <div class="assess-q" data-assess-q data-key="csl-q2" data-personas="builder" data-lever="Memory" data-anchor="design-memory-and-compaction-as-architecture">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Have you chosen how history is kept, instead of append-only?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4597,7 +4659,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="csl-q3" data-lever="Memory" data-anchor="design-memory-and-compaction-as-architecture">
+        <div class="assess-q" data-assess-q data-key="csl-q3" data-personas="builder" data-lever="Memory" data-anchor="design-memory-and-compaction-as-architecture">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you prune at natural boundaries, without breaking the cache every turn?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4655,7 +4717,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="crs-q1" data-lever="Tool design" data-anchor="budget-the-tool-definition-weight">
+        <div class="assess-q" data-assess-q data-key="crs-q1" data-personas="builder" data-lever="Tool design" data-anchor="budget-the-tool-definition-weight">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do you keep a costed inventory of tools, skills and MCP servers?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4692,7 +4754,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="crs-q2" data-lever="Tool design" data-anchor="budget-the-tool-definition-weight">
+        <div class="assess-q" data-assess-q data-key="crs-q2" data-personas="builder" data-lever="Tool design" data-anchor="budget-the-tool-definition-weight">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Does each call see only the tools it needs?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4751,7 +4813,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="bso-q1" data-lever="Orchestration" data-anchor="bound-the-reasoning-loop">
+        <div class="assess-q" data-assess-q data-key="bso-q1" data-personas="builder" data-lever="Orchestration" data-anchor="bound-the-reasoning-loop">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do loops have termination and retry limits, with rules where rules suffice?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4786,7 +4848,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="bso-q2" data-lever="Orchestration" data-anchor="bound-the-reasoning-loop">
+        <div class="assess-q" data-assess-q data-key="bso-q2" data-personas="builder" data-lever="Orchestration" data-anchor="bound-the-reasoning-loop">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Is multi-agent used only where it beats a single agent?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -4825,7 +4887,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="bso-q3" data-lever="Orchestration" data-anchor="bound-the-reasoning-loop">
+        <div class="assess-q" data-assess-q data-key="bso-q3" data-personas="builder" data-lever="Orchestration" data-anchor="bound-the-reasoning-loop">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Do you measure the full cost of a workflow, including retries and coordination?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -4900,7 +4962,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="ceb-q1" data-lever="Guardrails and limits" data-anchor="enforce-per-user-ceilings-at-the-gateway">
+        <div class="assess-q" data-assess-q data-key="ceb-q1" data-personas="builder" data-lever="Guardrails and limits" data-anchor="enforce-per-user-ceilings-at-the-gateway">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Are concurrency, queue depth and fan-out bounded in dispatcher code?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -4935,7 +4997,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="ceb-q2" data-lever="Guardrails and limits" data-anchor="enforce-per-user-ceilings-at-the-gateway">
+        <div class="assess-q" data-assess-q data-key="ceb-q2" data-personas="governance" data-lever="Guardrails and limits" data-anchor="enforce-per-user-ceilings-at-the-gateway">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Are request, token and connection limits enforced per caller at the gateway?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -5010,7 +5072,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="teui-q1" data-lever="Observability" data-anchor="audit-your-orchestration-for-hidden-invocations">
+        <div class="assess-q" data-assess-q data-key="teui-q1" data-personas="governance" data-lever="Observability" data-anchor="audit-your-orchestration-for-hidden-invocations">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Can you trace every model and tool call to its caller and task?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -5045,7 +5107,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="teui-q2" data-lever="Observability" data-anchor="audit-your-orchestration-for-hidden-invocations">
+        <div class="assess-q" data-assess-q data-key="teui-q2" data-personas="governance" data-lever="Observability" data-anchor="audit-your-orchestration-for-hidden-invocations">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Do you reconcile invocations against requested work to find orphans?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -5081,7 +5143,7 @@ details.assess-gap { margin-top: 12px; }
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
 
-        <div class="assess-q" data-assess-q data-key="teui-q3" data-lever="Observability" data-anchor="audit-your-orchestration-for-hidden-invocations">
+        <div class="assess-q" data-assess-q data-key="teui-q3" data-personas="governance" data-lever="Observability" data-anchor="audit-your-orchestration-for-hidden-invocations">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q3</span>Do you alert on calls with no task, after completion, or over budget?</div>
             <div class="seg" role="group" aria-label="Status for Q3">
@@ -5195,7 +5257,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer the question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-                <div class="assess-q" data-assess-q data-key="psr-q1" data-lever="Precise specifications to avoid rework" data-anchor="precise-specifications-to-avoid-rework">
+                <div class="assess-q" data-assess-q data-key="psr-q1" data-personas="developer" data-lever="Precise specifications to avoid rework" data-anchor="precise-specifications-to-avoid-rework">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Do users specify output, constraints and scope before the agent starts?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -5247,7 +5309,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-                <div class="assess-q" data-assess-q data-key="guid-q1" data-lever="Guided prompting to reduce input ambiguity" data-anchor="guided-prompting-to-reduce-input-ambiguity">
+                <div class="assess-q" data-assess-q data-key="guid-q1" data-personas="builder" data-lever="Guided prompting to reduce input ambiguity" data-anchor="guided-prompting-to-reduce-input-ambiguity">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Does your interface offer clickable options instead of a blank text box?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -5278,7 +5340,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-                <div class="assess-q" data-assess-q data-key="guid-q2" data-lever="Guided prompting to reduce input ambiguity" data-anchor="guided-prompting-to-reduce-input-ambiguity">
+                <div class="assess-q" data-assess-q data-key="guid-q2" data-personas="builder" data-lever="Guided prompting to reduce input ambiguity" data-anchor="guided-prompting-to-reduce-input-ambiguity">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Are those inputs low-variance, so clarifying round-trips are rare?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -5317,7 +5379,7 @@ details.assess-gap { margin-top: 12px; }
           <span class="assess-sub">Answer each question for your workload, then open the guidance where you have a gap.</span>
           <span class="assess-tally" data-assess-tally aria-live="polite"></span>
         </div>
-                <div class="assess-q" data-assess-q data-key="cost-q1" data-lever="Show the user what their session costs" data-anchor="show-the-user-what-their-session-costs">
+                <div class="assess-q" data-assess-q data-key="cost-q1" data-personas="builder" data-lever="Show the user what their session costs" data-anchor="show-the-user-what-their-session-costs">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q1</span>Does your interface show users what their session costs?</div>
             <div class="seg" role="group" aria-label="Status for Q1">
@@ -5338,7 +5400,7 @@ details.assess-gap { margin-top: 12px; }
           </details>
           <label class="assess-notes"><span class="an-label">Notes</span><textarea rows="2" data-assess-note placeholder="Record what is missing or the follow-up action..."></textarea></label>
         </div>
-                <div class="assess-q" data-assess-q data-key="cost-q2" data-lever="Show the user what their session costs" data-anchor="show-the-user-what-their-session-costs">
+                <div class="assess-q" data-assess-q data-key="cost-q2" data-personas="builder" data-lever="Show the user what their session costs" data-anchor="show-the-user-what-their-session-costs">
           <div class="assess-qrow">
             <div class="assess-qtext"><span class="qid">Q2</span>Is that cost shown during the session, while users can still act?</div>
             <div class="seg" role="group" aria-label="Status for Q2">
@@ -5472,6 +5534,7 @@ details.assess-gap { margin-top: 12px; }
       <div class="assessment-separation-note">
         <p><strong>Each track is a separate assessment.</strong> Progress, applicable-answer coverage, notes, gaps, exports, printing and resets are calculated only from the track you open.</p>
         <p>Use the two cards above to start or continue. There is deliberately no blended score across unlike operating models.</p>
+        <p><strong>Pick your role.</strong> Every question is tagged with the roles that act on it. Choose AI PM or leader to see every question, or Governance, Developer or App builder to see only yours, from every layer. Your gap report lists the skipped questions so you can route them. Not sure? Start with AI PM or leader; you can switch any time.</p>
         <p><strong>Prefer to start from your code?</strong> The <a href="https://github.com/aws-samples/sample-aws-ai-tokenomics-finops/tree/main/skills/ai-tokenomics-finops">AI Tokenomics FinOps agent skill</a> asks these same questions in your coding agent, reviews your repository read-only, and drafts the gap report for you to check.</p>
       </div>
     </section>
@@ -7490,6 +7553,96 @@ details.assess-gap { margin-top: 12px; }
     }
   }
 
+  // site/src/js/persona.mjs
+  var STORE3 = "tokenomics-assessment-persona-v1";
+  var ALL_PERSONA = "ai-pm-leader";
+  function initPersona() {
+    var pickers = Array.prototype.slice.call(document.querySelectorAll("[data-persona-picker]"));
+    if (!pickers.length) return;
+    var root = document.documentElement;
+    var labels = {};
+    Array.prototype.forEach.call(pickers[0].querySelectorAll('input[type="radio"]'), function(i) {
+      labels[i.value] = i.parentElement.textContent.trim();
+    });
+    var current = load();
+    if (!labels[current]) current = ALL_PERSONA;
+    var questions = Array.prototype.slice.call(document.querySelectorAll("[data-assess-q]"));
+    var levers = Array.prototype.slice.call(document.querySelectorAll(".assess[data-assess-lever]")).map(function(box) {
+      var h4 = box.previousElementSibling;
+      while (h4 && !(h4.tagName === "H4" && h4.id)) h4 = h4.previousElementSibling;
+      var nodes = [];
+      for (var n = h4; n; n = n.nextElementSibling) {
+        if (n !== h4 && n.matches("h4[id], h3, figure, .assess-report, [data-scope-picker]")) break;
+        nodes.push(n);
+      }
+      var nav = h4 ? Array.prototype.slice.call(document.querySelectorAll('#sidebar a.nav-link[href="#' + h4.id + '"]')).map(function(a) {
+        return a.closest("li") || a;
+      }) : [];
+      return { box, qs: Array.prototype.slice.call(box.querySelectorAll("[data-assess-q]")), nodes, nav };
+    });
+    function tagsOf(q) {
+      return (q.getAttribute("data-personas") || "").split(/\s+/);
+    }
+    function apply(silent) {
+      root.setAttribute("data-persona", current);
+      root.setAttribute("data-persona-label", labels[current]);
+      questions.forEach(function(q) {
+        var out = current !== ALL_PERSONA && tagsOf(q).indexOf(current) === -1;
+        q.hidden = out;
+        if (out) q.setAttribute("data-persona-out", "");
+        else q.removeAttribute("data-persona-out");
+      });
+      levers.forEach(function(rec) {
+        var none = rec.qs.every(function(q) {
+          return q.hasAttribute("data-persona-out");
+        });
+        if (none) rec.box.setAttribute("data-persona-out", "");
+        else rec.box.removeAttribute("data-persona-out");
+        rec.nodes.concat(rec.nav).forEach(function(n) {
+          n.classList.toggle("persona-off", none);
+        });
+      });
+      pickers.forEach(function(p) {
+        Array.prototype.forEach.call(p.querySelectorAll('input[type="radio"]'), function(i) {
+          i.checked = i.value === current;
+        });
+        var count = p.querySelector("[data-persona-count]");
+        var track = p.closest("section.track-route");
+        if (!count || !track) return;
+        var all = track.querySelectorAll("[data-assess-q]").length;
+        var shown = track.querySelectorAll("[data-assess-q]:not([data-persona-out])").length;
+        var name = (track.querySelector("h2") || {}).textContent || "This track";
+        var trackName = name.split(" - ")[0];
+        count.textContent = current === ALL_PERSONA ? "Showing all " + all + " questions." : shown ? "Showing " + shown + " of " + all + " questions for " + labels[current] + "." : trackName + " has no questions for " + labels[current] + ". Choose the other track, or All questions.";
+      });
+      if (!silent) document.dispatchEvent(new CustomEvent("runbook:persona", { detail: { persona: current } }));
+    }
+    pickers.forEach(function(p) {
+      p.hidden = false;
+      p.addEventListener("change", function(e) {
+        var input = e.target.closest('input[type="radio"]');
+        if (!input || !labels[input.value]) return;
+        current = input.value;
+        save();
+        apply(false);
+      });
+    });
+    apply(true);
+    function load() {
+      try {
+        return localStorage.getItem(STORE3) || ALL_PERSONA;
+      } catch (e) {
+        return ALL_PERSONA;
+      }
+    }
+    function save() {
+      try {
+        localStorage.setItem(STORE3, current);
+      } catch (e) {
+      }
+    }
+  }
+
   // site/src/js/stamp.mjs
   function assessorLine(now) {
     const when = (now || /* @__PURE__ */ new Date()).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
@@ -7566,7 +7719,7 @@ details.assess-gap { margin-top: 12px; }
 
   // site/src/js/assessment.mjs
   function assessment() {
-    var STORE3 = "tokenomics-assessment-v1";
+    var STORE4 = "tokenomics-assessment-v1";
     var NOTESTORE = "tokenomics-assessment-notes-v1";
     var LABELS = { yes: "Fully covered", wip: "Partially", no: "Not covered", na: "N/A" };
     var allQuestions = Array.prototype.slice.call(document.querySelectorAll("[data-assess-q]"));
@@ -7577,7 +7730,7 @@ details.assess-gap { margin-top: 12px; }
     if (!allQuestions.length) return;
     var state = {}, notes = {};
     try {
-      state = JSON.parse(localStorage.getItem(STORE3) || "{}") || {};
+      state = JSON.parse(localStorage.getItem(STORE4) || "{}") || {};
     } catch (e) {
       state = {};
     }
@@ -7588,7 +7741,7 @@ details.assess-gap { margin-top: 12px; }
     }
     function persist() {
       try {
-        localStorage.setItem(STORE3, JSON.stringify(state));
+        localStorage.setItem(STORE4, JSON.stringify(state));
       } catch (e) {
       }
     }
@@ -7620,7 +7773,7 @@ details.assess-gap { margin-top: 12px; }
       if (ta && notes[key] != null && ta.value !== notes[key]) ta.value = notes[key];
     }
     function updateTally(box) {
-      var qs = Array.prototype.slice.call(box.querySelectorAll("[data-assess-q]"));
+      var qs = Array.prototype.slice.call(box.querySelectorAll("[data-assess-q]")).filter(inScope);
       var total = qs.length, yes = 0, gaps = 0, answered = 0;
       qs.forEach(function(q) {
         var v = state[q.getAttribute("data-key")] || "";
@@ -7634,8 +7787,35 @@ details.assess-gap { margin-top: 12px; }
       tally.innerHTML = '<span class="pill ok">' + yes + "/" + total + ' covered</span><span class="pill gap' + (gaps ? " active" : "") + '">' + gaps + " gap" + (gaps === 1 ? "" : "s") + "</span>" + (done ? '<span class="pill done">complete</span>' : '<span class="pill">' + answered + "/" + total + " answered</span>");
     }
     function inScope(q) {
+      if (q.hasAttribute("data-persona-out")) return false;
       var blk = q.closest(".assess");
       return !(blk && blk.hasAttribute("data-scope-out"));
+    }
+    function personaInfo() {
+      var id = document.documentElement.getAttribute("data-persona");
+      if (!id || id === "ai-pm-leader") return null;
+      return { id, label: document.documentElement.getAttribute("data-persona-label") || id };
+    }
+    function personaLine(p) {
+      return "Persona: " + p.label + '. Questions for other roles were skipped and are listed under "Not assessed for this persona".';
+    }
+    function skippedFor(sections) {
+      var out = [], idx = {};
+      sections.forEach(function(sec) {
+        allQuestions.forEach(function(q) {
+          if (!q.hasAttribute("data-persona-out")) return;
+          var blk = q.closest(".assess");
+          if (!blk || blk.hasAttribute("data-scope-out")) return;
+          if (sec.scope && blk.getAttribute("data-assess-group") !== sec.scope) return;
+          var lev = q.getAttribute("data-lever");
+          if (!(lev in idx)) {
+            idx[lev] = out.length;
+            out.push({ lever: lev, qids: [] });
+          }
+          out[idx[lev]].qids.push(qId(q));
+        });
+      });
+      return out;
     }
     function questionsForScope(scope2) {
       if (!scope2) return allQuestions.filter(inScope);
@@ -7702,6 +7882,8 @@ details.assess-gap { margin-top: 12px; }
       var t = totalsFor(sections);
       var lines = ["# AI Tokenomics FinOps assessment — " + title, ""];
       lines.push(assessorLine(), "");
+      var persona = personaInfo();
+      if (persona) lines.push(personaLine(persona), "");
       lines.push(coverageSentence(t.c), "");
       var outAll = sections.reduce(function(acc, sec) {
         return acc.concat(sec.out || []);
@@ -7758,6 +7940,15 @@ details.assess-gap { margin-top: 12px; }
         });
         lines.push("");
       });
+      if (persona) {
+        var skipped = skippedFor(sections);
+        lines.push("## Not assessed for this persona", "", "Not counted above. Pass them to the role that owns them.", "");
+        if (!skipped.length) lines.push("_None._");
+        skipped.forEach(function(x) {
+          lines.push("- " + x.lever + ": " + x.qids.join(", "));
+        });
+        lines.push("");
+      }
       return lines.join("\n");
     }
     function printReport(title, sections, slug) {
@@ -7767,6 +7958,8 @@ details.assess-gap { margin-top: 12px; }
       html.push("<h1>AI Tokenomics FinOps assessment</h1>");
       html.push('<p class="apr-scope">' + esc(title) + "</p>");
       html.push('<p class="apr-by">' + esc(assessorLine()) + "</p>");
+      var persona = personaInfo();
+      if (persona) html.push('<p class="apr-out">' + esc(personaLine(persona)) + "</p>");
       html.push('<p class="apr-cov">' + esc(coverageSentence(t.c)) + "</p>");
       var outAllPrint = sections.reduce(function(acc, sec) {
         return acc.concat(sec.out || []);
@@ -7825,6 +8018,13 @@ details.assess-gap { margin-top: 12px; }
       }
       if (t.c.answered < t.c.total) {
         html.push('<p class="apr-appendix">This concise printout omits ' + (t.c.total - t.c.answered) + " unanswered questions. Complete the assessment or download the Markdown report for the full question log.</p>");
+      }
+      if (persona) {
+        var skippedP = skippedFor(sections);
+        html.push("<h2>Not assessed for this persona</h2>");
+        html.push('<p class="apr-none">' + (skippedP.length ? esc(skippedP.map(function(x) {
+          return x.lever + ": " + x.qids.join(", ");
+        }).join("; ")) + "." : "None.") + "</p>");
       }
       var root = document.getElementById("assess-print-root");
       if (!root) {
@@ -8255,6 +8455,9 @@ details.assess-gap { margin-top: 12px; }
     document.addEventListener("runbook:scope", function() {
       refreshAll();
     });
+    document.addEventListener("runbook:persona", function() {
+      refreshAll();
+    });
   }
 
   // site/src/js/wayfinder.mjs
@@ -8555,6 +8758,7 @@ details.assess-gap { margin-top: 12px; }
   buildCostMap();
   initHashDetails();
   initScope();
+  initPersona();
   assessment();
   initWayfinder();
   try {
