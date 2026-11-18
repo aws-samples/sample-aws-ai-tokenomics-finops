@@ -64,6 +64,8 @@ for (const t of model.tracks) {
   check(`${t.id}: persona totals`, JSON.stringify(got) === JSON.stringify(EXPECT_PERSONAS[t.id]), JSON.stringify(got));
   const index = files[`references/${t.id}/index.md`] || '';
   check(`${t.id}: the index lists questions by persona`, model.personas.slice(1).every((p) => index.includes(`- \`${p.id}\` (${p.label}), ${got[p.id]}`)));
+  check(`${t.id}: the index names the levers each persona can skip`, model.personas.slice(1).every((p) => t.levers.filter((l) => !l.questions.some((q) => q.personas.includes(p.id)))
+    .every((l) => got[p.id] === 0 || index.split('\n').find((x) => x.startsWith(`- \`${p.id}\``)).includes(`\`${l.anchor}\``))));
 }
 const assets = JSON.parse(files['assets/assessment.json']);
 const assetKeys = assets.tracks.flatMap((t) => t.levers.flatMap((l) => l.questions.map((q) => q.key)));

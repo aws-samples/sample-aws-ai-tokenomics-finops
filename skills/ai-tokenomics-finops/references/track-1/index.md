@@ -10,8 +10,8 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 
 `ai-pm-leader` (AI PM or leader) is the default and means every question in the table below.
 
-- `governance` (Governance, platform or FinOps), 23: qsh-q1, qsh-q2, qsh-q3, rsm-q1, rsm-q2, rsm-q3, rsm-q4, seat-q1, seat-q2, scap-q1, scap-q2, scap-q3, mcc-q1, mcc-q2, mop-q1, mop-q2, owm-q1, owm-q2, owm-q3, dedu-q1, dedu-q2, dedu-q3, dedu-q4
-- `developer` (Developer), 14: rsm-q2, dedu-q3, msc-q1, msc-q2, msc-q3, rpt-q1, ivs-q1, ail-q1, msc-q4, msc-q5, mre-q1, mre-q2, pbe-q1, pbe-q2
+- `governance` (Governance, platform or FinOps), 23: qsh-q1, qsh-q2, qsh-q3, rsm-q1, rsm-q2, rsm-q3, rsm-q4, seat-q1, seat-q2, scap-q1, scap-q2, scap-q3, mcc-q1, mcc-q2, mop-q1, mop-q2, owm-q1, owm-q2, owm-q3, dedu-q1, dedu-q2, dedu-q3, dedu-q4. Do not open these lever files: `manage-the-session-and-its-context-actively`, `match-reasoning-effort-to-task-complexity`, `plan-before-executing-complex-work`
+- `developer` (Developer), 14: rsm-q2, dedu-q3, msc-q1, msc-q2, msc-q3, rpt-q1, ivs-q1, ail-q1, msc-q4, msc-q5, mre-q1, mre-q2, pbe-q1, pbe-q2. Do not open these lever files: `know-how-your-fleet-is-metered`, `right-size-the-subscription-plan`, `cost-attribution-and-spending-caps`, `manage-coding-agent-configurations`, `manage-organisational-plugins`, `run-an-open-weight-model-behind-your-coding-agent-harness`
 - `builder` (App builder), 0: this track has no App builder questions. Tell the user, and offer the other track or `ai-pm-leader`.
 
 With any persona other than `ai-pm-leader`, answer only the questions in its list: skip the others, and skip a lever with none of them. A question's own personas are also in its lever file.

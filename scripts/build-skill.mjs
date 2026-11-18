@@ -73,8 +73,9 @@ function renderPersonas(t, personas) {
     `\`${ALL_PERSONA}\` (AI PM or leader) is the default and means every question in the table below.`, ''];
   for (const p of personas.slice(1)) {
     const mine = qs.filter((q) => q.personas.includes(p.id)).map((q) => q.key);
+    const skip = t.levers.filter((l) => !l.questions.some((q) => q.personas.includes(p.id))).map((l) => `\`${l.anchor}\``);
     out.push(mine.length
-      ? `- \`${p.id}\` (${p.label}), ${mine.length}: ${mine.join(', ')}`
+      ? `- \`${p.id}\` (${p.label}), ${mine.length}: ${mine.join(', ')}${skip.length ? `. Do not open these lever files: ${skip.join(', ')}` : ''}`
       : `- \`${p.id}\` (${p.label}), 0: this track has no ${p.label} questions. Tell the user, and offer the other track or \`${ALL_PERSONA}\`.`);
   }
   out.push('', `With any persona other than \`${ALL_PERSONA}\`, answer only the questions in its list: skip the others, and skip a lever with none of them. A question's own personas are also in its lever file.`, '');
