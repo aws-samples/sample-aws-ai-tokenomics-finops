@@ -270,7 +270,7 @@ test('personas: tags reach the assets, the track index and each lever file', () 
   const all = assessment.tracks.flatMap((t) => t.levers.flatMap((l) => l.questions));
   assert.ok(all.every((x) => x.personas.length >= 1));
   assert.match(files['references/track-1/index.md'], /^- `builder` \(App builder\), 0: this track has no App builder questions\./m);
-  assert.match(files['references/track-2/index.md'], /^- `developer` \(Developer\), 1: psr-q1$/m);
+  assert.match(files['references/track-2/index.md'], /^- `developer` \(Developer\), 1: psr-q1\. Do not open these lever files: `know-what-you-spend`/m);
   assert.match(files['references/track-1/right-size-the-model-to-the-task.md'], /## `rsm-q2`[^\n]*\n\n- Personas: governance, developer\n/);
 });
 
