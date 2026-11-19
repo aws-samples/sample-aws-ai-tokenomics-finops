@@ -25,6 +25,6 @@
   "devDependencies": {
     "esbuild": "^0.28.2",
     "parse5": "^8.1.1",
-    "puppeteer-core": "^25.16.0"
+    "puppeteer-core": "^25.17.0"
   }
 }
