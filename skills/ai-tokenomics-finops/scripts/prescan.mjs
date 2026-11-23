@@ -3,7 +3,7 @@
  * AI Tokenomics FinOps pre-scan (Level 1, static).
  *
  * Runs the runbook's per-question evidence patterns (assets/assessment.json) over a workspace and prints
- * a fixed-size summary: capped hits per question, with file:line references. The agent reads this summary
+ * a fixed-size summary: capped hits per question (code, config and IaC before docs), with file:line references. The agent reads this summary
  * instead of the repository. The markdown output starts with a two-level workspace listing for triage.
  *
  * Guarantees: Node built-ins only; no network; read-only (writes nothing, only prints); never follows
@@ -146,7 +146,9 @@ export function scan(root, assessment, options = {}) {
   const { files, truncated: listCap } = listFiles(root, opts, skipped);
   let truncated = listCap;
   let filesScanned = 0, bytesScanned = 0;
-  const found = new Map(questions.map((q) => [q.key, { total: 0, bySource: {}, shown: [] }]));
+  // Hits shown per question: code, config and IaC first, docs only in the slots left, so a docs-heavy repo
+  // cannot crowd out code evidence while a README hit still shows when it is the only evidence.
+  const found = new Map(questions.map((q) => [q.key, { total: 0, bySource: {}, first: [], docs: [] }]));
 
   for (const path of files) {
     const rel = relative(root, path).split(sep).join('/');
@@ -159,20 +161,23 @@ export function scan(root, assessment, options = {}) {
     const lines = readFileSync(path, 'utf8').split(/\r?\n/);
     filesScanned++; bytesScanned += size;
     const source = classify(rel, sets);
+    // Agent instructions (CLAUDE.md, AGENTS.md, .kiro/...) are config evidence even as Markdown, so they rank first.
+    const late = source === 'docs' && !(sets['agent-config'] || []).some((r) => r.test(rel));
     for (const q of wanted) {
       const f = found.get(q.key);
       lines.forEach((line, i) => {
         if (!q.res.some((r) => r.test(line))) return;
         f.total++;
         f.bySource[source] = (f.bySource[source] || 0) + 1;
-        if (f.shown.length >= opts.maxHits) return;
+        const keep = late ? f.docs : f.first;
+        if (keep.length >= opts.maxHits) return;
         const from = Math.max(0, i - opts.context), to = Math.min(lines.length - 1, i + opts.context);
         const text = [];
         for (let j = from; j <= to; j++) {
           const s = lines[j].trim();
           text.push(SECRET_LINE.test(s) ? '[line withheld: may hold a secret]' : s.length > opts.lineWidth ? s.slice(0, opts.lineWidth - 1) + '…' : s);
         }
-        f.shown.push({ ref: `${rel}:${i + 1}`, source, text });
+        keep.push({ ref: `${rel}:${i + 1}`, source, text });
       });
     }
   }
@@ -189,7 +194,8 @@ export function scan(root, assessment, options = {}) {
     truncatedReason: truncated || null,
     questions: questions.map((q) => {
       const f = found.get(q.key);
-      return { id: q.key, track: q.track, lever: q.lever, hits: f.total, bySource: f.bySource, shown: f.shown, more: f.total - f.shown.length };
+      const shown = [...f.first, ...f.docs].slice(0, opts.maxHits);
+      return { id: q.key, track: q.track, lever: q.lever, hits: f.total, bySource: f.bySource, shown, more: f.total - shown.length };
     })
   };
 }
@@ -198,7 +204,7 @@ export function scan(root, assessment, options = {}) {
 export function renderMarkdown(s) {
   const out = [`# AI Tokenomics FinOps pre-scan (${s.schema}, level ${s.level}, ${s.source})`, ''];
   const sk = Object.entries(s.skipped).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(', ') || 'none';
-  out.push(`Scanned ${s.scanned.files} files, ${s.scanned.bytes} bytes. Skipped: ${sk}. Caps: ${s.caps.maxHits} hits per question, ${s.caps.maxFiles} files, ${s.caps.maxBytes} bytes.`);
+  out.push(`Scanned ${s.scanned.files} files, ${s.scanned.bytes} bytes. Skipped: ${sk}. Caps: ${s.caps.maxHits} hits per question (code, config and IaC before docs), ${s.caps.maxFiles} files, ${s.caps.maxBytes} bytes.`);
   if (s.persona) out.push(`Persona: ${s.persona}. Only its questions are listed; the others were not scanned.`);
   out.push(s.truncated ? `TRUNCATED: ${s.truncatedReason}. Ask the user to narrow the path.` : 'Truncated: no.', '');
   let lever = null;

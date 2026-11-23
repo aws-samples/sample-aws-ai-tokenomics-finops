@@ -107,6 +107,10 @@ check('triage asks the persona with the track, ai-pm-leader by default, and hand
 check('lever picking skips questions outside the persona', /^3\. \*\*Pick levers\.\*\*[^\n]*Questions by persona[^\n]*skip levers with none/m.test(skill));
 check('the report command passes the persona', /report\.mjs [^`]*--persona <id> --out/.test(skill));
 check('File tools rule forbids chaining commands', /\*\*File tools only\.\*\*[^\n]*Never chain commands\./.test(skill));
+check('the first action is stated before anything else: open SKILL.md, then the pre-scan, no listing first',
+  /First action, in every client: open this file, then run the pre-scan it names; never list or search files/.test(desc || '') && /^\*\*First action:\*\* run `node <this skill>\/scripts\/prescan\.mjs <workspace>`/m.test(skill));
+check('an unknown answer uses evidence source none, and a question that cannot apply is na without a search',
+  /\*\*Never fabricate\.\*\*[^\n]*`unknown`, with evidence source `none`/.test(skill) && /\*\*Questions that do not fit\.\*\*[^\n]*answer `na`[^\n]*do not search/.test(skill));
 check('Stay small forbids listing the skill folder', /\*\*Stay small\.\*\*[^\n]*never list this skill's folder/.test(skill));
 check(`SKILL.md fits one read.mjs range (${MAX_LINES} lines) and its description says how to open it without a file-read tool`, skill.trimEnd().split('\n').length <= MAX_LINES && /scripts\/read\.mjs <this skill>\/SKILL\.md 1 \d+/.test(desc || ''), `${skill.trimEnd().split('\n').length} lines`);
 const readme = readFileSync(join(SKILL_DIR, 'README.md'), 'utf8');

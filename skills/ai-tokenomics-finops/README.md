@@ -42,7 +42,7 @@ the role and lists the skipped question IDs by lever under "Not assessed for thi
 ## How it keeps a run small
 
 A triage step picks the track. A local pre-scan (`scripts/prescan.mjs`) runs each question's search patterns and
-prints a fixed-size summary with `path:line` refs (default 3 hits per question, 160 characters a line, hard caps on
+prints a fixed-size summary with `path:line` refs (default 3 hits per question, code, config and IaC before docs, 160 characters a line, hard caps on
 files and bytes, marked `TRUNCATED` when hit). The agent then loads one lever at a time and writes its findings to
 disk, and `scripts/report.mjs` assembles the report.
 
