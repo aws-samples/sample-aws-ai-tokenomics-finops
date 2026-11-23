@@ -10,6 +10,7 @@ Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#run-an-o
 - [141] Harness or Model? Isolating the Harness Effect. arXiv:2609.11987, September 2026. https://arxiv.org/abs/2609.11987
 - [138] Benchmarking customized models on Amazon Bedrock using LLMPerf and LiteLLM. AWS Machine Learning Blog, 13 March 2025. https://aws.amazon.com/blogs/machine-learning/benchmarking-customized-models-on-amazon-bedrock-using-llmperf-and-litellm/
 - [135] Amazon Bedrock adds support for six fully-managed open weights models. AWS What's New, 10 February 2026. https://aws.amazon.com/about-aws/whats-new/2026/02/amazon-bedrock-adds-support-six-open-weights-models/
+- [216] GLM 5.3 model card (lifecycle and access). Amazon Bedrock User Guide, AWS; accessed 22 November 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-zai-glm-5-3.html
 - [145] Chat Completions API. Amazon Bedrock User Guide, AWS; accessed 19 October 2026. https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html
 - [136] Set up OpenAI ChatGPT Codex with LiteLLM on Amazon ECS and Amazon Bedrock. AWS Machine Learning Blog, 3 September 2026. https://aws.amazon.com/blogs/machine-learning/set-up-openai-chatgpt-codex-with-litellm-on-amazon-ecs-and-amazon-bedrock/
 - [137] sample-litellm-bedrock-gateway-on-eks, a LiteLLM to Amazon Bedrock model gateway on Amazon EKS. AWS Samples on GitHub. https://github.com/aws-samples/sample-litellm-bedrock-gateway-on-eks

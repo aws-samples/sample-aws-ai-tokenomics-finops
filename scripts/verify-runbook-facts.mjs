@@ -474,6 +474,8 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
   // card's fallback count from 111 to 119, so the two Track 2 evidence phrases name 119.
   // 2026-11-16, sweep-3 content PR: ten newly cited references (206-215) take the Track 1 card's
   // fallback count from 61 to 63 and Track 2's from 119 to 127; the evidence phrases name them.
+  // 2026-11-23, sweep-4 content PR: nine newly cited references (216-224) take the Track 1 card's
+  // fallback count from 63 to 68 and Track 2's from 127 to 131; the evidence phrases name them.
   // 2026-11-16, sweep-3 content PR (R54): the tiered-routing worked card moves from GPT-5.6 Sol and
   // Luna (In-Region rates) to GPT-6.1 Sol and GPT-6 Luna (Global rates), and its price table becomes
   // one line. Each retired price and total is bound to the new figure that replaces it.
@@ -515,10 +517,10 @@ const REVIEWED_FACT_REPLACEMENT_MANIFEST = {
       owners: [
         reviewedOwner('integers:10', reviewedPhrase('11 levers 35 questions')),
         reviewedOwner('integers:32', reviewedPhrase('0/35 answered'), reviewedPhrase('0/39 answered')),
-        reviewedOwner('integers:36', reviewedPhrase('35 questions 63 references')),
+        reviewedOwner('integers:36', reviewedPhrase('35 questions 68 references')),
         reviewedOwner('integers:20', reviewedPhrase('17 levers 39 questions')),
-        reviewedOwner('integers:43', reviewedPhrase('39 questions 127 references')),
-        reviewedOwner('integers:75', reviewedPhrase('127 references'))
+        reviewedOwner('integers:43', reviewedPhrase('39 questions 131 references')),
+        reviewedOwner('integers:75', reviewedPhrase('131 references'))
       ]
     },
     {
@@ -566,7 +568,7 @@ const canonicalJson = (value) => {
 const reviewedManifestSha256 = (manifest) => createHash('sha256')
   .update(canonicalJson(manifest))
   .digest('hex');
-const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '5a84fcd05f345213070be07507c7234a366f9393d984a30fd41cc23b3972c473';
+const REVIEWED_FACT_REPLACEMENT_MANIFEST_SHA256 = '40591b1a1e1cc929f1b62ac7f26651fbf86e34fdb8c68e15eb14e7efa38144ea';
 const FACT_REPLACEMENT_CONTRACTS = REVIEWED_FACT_REPLACEMENT_MANIFEST.contracts;
 
 /**

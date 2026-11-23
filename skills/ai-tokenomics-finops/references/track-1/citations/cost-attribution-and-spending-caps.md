@@ -7,6 +7,7 @@ Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#cost-att
 - [74] Coding agents insights. Amazon CloudWatch User Guide, AWS. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/coding-agents-insights.html
 - [104] Set up OpenTelemetry for OpenAI Codex. Amazon CloudWatch User Guide, AWS. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/coding-agents-codex.html
 - [75] Track Amazon Bedrock costs by caller identity with IAM-based cost allocation. AWS Cloud Financial Management Blog. https://aws.amazon.com/blogs/aws-cloud-financial-management/track-amazon-bedrock-costs-by-caller-identity-with-iam-based-cost-allocation/
+- [217] Cost attribution and controls for AI developer and productivity tools on Amazon Bedrock. AWS Machine Learning Blog, 13 November 2026; accessed 23 November 2026. https://aws.amazon.com/blogs/machine-learning/cost-attribution-and-controls-for-ai-developer-and-productivity-tools-on-amazon-bedrock/
 - [103] Use ChatGPT Work and Codex with Amazon Bedrock. OpenAI Codex documentation. https://developers.openai.com/codex/amazon-bedrock
 - [76] Send Claude Code gateway telemetry to CloudWatch. Amazon CloudWatch User Guide, AWS. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/coding-agents-claude-code-gateway.html
 - [45] Budgets and rate limits. LiteLLM proxy documentation. https://docs.litellm.ai/docs/proxy/users
