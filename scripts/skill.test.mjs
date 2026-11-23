@@ -102,6 +102,22 @@ test('prescan: caps hits per question and clamps the cap to 5', (t) => {
   assert.equal(scan(root, assessment, { track: 'track-2', context: 1 }).questions.find((x) => x.id === 'cwr-q1').shown[0].text.length, 3);
 });
 
+test('prescan: shows code hits before docs hits, and a README hit when it is the only evidence', (t) => {
+  const root = tmp(t);
+  // Docs sort first in traversal and outnumber the code hit; counts stay complete.
+  write(root, 'README.md', 'outputTokens\n');
+  write(root, 'adocs/a.md', 'outputTokens\noutputTokens\noutputTokens\n');
+  write(root, 'app/agent.py', 'n = r["usage"]["outputTokens"]\n');
+  const s = scan(root, assessment, { track: 'track-2' });
+  assert.deepEqual(q(s, 'eff-q2').shown.map((h) => h.ref), ['app/agent.py:1', 'README.md:1', 'adocs/a.md:1']);
+  assert.equal(q(s, 'eff-q2').hits, 5);
+  assert.equal(q(s, 'eff-q2').more, 2);
+  assert.deepEqual(q(s, 'eff-q2').bySource, { code: 1, docs: 4 });
+  const only = tmp(t);
+  write(only, 'README.md', 'We track outputTokens per call.\n');
+  assert.deepEqual(q(scan(only, assessment, { track: 'track-2' }), 'eff-q2').shown.map((h) => h.ref), ['README.md:1']);
+});
+
 test('prescan: marks the summary truncated when a cap is hit', (t) => {
   const s = scan(fixture(t), assessment, { track: 'track-2', maxFiles: 1 });
   assert.equal(s.truncated, true);
