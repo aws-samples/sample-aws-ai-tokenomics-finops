@@ -18,7 +18,7 @@ Answer each question with: `yes` (Fully covered), `wip` (Partially), `no` (Not c
 ## `owm-q2` Have you reviewed the gateway, data-handling, and model-provenance path for the open-weight model, including whether it runs in your account on Amazon Bedrock or through a third-party API?
 
 - Personas: governance
-- Fully covered looks like: Start with the managed open-weight models in Amazon Bedrock, which bill per token and need no infrastructure of your own. The launch list includes coding-oriented models such as Kimi K2.5, Qwen3 Coder Next and GLM 4.7 (Amazon Bedrock adds six open weights models [135]).
+- Fully covered looks like: Start with the managed open-weight models in Amazon Bedrock, which bill per token and need no infrastructure of your own. The launch list includes coding-oriented models such as Kimi K2.5 and Qwen3 Coder Next (Amazon Bedrock adds six open weights models [135]), and GLM 5.3 followed in October 2026 for eligible customers (GLM 5.3 model card [216]).
 - Evidence: The gateway and data path to the open-weight model: in-account Bedrock or a third-party API.
 - Search: config, iac, agent-config, docs files for `litellm|gateway|proxy`, `(ANTHROPIC|OPENAI)_BASE_URL|base_url`, `openai\.gpt-oss|qwen\.|deepseek\.|mistral\.|meta\.llama`
 

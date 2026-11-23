@@ -6,6 +6,9 @@ Runbook: https://aws-samples.github.io/sample-aws-ai-tokenomics-finops/#right-si
 
 - [87] Auto routing. LiteLLM documentation. https://docs.litellm.ai/docs/proxy/auto_routing
 - [88] Model configuration. Claude Code documentation. https://code.claude.com/docs/en/model-config
+- [218] Claude Code v2.1.328 release notes. Anthropic, GitHub, 19 November 2026. https://github.com/anthropics/claude-code/releases/tag/v2.1.328
+- [219] Permission modes (auto mode, classifier model and server-side review). Claude Code documentation; accessed 22 November 2026. https://code.claude.com/docs/en/permission-modes
+- [220] Auto mode classifier request charges. Claude Code documentation; accessed 22 November 2026. https://code.claude.com/docs/en/auto-mode-classifier-billing
 - [214] Model governance. Kiro documentation, updated 11 November 2026; accessed 16 November 2026. https://kiro.dev/docs/enterprise/governance/model/
 - [98] Best practices for Codex. OpenAI. https://learn.chatgpt.com/guides/best-practices
 - [103] Use ChatGPT Work and Codex with Amazon Bedrock. OpenAI Codex documentation. https://developers.openai.com/codex/amazon-bedrock
